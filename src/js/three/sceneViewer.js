@@ -131,78 +131,104 @@ export function createSceneViewer({ container, onStatus }) {
         return m;
     }
 
-    // Find the highest terrain Y near a given (x, z) point.
+    // Find the terrain GROUND Y near a given (x, z) point.
     //
-    // The terrain GLB is exported as a Point Cloud (THREE.Points),
-    // which makes triangle raycasting unreliable. Instead, we scan the
-    // terrain's vertex buffer once (cached on the terrain object) and
-    // for each query find the highest point inside a search radius
-    // around the query (x, z). This is O(N) per call but N is fixed
-    // (tens of thousands at most) and the work is trivially fast.
-    function getTerrainHeightAt(terrainObject, x, z, radius = 3.0) {
-        if (!terrainObject) return null;
-        // Cache flattened vertex arrays on the terrain object so we
-        // don't re-walk the scene graph for every building.
-        if (!terrainObject.userData.__pointArrays) {
-            const arrays = [];
-            terrainObject.updateWorldMatrix(true, true);
-            terrainObject.traverse((node) => {
-                const geo = node.geometry;
-                const posAttr = geo?.attributes?.position;
-                if (!posAttr) return;
-                // Bake world transform into a flat Float32Array so we
-                // can scan without re-multiplying every call.
-                const out = new Float32Array(posAttr.count * 3);
-                const v = new THREE.Vector3();
-                for (let i = 0; i < posAttr.count; i++) {
-                    v.fromBufferAttribute(posAttr, i);
-                    v.applyMatrix4(node.matrixWorld);
-                    out[i * 3] = v.x;
-                    out[i * 3 + 1] = v.y;
-                    out[i * 3 + 2] = v.z;
+    // The terrain GLB is a coloured point cloud (THREE.Points) where
+    // each vertex carries the LAS classification colour. Picking the
+    // highest Y indiscriminately puts buildings on top of vegetation
+    // canopies and other building rooftops; instead we filter for the
+    // LAS "ground" class (brown ≈ rgb(165,42,42)) and pick its
+    // median-high Y in a small radius around the query.
+    //
+    // The filtered ground-only array is cached on the terrain object
+    // so the linear scan only runs once across all buildings.
+    function buildGroundIndex(terrainObject) {
+        const grounds = [];
+        terrainObject.updateWorldMatrix(true, true);
+        const v = new THREE.Vector3();
+        terrainObject.traverse((node) => {
+            const geo = node.geometry;
+            const posAttr = geo?.attributes?.position;
+            const colAttr = geo?.attributes?.color;
+            if (!posAttr) return;
+            const out = [];
+            for (let i = 0; i < posAttr.count; i++) {
+                if (colAttr) {
+                    // LAS Ground (class 2) is exported as (165,42,42).
+                    // We accept a small tolerance because the colour
+                    // is normalised through bufferGeometry's color
+                    // attribute (Uint8 -> 0..1 floats).
+                    const r = colAttr.getX(i) * 255;
+                    const g = colAttr.getY(i) * 255;
+                    const b = colAttr.getZ(i) * 255;
+                    const isGround =
+                        Math.abs(r - 165) <= 8 &&
+                        Math.abs(g - 42) <= 8 &&
+                        Math.abs(b - 42) <= 8;
+                    if (!isGround) continue;
                 }
-                arrays.push(out);
-            });
-            terrainObject.userData.__pointArrays = arrays;
+                v.fromBufferAttribute(posAttr, i);
+                v.applyMatrix4(node.matrixWorld);
+                out.push(v.x, v.y, v.z);
+            }
+            if (out.length) grounds.push(new Float32Array(out));
+        });
+        return grounds;
+    }
+
+    function getGroundHeightAt(terrainObject, x, z, radius = 3.0) {
+        if (!terrainObject) return null;
+        if (!terrainObject.userData.__groundArrays) {
+            terrainObject.userData.__groundArrays = buildGroundIndex(terrainObject);
         }
+        const arrays = terrainObject.userData.__groundArrays;
         const r2 = radius * radius;
-        let bestY = -Infinity;
-        for (const arr of terrainObject.userData.__pointArrays) {
+        const hits = [];
+        for (const arr of arrays) {
             for (let i = 0; i < arr.length; i += 3) {
                 const dx = arr[i] - x;
                 const dz = arr[i + 2] - z;
-                if (dx * dx + dz * dz <= r2) {
-                    const yy = arr[i + 1];
-                    if (yy > bestY) bestY = yy;
-                }
+                if (dx * dx + dz * dz <= r2) hits.push(arr[i + 1]);
             }
         }
-        return isFinite(bestY) ? bestY : null;
+        if (!hits.length) return null;
+        // Use the 80th-percentile Y as the "ground level" — robust to
+        // a few stray points below the surface (drainage cuts, building
+        // basements that were mis-classified) while still tracking the
+        // local terrain shape.
+        hits.sort((a, b) => a - b);
+        const idx = Math.min(hits.length - 1, Math.floor(hits.length * 0.8));
+        return hits[idx];
     }
 
     // Drop a freshly-placed building onto the terrain.
     //
     // The building's matrix transform leaves it at absolute-elevation
     // height (the upstream's terrain min_z is not exposed). We sample
-    // the terrain near the building's footprint centroid and translate
-    // the building so its lowest vertex sits at the local ground.
+    // the terrain's ground-class points near the building footprint
+    // and translate the building so its lowest vertex matches the
+    // local ground level.
     function seatOnTerrain(buildingNode, terrainObject) {
         if (!terrainObject) return false;
         const box = new THREE.Box3().setFromObject(buildingNode);
         if (!isFinite(box.min.x) || !isFinite(box.max.x)) return false;
         const center = box.getCenter(new THREE.Vector3());
 
-        // Try progressively larger search radii until we hit terrain
-        // points. Switzerland's LIDAR is dense (~0.5 m spacing for the
-        // ground class), so r=2 m almost always succeeds.
-        let terrainY = null;
+        // Sample at the centroid first. Around dense Swiss building
+        // blocks the LIDAR can have ground gaps right under a footprint
+        // (the LAS ground class excludes the building itself), so we
+        // step outward until we hit ground.
+        let groundY = null;
         for (const r of [2.0, 4.0, 8.0, 16.0]) {
-            terrainY = getTerrainHeightAt(terrainObject, center.x, center.z, r);
-            if (terrainY != null) break;
+            groundY = getGroundHeightAt(terrainObject, center.x, center.z, r);
+            if (groundY != null) break;
         }
-        if (terrainY == null) return false;
+        if (groundY == null) return false;
 
-        const dy = terrainY - box.min.y;
+        // Sink the building's lowest point ~10 cm below grade so its
+        // base reads as planted, not levitating, on the colour-coded
+        // point cloud.
+        const dy = groundY - box.min.y - 0.1;
         buildingNode.position.y += dy;
         return true;
     }
