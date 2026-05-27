@@ -121,6 +121,19 @@ function boot() {
         setTimeout(() => input.focus(), 80);
     }
 
+    // Deep-link bootstrap: ?lat=&lng= (optional &label=) skips the
+    // landing view and renders the scene immediately. Useful for
+    // sharing a specific address and for headless tests.
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const lat = Number(params.get('lat'));
+        const lng = Number(params.get('lng'));
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            const label = params.get('label') || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            handlePick({ lat, lng, label });
+        }
+    } catch (_) { /* no-op */ }
+
     if (window.lucide?.createIcons) window.lucide.createIcons();
 }
 
