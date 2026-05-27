@@ -1,0 +1,96 @@
+/* Three.js scene view — full-bleed canvas with a slim top header that shows
+ * the picked address and a Back button. The comparison sidebar floats over
+ * the right edge as usual when an EGRID is resolved. */
+
+.scene-view {
+    position: fixed;
+    inset: 56px 0 0 0;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme='light'] .scene-view {
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+}
+
+.scene-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.scene-canvas canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.scene-header {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 5;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: none;
+}
+
+.scene-header > * { pointer-events: auto; }
+
+.scene-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #0f172a;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+}
+
+.scene-back svg { width: 16px; height: 16px; }
+
+.scene-back:hover { color: #dc2626; }
+
+[data-theme='dark'] .scene-back {
+    background: rgba(17, 24, 39, 0.92);
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.scene-address {
+    flex: 1 1 auto;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #0f172a;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+[data-theme='dark'] .scene-address {
+    background: rgba(17, 24, 39, 0.92);
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.scene-status {
+    padding: 8px 14px;
+    background: rgba(220, 38, 38, 0.92);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 13px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+    transition: opacity 0.25s ease;
+}
+
+.scene-status:empty { display: none; }
