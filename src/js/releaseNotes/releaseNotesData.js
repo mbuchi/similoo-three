@@ -38,6 +38,40 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.2.0',
+        date: 'May 27, 2026',
+        codename: 'Inter Polish',
+        summary:
+            'Typography refresh for a more professional tech-product look. UI body, headings, and the address search now ride on Inter (variable, OpenType cv11 + ss01 + tabular figures) with `-webkit-font-smoothing: antialiased` for clean rendering on the dark theme. Varela Round is preserved only for the `similoo-three` wordmark in the navbar — the suite-wide brand identifier with the red `oo`. Code/ID surfaces (parcel IDs, EGRID, camera monitor) switch to JetBrains Mono via a new `--hood-mono` token. Three tokens now drive every font choice in the app: `--hood-font` (Inter, UI), `--hood-display` (Varela Round, wordmark), `--hood-mono` (JetBrains Mono, code).',
+        highlight: true,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'type',
+                text: 'Inter is now the UI font everywhere except the brand wordmark — landing hero, address search input, autocomplete list, navbar caption, sidebar, comparison panel, building info panel. Hero "Type a Swiss address." renders at Inter 700 with -2.5% tracking for a modern tech-product feel.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'badge-check',
+                text: 'Brand wordmark untouched: `similoo-three` stays in Varela Round with the red `oo`, matching SwissNovo suite branding.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'code-2',
+                text: 'JetBrains Mono token (`--hood-mono`) replaces every hard-coded `ui-monospace, SFMono-Regular, Menlo, Monaco, monospace` stack in buildingInfoPanel/comparison/releaseNotes/styles.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Crisper rendering on dark mode: grayscale font-smoothing, `text-rendering: optimizeLegibility`, kerning + ligatures + Inter cv11 (single-storey g) + ss01 (open digits) enabled at the html root.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.1.0',
         date: 'May 27, 2026',
         codename: 'First Three',
