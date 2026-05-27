@@ -16,6 +16,20 @@ export const config = { maxDuration: 60 };
 const CONTOOR_BASE =
     process.env.CONTOOR_3D_API_BASE ||
     'https://contoor-api-contabo.gisjoe.com';
+
+// Server-side default API key for the Contoor 3D upstream, matching the
+// contoor sibling app (see contoor/api/glb.ts:12). This constant is only
+// ever read inside a Vercel Node serverless function — it never reaches
+// the browser. CONTOOR_3D_API_KEY (or the contoor-compatible aliases
+// CONTOUR_API_KEY / GLB_API_KEY) override it when set in Vercel env vars.
+const DEFAULT_CONTOOR_3D_API_KEY = '@d3YJbayNg@RxyanD!N.rXcLcq.Qrv_gR_FFw9z2';
+
+const CONTOOR_API_KEY =
+    process.env.CONTOOR_3D_API_KEY ||
+    process.env.GLB_API_KEY ||
+    process.env.CONTOUR_API_KEY ||
+    DEFAULT_CONTOOR_3D_API_KEY;
+
 const UPSTREAM_TIMEOUT_MS = 45_000;
 
 const CORS_HEADERS = {
@@ -79,10 +93,10 @@ export default async function handler(req, res) {
         body = req.body || {};
     }
 
-    const headers = { 'Content-Type': 'application/json' };
-    if (process.env.CONTOOR_3D_API_KEY) {
-        headers['X-API-Key'] = process.env.CONTOOR_3D_API_KEY;
-    }
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-API-Key': CONTOOR_API_KEY,
+    };
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
