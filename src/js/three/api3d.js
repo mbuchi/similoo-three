@@ -22,6 +22,7 @@
 const TERRAIN_ENDPOINT = '/api/three3d/terrain';
 const BUILDING_ENDPOINT = '/api/three3d/building';
 const FOOTPRINTS_ENDPOINT = '/api/three3d/footprints';
+const HEIGHT_VOLUME_ENDPOINT = '/api/three3d/height-volume';
 
 async function fetchGLBWithMeta(url, body) {
     const res = await fetch(url, {
@@ -51,13 +52,21 @@ async function fetchGLBWithMeta(url, body) {
     return { blob, metadata };
 }
 
-export function fetchTerrainGLB({ lat, lng, radius_m = 100 }) {
-    return fetchGLBWithMeta(TERRAIN_ENDPOINT, {
+export function fetchTerrainGLB({ lat, lng, radius_m = 100, classes = null }) {
+    const body = {
         lat,
         lng,
         bbox_radius_m: radius_m,
         return_data: true,
-    });
+    };
+    // Filter the LAS point cloud by classification before generating
+    // the GLB. Supported classes (per Contoor docs): 'ground',
+    // 'vegetation', 'tree', 'trees', 'buildings'. Pass null/[] to get
+    // the full unfiltered cloud (the default).
+    if (Array.isArray(classes) && classes.length) {
+        body.selected_pointcloud_class = classes;
+    }
+    return fetchGLBWithMeta(TERRAIN_ENDPOINT, body);
 }
 
 export function fetchBuildingGLB({ lat, lng }) {
@@ -82,6 +91,26 @@ export async function fetchFootprintsBBox({ lat, lng, radius_m = 100 }) {
     if (!res.ok) {
         const text = await res.text().catch(() => '');
         throw new Error(`footprints ${res.status}: ${text.slice(0, 200)}`);
+    }
+    return res.json();
+}
+
+// Combined height + volume metrics for the building footprint at
+// (lat, lng). Returns the Contoor BuildingHeightVolumeResponse shape:
+//   { input, coordinate2056, status:{height,volume}, height:{...}, volume:{...}, errors, meta }
+// Either or both of `height` / `volume` may be null if upstream failed
+// to compute one component; the `status` flags indicate which worked.
+export async function fetchBuildingHeightVolume({ lat, lng, radiusMeters = null }) {
+    const body = { lat, lng };
+    if (radiusMeters != null) body.radiusMeters = radiusMeters;
+    const res = await fetch(HEIGHT_VOLUME_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`height-volume ${res.status}: ${text.slice(0, 200)}`);
     }
     return res.json();
 }

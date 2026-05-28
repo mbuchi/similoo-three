@@ -76,7 +76,12 @@ function readPath(req) {
 const ROUTES = {
     terrain: '/api/v1/pointcloud/glb',
     building: '/api/v1/building-model',
+    'height-volume': '/api/v1/building-height-volume',
 };
+
+// Routes whose response is JSON (not a GLB binary) so we forward the
+// raw text instead of arrayBuffer()-ing it.
+const JSON_ROUTES = new Set(['height-volume']);
 
 // Swiss WFS used to enumerate building footprints inside a BBOX.
 // This service is reachable from the Vercel function but not the
@@ -204,14 +209,22 @@ export default async function handler(req, res) {
         }
 
         setCors(res);
+        // Caching: derived from static raw data, safe to cache hard at
+        // the CDN. Same key = same answer (the lat/lng+radius are in
+        // the request body; we rely on body-aware client caching).
+        res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+
+        if (JSON_ROUTES.has(op)) {
+            res.setHeader('Content-Type', 'application/json');
+            const text = await upstream.text();
+            res.status(200).end(text);
+            return;
+        }
+
         const ct = upstream.headers.get('Content-Type') || 'model/gltf-binary';
         res.setHeader('Content-Type', ct);
         const meta = upstream.headers.get('X-GLB-Metadata');
         if (meta) res.setHeader('X-GLB-Metadata', meta);
-        // Caching: GLBs are derived from static raw data, safe to cache
-        // hard at the CDN. Same key = same answer (the lat/lng+radius are
-        // in the request body, so we rely on body-aware client caching).
-        res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
 
         const buf = Buffer.from(await upstream.arrayBuffer());
         res.status(200).end(buf);

@@ -21,12 +21,18 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { fetchTerrainGLB, fetchBuildingGLB, fetchFootprintsBBox } from './api3d.js';
+import {
+    fetchTerrainGLB,
+    fetchBuildingGLB,
+    fetchFootprintsBBox,
+    fetchBuildingHeightVolume,
+} from './api3d.js';
 import { wgs84ToLV95 } from './swissCoords.js';
 import { createSkyDome, SKY_PALETTES } from './sky.js';
 import { createCompass } from './compass.js';
 import { createScaleLegend } from './scaleLegend.js';
 import { createBuildingInfoPanel } from './buildingInfoPanel.js';
+import { createLayersToggle } from './layersToggle.js';
 
 const SCENE_RADIUS_M = 100;
 // The upstream API serialises heavy Roofer jobs, so the proxy retries
@@ -122,6 +128,72 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         renderer,
     });
     const infoPanel = createBuildingInfoPanel({ container });
+
+    // Layers dock (top-right under the compass). The vegetation toggle
+    // is the only layer today; future toggles (zoning overlay etc.)
+    // plug into the same dock.
+    const layersDock = createLayersToggle({ container });
+    let vegetationOverlay = null;       // { node: THREE.Object3D } once loaded
+    let vegetationLoading = null;       // in-flight promise; reused on rapid toggling
+    let vegetationActive = false;       // user intent — preserved across address changes
+    let currentLatLng = null;           // last loaded address for vegetation re-fetch
+    layersDock.addToggle({
+        id: 'vegetation',
+        labelKey: 'scene.layer_vegetation',
+        fallbackLabel: 'Vegetation',
+        icon: 'trees',
+        onToggle: async (next) => {
+            vegetationActive = next;
+            if (next) {
+                if (!vegetationOverlay) {
+                    if (!currentLatLng) return; // wait for first address
+                    if (!vegetationLoading) vegetationLoading = loadVegetationOverlay(currentLatLng);
+                    vegetationOverlay = await vegetationLoading;
+                    vegetationLoading = null;
+                }
+                if (vegetationOverlay?.node) vegetationOverlay.node.visible = true;
+            } else if (vegetationOverlay?.node) {
+                vegetationOverlay.node.visible = false;
+            }
+        },
+    });
+
+    async function loadVegetationOverlay({ lat, lng }) {
+        const { blob } = await fetchTerrainGLB({
+            lat,
+            lng,
+            radius_m: SCENE_RADIUS_M,
+            classes: ['vegetation', 'trees'],
+        });
+        const gltf = await loadGLBBlob(blob);
+        const node = gltf.scene;
+        node.name = 'vegetation-overlay';
+        // Tint the vegetation points a translucent canopy green so they
+        // read as overlay, not as part of the base terrain.
+        node.traverse((child) => {
+            const mat = child.material;
+            if (!mat) return;
+            if (mat.color && mat.color.set) {
+                mat.color.set(0x16a34a);
+            }
+            if (mat.size != null) {
+                mat.size = Math.max(mat.size, 0.6);
+            }
+            mat.transparent = true;
+            mat.opacity = 0.85;
+        });
+        sceneGroup.add(node);
+        return { node };
+    }
+
+    function disposeVegetationOverlay() {
+        if (vegetationOverlay?.node) {
+            disposeNode(vegetationOverlay.node);
+            sceneGroup.remove(vegetationOverlay.node);
+        }
+        vegetationOverlay = null;
+        vegetationLoading = null;
+    }
 
     // Reference grid so the user has a sense of scale before assets
     // land (100 m × 100 m, 10 m cells).
@@ -400,7 +472,12 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         }
         const token = ++loadToken;
 
+        // clearGroup nukes vegetation overlay too — reset state and
+        // we'll re-fetch below if the toggle was active for the user.
         clearGroup(sceneGroup);
+        vegetationOverlay = null;
+        vegetationLoading = null;
+        currentLatLng = { lat, lng };
         // sceneGroup just got nuked — recreate the buildings sub-group.
         const localBuildingsGroup = new THREE.Group();
         localBuildingsGroup.name = 'buildings';
@@ -527,8 +604,12 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
                         id: b.id,
                         address: b.address,
                         gwr_bldg_id: b.gwr_bldg_id,
+                        res_building_id: b.res_building_id,
                         const_year: b.const_year,
                         floors: b.floors,
+                        lat: b.lat,
+                        lng: b.lng,
+                        distM: b.distM,
                     };
                     node.applyMatrix4(lv95ToLocal);
                     seatOnTerrain(node, terrainObject, raycaster);
@@ -559,6 +640,27 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         // Final framing pass: if we never homed in on the target,
         // frame whatever ended up in the group.
         if (!frameDone) frameOnContent(localBuildingsGroup);
+
+        // Vegetation overlay was nuked by clearGroup at the top — if the
+        // user had it on, kick off a fresh fetch in the background so
+        // the toggle's "on" state stays honest.
+        if (vegetationActive && currentLatLng && !vegetationOverlay && !vegetationLoading) {
+            vegetationLoading = loadVegetationOverlay(currentLatLng);
+            vegetationLoading
+                .then((overlay) => {
+                    if (token !== loadToken) {
+                        disposeNode(overlay.node);
+                        return;
+                    }
+                    vegetationOverlay = overlay;
+                    overlay.node.visible = true;
+                    vegetationLoading = null;
+                })
+                .catch((err) => {
+                    console.warn('vegetation overlay re-fetch failed', err);
+                    vegetationLoading = null;
+                });
+        }
 
         setStatus('');
         return {
@@ -635,6 +737,8 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         return null;
     }
 
+    let pickedHvSeq = 0;
+
     function focusBuilding(root) {
         setActiveHighlight(root);
         const box = new THREE.Box3().setFromObject(root);
@@ -645,6 +749,39 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         };
         infoPanel.show(info);
         if (typeof onBuildingPicked === 'function') onBuildingPicked(info);
+
+        // Kick off a background fetch for richer Contoor metrics
+        // (LIDAR-derived peak height, computed volume m³, footprint
+        // area m²) and patch them into the panel when they land. Use
+        // the building's WGS84 lat/lng from the WFS proxy if we have
+        // it; otherwise skip (the bbox height is still useful on its
+        // own).
+        const seq = ++pickedHvSeq;
+        const lat = Number(root.userData.lat);
+        const lng = Number(root.userData.lng);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            fetchBuildingHeightVolume({ lat, lng })
+                .then((payload) => {
+                    if (seq !== pickedHvSeq) return;
+                    if (!payload) return;
+                    const heightPeak = payload.height?.buildingPeakMeters;
+                    const heightP95 = payload.height?.buildingP95Meters;
+                    const volumeM3 = payload.volume?.volumeM3;
+                    const footprintM2 = payload.volume?.footprintAreaSqm;
+                    infoPanel.show({
+                        ...info,
+                        // Prefer LIDAR-measured peak if Contoor returned it;
+                        // fall back to the bbox height already shown.
+                        height_m: Number.isFinite(heightPeak) ? heightPeak : height_m,
+                        height_p95_m: Number.isFinite(heightP95) ? heightP95 : null,
+                        volume_m3: Number.isFinite(volumeM3) ? volumeM3 : null,
+                        footprint_m2: Number.isFinite(footprintM2) ? footprintM2 : null,
+                    });
+                })
+                .catch((err) => {
+                    console.warn('height-volume fetch failed', err);
+                });
+        }
     }
 
     function setActiveHighlight(root) {
@@ -763,6 +900,7 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             compass.destroy();
             scaleLegend.destroy();
             infoPanel.destroy();
+            layersDock.destroy();
             sky.dispose();
             controls.dispose();
             clearGroup(sceneGroup);

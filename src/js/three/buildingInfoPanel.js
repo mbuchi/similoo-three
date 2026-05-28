@@ -71,6 +71,9 @@ export function createBuildingInfoPanel({ container }) {
             row('scene_info.const_year', current.const_year),
             row('scene_info.floors', current.floors),
             row('scene_info.height', formatMetres(current.height_m)),
+            row('scene_info.height_p95', formatMetres(current.height_p95_m)),
+            row('scene_info.volume', formatCubicMetres(current.volume_m3)),
+            row('scene_info.footprint', formatSquareMetres(current.footprint_m2)),
             row('scene_info.distance', current.distM != null ? formatMetres(current.distM) : null),
         ].filter(Boolean);
         body.innerHTML = rows.join('') || `<p class="scene-info-empty">${escapeHtml(t('scene_info.empty') || 'No metadata available')}</p>`;
@@ -99,6 +102,18 @@ function formatMetres(n) {
     if (!Number.isFinite(n)) return null;
     if (n < 10) return `${n.toFixed(1)} m`;
     return `${Math.round(n)} m`;
+}
+
+function formatCubicMetres(n) {
+    if (!Number.isFinite(n)) return null;
+    if (n < 1) return `${n.toFixed(2)} m³`;
+    return `${Math.round(n).toLocaleString('en-CH').replace(/,/g, ' ')} m³`;
+}
+
+function formatSquareMetres(n) {
+    if (!Number.isFinite(n)) return null;
+    if (n < 1) return `${n.toFixed(2)} m²`;
+    return `${Math.round(n).toLocaleString('en-CH').replace(/,/g, ' ')} m²`;
 }
 
 function escapeHtml(s) {

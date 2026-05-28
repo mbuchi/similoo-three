@@ -318,3 +318,72 @@
     font-size: 12px;
     color: #94a3b8;
 }
+
+/* ---------- Layers toggle dock (top-right, under compass) ------------ */
+
+.scene-layers {
+    position: absolute;
+    top: 84px;
+    right: 16px;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.scene-layers-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 8px 10px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #0f172a;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+    transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease;
+}
+
+.scene-layers-btn:hover { transform: translateY(-1px); }
+.scene-layers-btn:focus-visible { outline: 2px solid #dc2626; outline-offset: 2px; }
+
+.scene-layers-btn.is-active {
+    background: #16a34a;
+    border-color: #15803d;
+    color: #f0fdf4;
+}
+
+.scene-layers-btn:disabled {
+    opacity: 0.7;
+    cursor: progress;
+}
+
+[data-theme='dark'] .scene-layers-btn {
+    background: rgba(17, 24, 39, 0.92);
+    border-color: rgba(255, 255, 255, 0.10);
+    color: #f1f5f9;
+}
+
+[data-theme='dark'] .scene-layers-btn.is-active {
+    background: #15803d;
+    color: #ecfdf5;
+}
+
+.scene-layers-btn-icon { display: inline-flex; }
+.scene-layers-btn-icon svg { width: 14px; height: 14px; }
+
+.scene-layers-btn-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: scene-layers-spin 0.7s linear infinite;
+}
+
+@keyframes scene-layers-spin {
+    to { transform: rotate(360deg); }
+}
