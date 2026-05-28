@@ -38,6 +38,46 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.6.0',
+        date: 'May 28, 2026',
+        codename: 'Sun & Shadow',
+        summary:
+            'Pick any moment in the year and see exactly where the sun is and how the building shadows fall at that time. A new bottom-centre pill exposes a date picker, an hour slider (15-minute steps over the full 24 h day), and a live readout of the solar altitude in degrees (or "Below horizon" at night). The DirectionalLight is repositioned in real time using the NOAA solar geometry formulas for the loaded address — accurate to ~0.1°. The sky shader composes with the page theme: golden hour warms the horizon, night dims the dome to deep blue, and the sun colour shifts from amber at sunrise to neutral white at high noon.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'sun',
+                text: 'Solar geometry module (src/js/three/sunCalc.js): Spencer 1971 declination + equation-of-time + hour-angle math, ~50 lines, no external dependency. Computes the sun direction vector in scene coordinates given (date, lat, lng).',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'clock',
+                text: 'Sun control pill (bottom-centre): date picker + 24h slider (15-min steps) + Now button + live solar altitude readout. Dragging the slider repositions the DirectionalLight live and updates shadows in real time.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'sunset',
+                text: 'Atmosphere-aware sky: night drops the dome to deep blue (#0b1220 top / #18243d horizon), dims hemi light to 0.25; golden hour warms the horizon stripe (#f6c47a) and tints hemi light amber; daytime returns the theme\'s base palette. Theme toggle still works on top of all that.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'building-2',
+                text: 'Shadows now fall in the real direction: pick any address, drag the slider from 06:00 to 20:00, and watch each building\'s shadow sweep across its neighbours. Below-horizon hours keep the light just above 0° so the shadow camera still covers the scene at moonlight intensity (0.15).',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'globe',
+                text: 'Sun direction recomputed when a new address loads — same moment in time, different geographic point, different shadow direction.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.5.0',
         date: 'May 28, 2026',
         codename: 'Data Layers',
