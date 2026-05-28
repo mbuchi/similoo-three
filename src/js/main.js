@@ -7,6 +7,13 @@ import { createComparisonSidebar } from './comparison/sidebar.js';
 import { resolveEgridFromLngLat } from './comparison/parcelLookup.js';
 import { sendSignalCollect } from './api/signalCollect.js';
 import { locationState } from './locationState.js';
+import { setupApp } from '@swissnovo/shared/cesium-app/app.js';
+import { setupAuth } from '@swissnovo/shared/cesium-app/auth/index.js';
+
+// Tag the suite-shared modules with this app's name so signal_collect
+// payloads, screenshot filename prefixes, and PRM records carry the
+// right `app_name`. Must run before any shared module that reads it.
+setupApp({ appName: 'similoo-three', appLabel: 'similoo-three' });
 
 // Apply translations as soon as the static DOM is parsed — before window.onload
 // fires — so users don't see a flash of English text while the bundle boots.
@@ -20,6 +27,14 @@ function boot() {
     applyTranslations(document);
     bindLocaleSelect('locale-select');
     setupThemeToggle();
+
+    // Wire suite-shared Zitadel auth into the existing <div id="authNav">.
+    // setupAuth() injects the login button + profile dropdown into that
+    // placeholder and handles the OIDC callback automatically. Fire-and-
+    // forget: the auth state propagates via shared's onAuthChange.
+    setupAuth().catch((err) => {
+        console.warn('auth bootstrap failed', err);
+    });
 
     const landingView = document.getElementById('landingView');
     const sceneView = document.getElementById('sceneView');

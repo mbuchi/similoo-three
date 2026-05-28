@@ -29,6 +29,7 @@ export function createBuildingInfoPanel({ container }) {
             </button>
         </header>
         <div class="scene-info-body"></div>
+        <footer class="scene-info-footer"></footer>
     `;
     container.appendChild(root);
 
@@ -95,7 +96,13 @@ export function createBuildingInfoPanel({ container }) {
         root.remove();
     }
 
-    return { show, hide, destroy };
+    // Slot for mounting action buttons (e.g. save-parcel) without
+    // coupling the panel to any specific feature.
+    function getFooter() {
+        return root.querySelector('.scene-info-footer');
+    }
+
+    return { show, hide, destroy, getFooter };
 }
 
 function formatMetres(n) {

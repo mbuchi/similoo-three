@@ -35,6 +35,7 @@ import { createBuildingInfoPanel } from './buildingInfoPanel.js';
 import { createLayersToggle } from './layersToggle.js';
 import { sunDirection, sunTint } from './sunCalc.js';
 import { createSunControl } from './sunControl.js';
+import { createSaveParcelButton } from './saveParcelButton.js';
 
 const SCENE_RADIUS_M = 100;
 // The upstream API serialises heavy Roofer jobs, so the proxy retries
@@ -136,6 +137,11 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         renderer,
     });
     const infoPanel = createBuildingInfoPanel({ container });
+
+    // Save-parcel button mounts in the info panel's footer slot. Wired
+    // to the SwissNovo PRM (Parcel Registry Management) backend via
+    // shared helpers — picks up Zitadel auth automatically.
+    const saveParcel = createSaveParcelButton({ container: infoPanel.getFooter() });
 
     // Sun control (bottom-centre): drives the DirectionalLight via
     // solar geometry so users can see real shadows at any time of day.
@@ -829,6 +835,16 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             height_m,
         };
         infoPanel.show(info);
+        // The PRM parcel id is the GWR building id where available;
+        // otherwise the synthesised footprint id from the WFS proxy.
+        // Either way, it's stable across reloads of the same scene.
+        const parcelId = info.gwr_bldg_id || info.res_building_id || info.id;
+        saveParcel.setParcel({
+            id: parcelId ? String(parcelId) : null,
+            lat: info.lat ?? null,
+            lng: info.lng ?? null,
+            label: info.address || parcelId,
+        });
         if (typeof onBuildingPicked === 'function') onBuildingPicked(info);
 
         // Kick off a background fetch for richer Contoor metrics
@@ -980,6 +996,7 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             themeObserver.disconnect();
             compass.destroy();
             scaleLegend.destroy();
+            saveParcel.destroy();
             infoPanel.destroy();
             layersDock.destroy();
             sunControl.destroy();

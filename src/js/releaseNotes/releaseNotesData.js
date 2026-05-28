@@ -38,6 +38,46 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.8.0',
+        date: 'May 28, 2026',
+        codename: 'Auth & PRM',
+        summary:
+            'Suite parity step one: Zitadel auth + Parcel Registry Management (PRM) save-parcel. Signing in works through the standard SwissNovo OIDC flow (the same Zitadel realm the rest of the suite uses); the building info panel grows a "Save parcel" footer button that hits the proom PRM backend via @swissnovo/shared\'s vanilla helpers. The button is state-aware — "Save parcel" → "Saving…" → "Saved" (or "Sign in to save" for anonymous users, who get the login popup on click). Locale-correct labels for all five states in EN/FR/DE/IT. The shared i18n engine is now registered with our 293-key catalog so the suite-shared auth nav speaks the same language as the rest of the UI. Claire (text + voice) is the remaining parity gap — defer to a follow-up because the React-based ClaireAssistant component needs a tiny React island that doesn\'t exist in this vanilla app yet.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'log-in',
+                text: 'Zitadel auth via @swissnovo/shared/cesium-app/auth: setupAuth() injects the login button + profile dropdown into the existing <div id="authNav"> placeholder. Standard SwissNovo OIDC redirect_uri / silent SSO flow, no app-specific config beyond setupApp({appName: "similoo-three"}).',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'bookmark',
+                text: 'Save-parcel button in the building info panel footer. Calls @swissnovo/shared\'s createPrmRecord/fetchPrmByParcel with the picked building\'s GWR id as the parcel_id. State machine: idle → saving → saved (or auth → error). Re-clicking a saved parcel shows the "Saved" state without re-saving.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'languages',
+                text: 'Shared i18n engine now registered with our 293-key catalog at i18n.js load time. The auth nav + profile modal pull their strings from the same catalog as the rest of similoo-three — no more EN-only fallback in shared UI.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'globe',
+                text: 'Save-parcel labels translated for all five states in EN/FR/DE/IT: "Save parcel" / "Enregistrer" / "Parzelle speichern" / "Salva particella", plus the saving / saved / sign-in / error variants.',
+                prs: [],
+            },
+            {
+                kind: 'docs',
+                icon: 'message-square',
+                text: 'Defer: Claire (text + voice) is the remaining parity gap. The shared ClaireAssistant is a React component; integrating it into this vanilla Vite app needs a tiny React island that\'s tracked for a follow-up PR. Save-parcel is the higher-value first step (it persists user work; Claire is a UX layer on top).',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.7.3',
         date: 'May 28, 2026',
         codename: 'Cache Layer',
