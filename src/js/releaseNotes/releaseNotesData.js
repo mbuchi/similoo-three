@@ -38,6 +38,46 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.3.0',
+        date: 'May 28, 2026',
+        codename: 'Hygiene Pass',
+        summary:
+            'Foundational sweep: wire the comparable-buildings sidebar to the 3D scene (clicking a comparable now reloads the scene at its lat/lng), apply the Contoor cache-bug retry to both terrain and building endpoints, tighten input validation on /api/parcel and /api/similoo (EGRID format, years/limit bounds), warn when hardcoded API-key fallbacks are used so prod env vars are easy to spot, and purge ~2K lines of Cesium-era legacy code that no longer ships (viewer/, controls/, screenshots/, info/, mapUrlState, tour, cesiumConfig, sidebar.css, vite-scaffold leftovers).',
+        highlight: true,
+        items: [
+            {
+                kind: 'fixed',
+                icon: 'mouse-pointer-click',
+                text: 'Clicking a comparable building card now reloads the 3D scene around that building — previously `onFlyTo` was null and the cards did nothing.',
+                prs: [],
+            },
+            {
+                kind: 'fixed',
+                icon: 'shield-check',
+                text: 'The Contoor cache-hit bug retry (lat/lng perturbation) now also fires for /api/three3d/building, not just /terrain — both endpoints share the buggy upstream cache codepath.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'lock',
+                text: 'Input validation: /api/parcel and /api/similoo reject malformed EGRIDs (must match /^CH\\d{12}$/); /api/similoo also bounds years (1–100) and limit (1–100) before forwarding upstream.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'key',
+                text: 'API tokens (Contoor 3D + RES) prefer env vars; one-shot console.warn flags when the hardcoded fallback is in use so deploys without env vars set are visible in Vercel logs.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Removed ~2K lines of unused Cesium-era code: src/js/viewer (12 files), controls (12), screenshots (4), info (1), auth (6), utils, cesiumConfig.js, tour.js, controls.js, mapUrlState.js, releaseNotesPanel.js, plus sidebar/auth/buildingInfoPanel/map/releaseNotes/screenshots CSS and root Vite scaffold (counter.js, main.js, style.css, netlify/).',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.2.0',
         date: 'May 27, 2026',
         codename: 'Inter Polish',
