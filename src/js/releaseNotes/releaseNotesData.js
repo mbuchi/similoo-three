@@ -38,6 +38,52 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.4.0',
+        date: 'May 28, 2026',
+        codename: 'Scene Quality',
+        summary:
+            'The 3D scene grows up: real shadow mapping, a procedural sky dome that follows the camera, a click-on-building info panel, plus a compass and a metric scale legend so users always know where they are and how big the things they see are. Keyboard nav (arrows pan, R/F zoom, Home reframe) makes the scene navigable without a mouse. Sky palette tracks the page theme; the compass needle locks to world-north as you orbit; the scale bar snaps to nice 1/2/5/10/20/50/100 m steps so the label always reads honestly. Builds on the comparable→scene wiring from v0.3.0 — clicking a comparable card now also raises the info panel on the new scene.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'sun',
+                text: 'Shadow mapping enabled (PCF soft, 2048² map). DirectionalLight casts shadows; buildings cast + receive; terrain receives. The sun target follows the orbit centre so the shadow camera stays in frame as you pan.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'cloud-sun',
+                text: 'Procedural sky dome (custom GLSL gradient shader) replaces the flat background. Dome rides the camera so the horizon never reveals an edge. Light and dark palettes are wired to the page theme — flip the theme toggle and the dome repaints live.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'mouse-pointer-2',
+                text: 'Click any building in the scene to raise an info panel (address, GWR ID, construction year, floors, computed height in metres, distance to centre). Hits are gated by a 5 px drag threshold so orbit drags don\'t trigger picks. Picked buildings get a warm emissive highlight.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'compass',
+                text: 'Top-right compass with a red north needle that tracks the orbit azimuth in real time. Click (or Enter/Space) to snap the view back to north without losing your zoom or pitch.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'ruler',
+                text: 'Bottom-left scale legend that adapts to camera distance and snaps to a nice 1/2/5/10/20/50/100 m step so the bar length and label always agree.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'keyboard',
+                text: 'Keyboard nav: arrow keys pan around the orbit target (12 m/tap), R/F zoom in/out, Home reframes the full building group. Form fields are exempt so typing in the locale select or search bar still works.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.3.0',
         date: 'May 28, 2026',
         codename: 'Hygiene Pass',
