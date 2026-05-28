@@ -38,6 +38,34 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.7.2',
+        date: 'May 28, 2026',
+        codename: 'Locale Parity',
+        summary:
+            'All 30 new strings introduced across v0.4.0–v0.7.1 (compass ticks, scene info panel, layers dock, sun control, retry button, error pill, canvas aria-label) now have proper French / German / Italian translations alongside the original English. Locale-correct cardinal directions on the compass (N E S O in FR/IT, N O S W in DE), Swiss-flavoured terminology ("RegBL"/"RegEd" for the building registry, "Geschosse"/"Étages"/"Piani" for floors). All four locales now share exact 293-key parity — no more silent EN fallback for new features.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'languages',
+                text: 'FR/DE/IT translations added for every key introduced in v0.4.0 through v0.7.1 (~30 keys): compass ticks, building info panel rows, layers dock, sun control + altitude readout, retry button, error pill, 3D canvas aria-label.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'compass',
+                text: 'Locale-correct cardinal direction on the compass: N E S O for French and Italian (Ouest/Ovest), N O S W for German (Ost/West). Previously the compass always read "N E S W" regardless of locale.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'check-check',
+                text: 'All four locales now share exact 293-key parity (en = fr = de = it). The fallback chain still resolves any missing key to EN, but the new-feature surface no longer silently falls back.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.7.1',
         date: 'May 28, 2026',
         codename: 'Mobile',
