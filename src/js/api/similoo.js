@@ -16,6 +16,8 @@
 //                  building_volume_m3, footprint_m2, height_m, floors,
 //                  construction_year, ratioV, similarity_score, lat, lng }
 
+import { getCached, setCached, TTL } from '../cache.js';
+
 // Same-origin Vercel proxy. The proxy (api/similoo.ts) attaches the RES
 // API token server-side so the client doesn't have to handle suite auth.
 const ENDPOINT = '/api/similoo';
@@ -26,6 +28,12 @@ export async function fetchSimilooComparables(egrid, opts = {}) {
     }
     const years = Number.isFinite(opts.years) ? opts.years : 10;
     const limit = Number.isFinite(opts.limit) ? opts.limit : 12;
+
+    // Cache key matches the backend's Redis cache shape so multi-tab
+    // sessions reuse each other's lookups.
+    const cacheKey = `similoo:${egrid}:y${years}:l${limit}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
 
     try {
         const res = await fetch(ENDPOINT, {
@@ -43,7 +51,13 @@ export async function fetchSimilooComparables(egrid, opts = {}) {
         if (!res.ok) {
             throw new Error(`similoo backend HTTP ${res.status}`);
         }
-        return await res.json();
+        const payload = await res.json();
+        // Only cache real backend hits — mocks are deterministic from
+        // the EGRID seed and don't need persisting.
+        if (payload?.meta?.source !== 'mock') {
+            setCached(cacheKey, payload, TTL.similoo);
+        }
+        return payload;
     } catch (err) {
         // Network / CORS / DNS failure → mock so the demo flow keeps working
         // before the backend is wired up. Real auth errors still surface

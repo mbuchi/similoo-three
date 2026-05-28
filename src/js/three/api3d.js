@@ -19,6 +19,8 @@
 //
 // All endpoints are proxied to keep the optional X-API-Key server-side.
 
+import { getCached, setCached, TTL } from '../cache.js';
+
 const TERRAIN_ENDPOINT = '/api/three3d/terrain';
 const BUILDING_ENDPOINT = '/api/three3d/building';
 const FOOTPRINTS_ENDPOINT = '/api/three3d/footprints';
@@ -103,6 +105,14 @@ export async function fetchFootprintsBBox({ lat, lng, radius_m = 100 }) {
 export async function fetchBuildingHeightVolume({ lat, lng, radiusMeters = null }) {
     const body = { lat, lng };
     if (radiusMeters != null) body.radiusMeters = radiusMeters;
+    // ~1 m precision is overkill for caching: two clicks near the same
+    // footprint should hit the same cache entry. Rounding to 5 decimals
+    // is fine because Contoor matches building footprints by spatial
+    // intersection upstream.
+    const cacheKey = `hv:${lat.toFixed(5)},${lng.toFixed(5)}${radiusMeters != null ? `:r${radiusMeters}` : ''}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const res = await fetch(HEIGHT_VOLUME_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -112,5 +122,11 @@ export async function fetchBuildingHeightVolume({ lat, lng, radiusMeters = null 
         const text = await res.text().catch(() => '');
         throw new Error(`height-volume ${res.status}: ${text.slice(0, 200)}`);
     }
-    return res.json();
+    const payload = await res.json();
+    // Cache only when at least one component succeeded — partial
+    // failures might be transient (e.g. tile not yet downloaded).
+    if (payload?.status?.height || payload?.status?.volume) {
+        setCached(cacheKey, payload, TTL.heightVolume);
+    }
+    return payload;
 }
