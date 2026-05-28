@@ -92,6 +92,22 @@ const translations = {
     // ---------- scene ----------
     'scene.back': 'Search again',
     'scene.loading': 'Loading 3D scene…',
+    'scene.compass_n': 'N',
+    'scene.compass_e': 'E',
+    'scene.compass_s': 'S',
+    'scene.compass_w': 'W',
+    'scene.compass_aria': 'Snap view to north',
+    'scene_info.eyebrow': 'Building',
+    'scene_info.close': 'Close',
+    'scene_info.unknown': 'Unknown building',
+    'scene_info.empty': 'No metadata available for this building.',
+    'scene_info.address': 'Address',
+    'scene_info.gwr_id': 'GWR ID',
+    'scene_info.res_id': 'RES ID',
+    'scene_info.const_year': 'Built',
+    'scene_info.floors': 'Floors',
+    'scene_info.height': 'Height',
+    'scene_info.distance': 'Distance to centre',
 
     // ---------- views dropdown ----------
     'views.button': 'Views',

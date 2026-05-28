@@ -23,6 +23,10 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { fetchTerrainGLB, fetchBuildingGLB, fetchFootprintsBBox } from './api3d.js';
 import { wgs84ToLV95 } from './swissCoords.js';
+import { createSkyDome, SKY_PALETTES } from './sky.js';
+import { createCompass } from './compass.js';
+import { createScaleLegend } from './scaleLegend.js';
+import { createBuildingInfoPanel } from './buildingInfoPanel.js';
 
 const SCENE_RADIUS_M = 100;
 // The upstream API serialises heavy Roofer jobs, so the proxy retries
@@ -30,16 +34,41 @@ const SCENE_RADIUS_M = 100;
 // while still pipelining one cache-hit lookup behind the active job.
 const BUILDING_FETCH_CONCURRENCY = 2;
 
-export function createSceneViewer({ container, onStatus }) {
+// Pointer drag threshold (CSS px) used to distinguish a click on a
+// building from an orbit drag. Pointers that move less than this
+// between pointerdown and pointerup are treated as clicks.
+const CLICK_DRAG_THRESHOLD_PX = 5;
+
+export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
     if (!container) throw new Error('createSceneViewer: container is required');
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xeef2f7);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 0.9));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.1);
+    // Procedural sky dome that follows the camera (a true skybox), so
+    // the horizon stays visually consistent at any orbit position.
+    const sky = createSkyDome({ radius: 1500 });
+    scene.add(sky.mesh);
+    applySkyPalette();
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x445566, 0.7);
+    scene.add(hemi);
+    const sun = new THREE.DirectionalLight(0xffffff, 1.4);
     sun.position.set(80, 120, 60);
+    sun.castShadow = true;
+    // Shadow camera covers the 100 m × 100 m scene with headroom for
+    // tall buildings; map size is a power of two large enough that
+    // building outlines stay sharp without burning fillrate.
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.left = -120;
+    sun.shadow.camera.right = 120;
+    sun.shadow.camera.top = 120;
+    sun.shadow.camera.bottom = -120;
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 400;
+    sun.shadow.bias = -0.0005;
+    sun.shadow.normalBias = 0.02;
     scene.add(sun);
+    scene.add(sun.target);
 
     const camera = new THREE.PerspectiveCamera(
         50,
@@ -53,6 +82,8 @@ export function createSceneViewer({ container, onStatus }) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(container.clientWidth, container.clientHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -62,6 +93,35 @@ export function createSceneViewer({ container, onStatus }) {
     controls.minDistance = 25;
     controls.maxDistance = 600;
     controls.maxPolarAngle = Math.PI * 0.49;
+    // Smooth keyboard panning via OrbitControls' built-in keys.
+    controls.listenToKeyEvents(renderer.domElement);
+    controls.keyPanSpeed = 12;
+
+    // Overlays — compass + scale legend live on top of the canvas
+    // (inside the container) and update once per frame.
+    const compass = createCompass({
+        container,
+        controls,
+        onResetNorth() {
+            // Reset orbit to face north (azimuth = 0) while preserving
+            // the current target/polar/distance — feels like "snap to
+            // North" rather than a full reset.
+            const spherical = new THREE.Spherical().setFromVector3(
+                camera.position.clone().sub(controls.target),
+            );
+            spherical.theta = 0;
+            const next = new THREE.Vector3().setFromSpherical(spherical);
+            camera.position.copy(controls.target).add(next);
+            controls.update();
+        },
+    });
+    const scaleLegend = createScaleLegend({
+        container,
+        camera,
+        controls,
+        renderer,
+    });
+    const infoPanel = createBuildingInfoPanel({ container });
 
     // Reference grid so the user has a sense of scale before assets
     // land (100 m × 100 m, 10 m cells).
@@ -241,6 +301,8 @@ export function createSceneViewer({ container, onStatus }) {
                     roughness: 0.55,
                     metalness: 0.05,
                 });
+                node.castShadow = true;
+                node.receiveShadow = true;
             }
         });
     }
@@ -254,6 +316,8 @@ export function createSceneViewer({ container, onStatus }) {
                     metalness: 0.0,
                     flatShading: true,
                 });
+                node.castShadow = true;
+                node.receiveShadow = true;
                 // Subtle dark outline so adjacent buildings read as
                 // separate volumes against a mostly-uniform palette.
                 const edges = new THREE.EdgesGeometry(node.geometry, 25);
@@ -278,9 +342,36 @@ export function createSceneViewer({ container, onStatus }) {
                     roughness: 1.0,
                     flatShading: true,
                 });
+                // Terrain only RECEIVES shadows — point-cloud meshes
+                // shouldn't cast shadows of their own (they're a
+                // visualisation, not a real surface).
+                node.receiveShadow = true;
             }
         });
     }
+
+    // Apply the right sky palette for the current page theme. Watches
+    // [data-theme] so a runtime theme toggle re-paints the dome.
+    function applySkyPalette() {
+        const themeAttr = document.documentElement.getAttribute('data-theme');
+        const palette = themeAttr === 'dark' ? SKY_PALETTES.dark : SKY_PALETTES.light;
+        sky.setPalette(palette);
+        // Hemi light tone-balances against the dome so the scene
+        // doesn't go too blue or too grey in the wrong theme.
+        if (themeAttr === 'dark') {
+            hemi.color.setHex(0xb8d4ff);
+            hemi.groundColor.setHex(0x1a2238);
+            hemi.intensity = 0.45;
+            sun.intensity = 0.9;
+        } else {
+            hemi.color.setHex(0xffffff);
+            hemi.groundColor.setHex(0x445566);
+            hemi.intensity = 0.7;
+            sun.intensity = 1.4;
+        }
+    }
+    const themeObserver = new MutationObserver(applySkyPalette);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     // Pool that pulls items from a list with a fixed concurrency. Each
     // worker calls `iterate` on the next item until the list is empty.
@@ -493,6 +584,128 @@ export function createSceneViewer({ container, onStatus }) {
         controls.update();
     }
 
+    // ---------- Click-to-pick raycasting ----------------------------------
+    //
+    // pointerdown stamps the start position; pointerup with negligible
+    // drag fires the picker. The OrbitControls eat normal drag motion,
+    // so we don't need to defuse them.
+    const pickRay = new THREE.Raycaster();
+    const ndc = new THREE.Vector2();
+    let pointerDownX = 0;
+    let pointerDownY = 0;
+    let pointerDownButton = -1;
+    let activeHighlight = null;
+
+    function onPointerDown(e) {
+        pointerDownX = e.clientX;
+        pointerDownY = e.clientY;
+        pointerDownButton = e.button;
+    }
+
+    function onPointerUp(e) {
+        if (e.button !== 0 || pointerDownButton !== 0) return;
+        const dx = e.clientX - pointerDownX;
+        const dy = e.clientY - pointerDownY;
+        if (Math.hypot(dx, dy) > CLICK_DRAG_THRESHOLD_PX) return;
+
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        pickRay.setFromCamera(ndc, camera);
+
+        const buildings = sceneGroup.getObjectByName('buildings');
+        if (!buildings || !buildings.children.length) return;
+        const hits = pickRay.intersectObjects(buildings.children, true);
+        if (!hits.length) {
+            clearActiveHighlight();
+            infoPanel.hide();
+            return;
+        }
+        const root = findBuildingRoot(hits[0].object);
+        if (!root) return;
+        focusBuilding(root);
+    }
+
+    function findBuildingRoot(node) {
+        let cur = node;
+        while (cur && cur.parent) {
+            if (cur.userData && cur.userData.id) return cur;
+            cur = cur.parent;
+        }
+        return null;
+    }
+
+    function focusBuilding(root) {
+        setActiveHighlight(root);
+        const box = new THREE.Box3().setFromObject(root);
+        const height_m = box.max.y - box.min.y;
+        const info = {
+            ...root.userData,
+            height_m,
+        };
+        infoPanel.show(info);
+        if (typeof onBuildingPicked === 'function') onBuildingPicked(info);
+    }
+
+    function setActiveHighlight(root) {
+        clearActiveHighlight();
+        activeHighlight = root;
+        root.traverse((node) => {
+            if (node.isMesh && node.material) {
+                if (!node.userData.__origColor) {
+                    node.userData.__origColor = node.material.color?.getHex?.() ?? 0xffffff;
+                }
+                node.material.emissive?.setHex(0xfde68a);
+                if (node.material.emissiveIntensity != null) {
+                    node.material.emissiveIntensity = 0.35;
+                }
+            }
+        });
+    }
+
+    function clearActiveHighlight() {
+        if (!activeHighlight) return;
+        activeHighlight.traverse((node) => {
+            if (node.isMesh && node.material) {
+                node.material.emissive?.setHex(0x000000);
+                if (node.material.emissiveIntensity != null) {
+                    node.material.emissiveIntensity = 0;
+                }
+            }
+        });
+        activeHighlight = null;
+    }
+
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
+    renderer.domElement.addEventListener('pointerup', onPointerUp);
+
+    // Keyboard nav: OrbitControls already handles arrow-key panning via
+    // controls.listenToKeyEvents above. Augment with Home (reset) and
+    // R/F (zoom in/out around the target).
+    function onKeyDown(e) {
+        // Don't hijack typing in form fields.
+        const tag = (e.target?.tagName || '').toUpperCase();
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        if (e.key === 'Home') {
+            e.preventDefault();
+            const group = sceneGroup.getObjectByName('buildings');
+            if (group && group.children.length) frameOnContent(group);
+        } else if (e.key === 'r' || e.key === 'R') {
+            dollyBy(0.8);
+        } else if (e.key === 'f' || e.key === 'F') {
+            dollyBy(1.25);
+        }
+    }
+
+    function dollyBy(factor) {
+        const dir = camera.position.clone().sub(controls.target);
+        dir.multiplyScalar(factor);
+        camera.position.copy(controls.target).add(dir);
+        controls.update();
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+
     function frameOnContent(group) {
         const box = new THREE.Box3().setFromObject(group);
         if (!isFinite(box.min.x) || !isFinite(box.max.x)) return;
@@ -524,6 +737,15 @@ export function createSceneViewer({ container, onStatus }) {
     function tick() {
         if (disposed) return;
         controls.update();
+        // Sky follows the camera so the horizon never reveals the dome's
+        // edge as the user pans across the 100 m slice.
+        sky.mesh.position.copy(camera.position);
+        // Sun target follows controls.target so the shadow camera stays
+        // centred on the scene (without this, the shadow map's frustum
+        // would drift off when the user panned).
+        sun.target.position.copy(controls.target);
+        compass.update();
+        scaleLegend.update();
         renderer.render(scene, camera);
         requestAnimationFrame(tick);
     }
@@ -534,6 +756,14 @@ export function createSceneViewer({ container, onStatus }) {
         dispose() {
             disposed = true;
             window.removeEventListener('resize', onResize);
+            window.removeEventListener('keydown', onKeyDown);
+            renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+            renderer.domElement.removeEventListener('pointerup', onPointerUp);
+            themeObserver.disconnect();
+            compass.destroy();
+            scaleLegend.destroy();
+            infoPanel.destroy();
+            sky.dispose();
             controls.dispose();
             clearGroup(sceneGroup);
             renderer.dispose();
