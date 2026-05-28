@@ -53,9 +53,22 @@ function boot() {
             sidebar = createComparisonSidebar({
                 map: null,
                 onClose: () => document.body.classList.remove('cmp-shifted'),
-                onFlyTo: null,
+                onFlyTo: (comparable) => flyToComparable(comparable),
             });
         }
+    }
+
+    // Clicking a comparable in the sidebar re-renders the 3D scene around
+    // that building's lat/lng. Each scene is a self-contained 100 m slice,
+    // so reloading is the cheapest way to "fly" to a remote comparable —
+    // panning the existing scene would just leave a void outside the
+    // original 100 m radius.
+    async function flyToComparable(comparable) {
+        if (!comparable || !Number.isFinite(comparable.lat) || !Number.isFinite(comparable.lng)) return;
+        const label = comparable.address
+            || comparable.egrid
+            || `${comparable.lat.toFixed(5)}, ${comparable.lng.toFixed(5)}`;
+        await handlePick({ lat: comparable.lat, lng: comparable.lng, label });
     }
 
     function showLanding() {

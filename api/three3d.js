@@ -31,6 +31,18 @@ const CONTOOR_API_KEY =
     process.env.CONTOUR_API_KEY ||
     DEFAULT_CONTOOR_3D_API_KEY;
 
+// One-shot warning so Vercel logs flag missing env vars without spamming
+// per-request output. The deploy still works (the hardcoded fallback
+// matches the contoor sibling app's key), but the key should be rotated
+// to an env-var-only value.
+if (
+    !process.env.CONTOOR_3D_API_KEY &&
+    !process.env.GLB_API_KEY &&
+    !process.env.CONTOUR_API_KEY
+) {
+    console.warn('[three3d] CONTOOR_3D_API_KEY env var is not set — using hardcoded default. Set it in Vercel for the production deploy.');
+}
+
 const UPSTREAM_TIMEOUT_MS = 45_000;
 
 const CORS_HEADERS = {
@@ -128,14 +140,15 @@ export default async function handler(req, res) {
             },
         );
 
-        // The pointcloud/glb endpoint has a known cache-hit bug: it
-        // raises 500 "cannot access local variable 'glb_bytes'" /
-        // "'metadata'" because the cache-read branch is dead code. We
+        // The pointcloud/glb and building-model endpoints share the same
+        // cache-read codepath upstream, which has a known bug: it raises
+        // 500 "cannot access local variable 'glb_bytes'" / "'metadata'"
+        // on cache hits because the cache-read branch is dead code. We
         // can't restart the upstream, but we can perturb lat/lng so the
         // cache key changes and the upstream falls back to fresh
         // generation. Each retry uses a different perturbation in case
         // the previous one is now also cached.
-        if (op === 'terrain' && upstream && upstream.status >= 500) {
+        if ((op === 'terrain' || op === 'building') && upstream && upstream.status >= 500) {
             const text = await upstream.text().catch(() => '');
             const isCacheBug =
                 /cannot access local variable/i.test(text) ||

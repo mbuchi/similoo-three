@@ -6,8 +6,24 @@
 export const config = { maxDuration: 15 };
 
 const RES_SIMILOO_URL = 'https://res.zeroo.ch/score/similoo';
-const RES_API_TOKEN = 'DNfbHaqajFigz4jPX9B8vnatUduLKZXVwA83WKZG';
+// Server-side RES API token. Prefer env var; falls back to the published
+// suite token so the production deploy keeps working without manual
+// configuration. Rotate via Vercel env vars when the suite token changes.
+const RES_API_TOKEN_FALLBACK = 'DNfbHaqajFigz4jPX9B8vnatUduLKZXVwA83WKZG';
+const RES_API_TOKEN = process.env.RES_API_TOKEN || RES_API_TOKEN_FALLBACK;
 const UPSTREAM_TIMEOUT_MS = 12000;
+
+if (!process.env.RES_API_TOKEN) {
+    console.warn('[similoo] RES_API_TOKEN env var is not set — using hardcoded suite default. Set it in Vercel for the production deploy.');
+}
+
+// Bounds for client-controlled query params. The /score/similoo backend
+// caps internally but rejecting absurd values here saves an upstream
+// roundtrip and limits DoS surface.
+const YEARS_MIN = 1;
+const YEARS_MAX = 100;
+const LIMIT_MIN = 1;
+const LIMIT_MAX = 100;
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -49,8 +65,22 @@ export default async function handler(req, res) {
         send(res, 400, { error: "Missing 'egrid'" });
         return;
     }
-    const years = Number.isFinite(Number(body?.years)) ? Number(body.years) : 10;
-    const limit = Number.isFinite(Number(body?.limit)) ? Number(body.limit) : 12;
+    if (!/^CH\d{12}$/i.test(egrid)) {
+        send(res, 400, { error: "Invalid 'egrid' format — expected CH followed by 12 digits" });
+        return;
+    }
+    const yearsRaw = Number(body?.years);
+    const limitRaw = Number(body?.limit);
+    if (body?.years != null && (!Number.isFinite(yearsRaw) || yearsRaw < YEARS_MIN || yearsRaw > YEARS_MAX)) {
+        send(res, 400, { error: `'years' must be an integer between ${YEARS_MIN} and ${YEARS_MAX}` });
+        return;
+    }
+    if (body?.limit != null && (!Number.isFinite(limitRaw) || limitRaw < LIMIT_MIN || limitRaw > LIMIT_MAX)) {
+        send(res, 400, { error: `'limit' must be an integer between ${LIMIT_MIN} and ${LIMIT_MAX}` });
+        return;
+    }
+    const years = Number.isFinite(yearsRaw) ? Math.round(yearsRaw) : 10;
+    const limit = Number.isFinite(limitRaw) ? Math.round(limitRaw) : 12;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);

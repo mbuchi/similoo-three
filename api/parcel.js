@@ -6,8 +6,20 @@
 export const config = { maxDuration: 15 };
 
 const RES_PARCEL_URL = 'https://res.zeroo.ch/res_api/parcel_data';
-const RES_API_TOKEN = 'DNfbHaqajFigz4jPX9B8vnatUduLKZXVwA83WKZG';
+// Server-side RES API token. Prefer env var; falls back to the published
+// suite token so the production deploy keeps working without manual
+// configuration. Rotate via Vercel env vars when the suite token changes.
+const RES_API_TOKEN_FALLBACK = 'DNfbHaqajFigz4jPX9B8vnatUduLKZXVwA83WKZG';
+const RES_API_TOKEN = process.env.RES_API_TOKEN || RES_API_TOKEN_FALLBACK;
 const UPSTREAM_TIMEOUT_MS = 12000;
+
+if (!process.env.RES_API_TOKEN) {
+    console.warn('[parcel] RES_API_TOKEN env var is not set — using hardcoded suite default. Set it in Vercel for the production deploy.');
+}
+
+// Swiss EGRID: "CH" followed by 12 digits. Validating upstream avoids
+// passing malformed identifiers straight to the RES API.
+const EGRID_RE = /^CH\d{12}$/i;
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -49,6 +61,10 @@ export default async function handler(req, res) {
     const lng = Number(body?.lng);
     if (!egrid && (!Number.isFinite(lat) || !Number.isFinite(lng))) {
         send(res, 400, { error: "Provide either 'egrid' or 'lat'/'lng'" });
+        return;
+    }
+    if (egrid && !EGRID_RE.test(egrid)) {
+        send(res, 400, { error: "Invalid 'egrid' format — expected CH followed by 12 digits" });
         return;
     }
 
