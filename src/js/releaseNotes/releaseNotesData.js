@@ -38,6 +38,40 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.7.1',
+        date: 'May 28, 2026',
+        codename: 'Mobile',
+        summary:
+            'Mobile and tablet polish: viewport meta no longer blocks pinch-zoom (a11y fix), the 3D canvas uses `touch-action: none` so pinch on the scene doesn\'t accidentally page-zoom the document, and every scene overlay (compass, layers dock, info panel, scale legend, sun pill, status bar) repositions and tightens at ≤560 px so the canvas stays usable on phones. The dead Cesium hooks in the `body.cmp-shifted` rule are replaced with the actual Three.js overlay selectors (.scene-compass + .scene-layers), so opening the comparison sidebar now correctly shifts those out of its way.',
+        highlight: false,
+        items: [
+            {
+                kind: 'fixed',
+                icon: 'accessibility',
+                text: 'Viewport meta no longer carries `maximum-scale=1.0, user-scalable=no` — that was an a11y antipattern (blocks pinch-zoom for low-vision users). Added `viewport-fit=cover` for notched devices.',
+                prs: [],
+            },
+            {
+                kind: 'fixed',
+                icon: 'hand',
+                text: 'Scene canvas has `touch-action: none` so mobile pinch/swipe on the 3D view drives OrbitControls only, not the page chrome.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'smartphone',
+                text: 'Mobile breakpoint (≤560 px): compass shrinks to 44 px, layers dock + info panel tighten, scale bar moves to 8 px insets, sun pill becomes full-width with the slider on its own row.',
+                prs: [],
+            },
+            {
+                kind: 'fixed',
+                icon: 'panel-right',
+                text: 'Opening the comparison sidebar now actually shifts the right-edge scene overlays (.scene-compass, .scene-layers) out from under it. The old `body.cmp-shifted` rule still targeted Cesium selectors that don\'t exist in this app.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.7.0',
         date: 'May 28, 2026',
         codename: 'UX Polish',
