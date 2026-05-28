@@ -113,6 +113,12 @@ const translations = {
     'scene_info.distance': 'Distance to centre',
     'scene.layers_aria': 'Scene layers',
     'scene.layer_vegetation': 'Vegetation',
+    'scene.sun_aria': 'Sun position control',
+    'scene.sun_now': 'Now',
+    'scene.sun_now_aria': 'Reset to current time',
+    'scene.sun_date_aria': 'Date',
+    'scene.sun_time_aria': 'Time of day',
+    'scene.sun_below_horizon': 'Below horizon',
 
     // ---------- views dropdown ----------
     'views.button': 'Views',

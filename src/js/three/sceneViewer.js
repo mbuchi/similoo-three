@@ -33,6 +33,8 @@ import { createCompass } from './compass.js';
 import { createScaleLegend } from './scaleLegend.js';
 import { createBuildingInfoPanel } from './buildingInfoPanel.js';
 import { createLayersToggle } from './layersToggle.js';
+import { sunDirection, sunTint } from './sunCalc.js';
+import { createSunControl } from './sunControl.js';
 
 const SCENE_RADIUS_M = 100;
 // The upstream API serialises heavy Roofer jobs, so the proxy retries
@@ -54,11 +56,17 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
     // the horizon stays visually consistent at any orbit position.
     const sky = createSkyDome({ radius: 1500 });
     scene.add(sky.mesh);
-    applySkyPalette();
+    // Initial palette is set further below via updateSunFromDate(),
+    // once the sun control + currentSunDate are wired up. Until then
+    // the dome carries createSkyDome's neutral default.
 
     const hemi = new THREE.HemisphereLight(0xffffff, 0x445566, 0.7);
     scene.add(hemi);
     const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+    // Position is recomputed by updateSunFromDate() once we know the
+    // scene's lat/lng + the user-picked time. The initial direction
+    // (mid-day SE) is just a sensible default while no scene is
+    // loaded yet.
     sun.position.set(80, 120, 60);
     sun.castShadow = true;
     // Shadow camera covers the 100 m × 100 m scene with headroom for
@@ -128,6 +136,92 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         renderer,
     });
     const infoPanel = createBuildingInfoPanel({ container });
+
+    // Sun control (bottom-centre): drives the DirectionalLight via
+    // solar geometry so users can see real shadows at any time of day.
+    let currentSunDate = new Date();
+    // Center of Switzerland is a sensible default until loadAddress lands.
+    const DEFAULT_LATLNG = { lat: 46.8, lng: 8.2 };
+    // Distance along the sun direction at which we park the
+    // DirectionalLight. Must be larger than the scene's bbox so the
+    // shadow camera's frustum captures everything.
+    const SUN_DISTANCE_M = 220;
+    const sunControl = createSunControl({
+        container,
+        initialDate: currentSunDate,
+        onChange: (date) => {
+            currentSunDate = date;
+            updateSunFromDate();
+        },
+    });
+
+    function updateSunFromDate() {
+        const where = currentLatLng || DEFAULT_LATLNG;
+        const { x, y, z, elevation } = sunDirection(currentSunDate, where.lat, where.lng);
+        sun.position.set(
+            controls.target.x + x * SUN_DISTANCE_M,
+            controls.target.y + Math.max(0.05, y) * SUN_DISTANCE_M,
+            controls.target.z + z * SUN_DISTANCE_M,
+        );
+        // When the sun is below horizon we keep the light just above 0
+        // for the shadow camera to still cover the scene, but we drop
+        // its intensity (night mode).
+        const tint = sunTint(elevation);
+        sun.color.setHex(tint.color);
+        sun.intensity = tint.intensity;
+        // Update sky palette for golden hour / night.
+        applyAtmosphere(elevation);
+        sunControl.setAltitude(elevation);
+    }
+
+    // Sky palette refinement that accounts for solar elevation on top
+    // of the page theme. Below horizon dims the dome to night; near
+    // horizon warms the horizon stripe.
+    // First paint with the default location + 'now' so the scene
+    // doesn't open with the boilerplate (80, 120, 60) sun direction.
+    updateSunFromDate();
+
+    function applyAtmosphere(elevation) {
+        const themeAttr = document.documentElement.getAttribute('data-theme');
+        const base = themeAttr === 'dark' ? SKY_PALETTES.dark : SKY_PALETTES.light;
+        if (!Number.isFinite(elevation) || elevation <= 0) {
+            // Night: deep blue top, very dark horizon.
+            sky.setPalette({
+                top: 0x0b1220,
+                bottom: 0x18243d,
+                exponent: 0.55,
+                offset: 33,
+            });
+            hemi.color.setHex(0x6b8caf);
+            hemi.groundColor.setHex(0x0f172a);
+            hemi.intensity = 0.25;
+            return;
+        }
+        if (elevation < 10 * Math.PI / 180) {
+            // Golden hour: warm horizon, slightly muted top.
+            sky.setPalette({
+                top: themeAttr === 'dark' ? 0x1b2842 : 0x6b7faf,
+                bottom: 0xf6c47a,
+                exponent: 0.5,
+                offset: 33,
+            });
+            hemi.color.setHex(0xffd9b0);
+            hemi.groundColor.setHex(themeAttr === 'dark' ? 0x1a2238 : 0x44485f);
+            hemi.intensity = themeAttr === 'dark' ? 0.4 : 0.6;
+            return;
+        }
+        // Daytime: use the theme's base palette.
+        sky.setPalette(base);
+        if (themeAttr === 'dark') {
+            hemi.color.setHex(0xb8d4ff);
+            hemi.groundColor.setHex(0x1a2238);
+            hemi.intensity = 0.45;
+        } else {
+            hemi.color.setHex(0xffffff);
+            hemi.groundColor.setHex(0x445566);
+            hemi.intensity = 0.7;
+        }
+    }
 
     // Layers dock (top-right under the compass). The vegetation toggle
     // is the only layer today; future toggles (zoning overlay etc.)
@@ -422,27 +516,11 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         });
     }
 
-    // Apply the right sky palette for the current page theme. Watches
-    // [data-theme] so a runtime theme toggle re-paints the dome.
-    function applySkyPalette() {
-        const themeAttr = document.documentElement.getAttribute('data-theme');
-        const palette = themeAttr === 'dark' ? SKY_PALETTES.dark : SKY_PALETTES.light;
-        sky.setPalette(palette);
-        // Hemi light tone-balances against the dome so the scene
-        // doesn't go too blue or too grey in the wrong theme.
-        if (themeAttr === 'dark') {
-            hemi.color.setHex(0xb8d4ff);
-            hemi.groundColor.setHex(0x1a2238);
-            hemi.intensity = 0.45;
-            sun.intensity = 0.9;
-        } else {
-            hemi.color.setHex(0xffffff);
-            hemi.groundColor.setHex(0x445566);
-            hemi.intensity = 0.7;
-            sun.intensity = 1.4;
-        }
-    }
-    const themeObserver = new MutationObserver(applySkyPalette);
+    // Theme observer: when the page theme flips, recompute the
+    // atmosphere using the current sun position so day/night and
+    // light/dark blend together (e.g., dark theme + golden hour
+    // composes warm horizon + dark top rather than overwriting).
+    const themeObserver = new MutationObserver(() => updateSunFromDate());
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     // Pool that pulls items from a list with a fixed concurrency. Each
@@ -478,6 +556,9 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         vegetationOverlay = null;
         vegetationLoading = null;
         currentLatLng = { lat, lng };
+        // Recompute sun direction at the new location — same calendar
+        // moment, different geographic point.
+        updateSunFromDate();
         // sceneGroup just got nuked — recreate the buildings sub-group.
         const localBuildingsGroup = new THREE.Group();
         localBuildingsGroup.name = 'buildings';
@@ -901,6 +982,7 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             scaleLegend.destroy();
             infoPanel.destroy();
             layersDock.destroy();
+            sunControl.destroy();
             sky.dispose();
             controls.dispose();
             clearGroup(sceneGroup);
