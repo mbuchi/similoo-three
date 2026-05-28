@@ -38,6 +38,46 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.7.0',
+        date: 'May 28, 2026',
+        codename: 'UX Polish',
+        summary:
+            'Loading, error, and share-link UX gets a polish pass. The scene status bar grew a slim progress strip that fills from 0 to 100% as buildings stream in; legacy "(5/12)…" messages still work but render as a real progress bar now. If the Contoor upstream fails, the status flips to a tinted error pill with a Retry button that re-runs the whole pick. Shareable deep links: every address pick writes ?lat=&lng=&label= into the URL via replaceState, so refreshing or sharing the URL resumes the same scene; "Search again" strips them on the way back. Accessibility: the 3D canvas gets role="img" and an i18n aria-label, the status div is a proper aria-live="polite" region.',
+        highlight: true,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'loader',
+                text: 'Scene status bar grew a slim progress strip (3 px, gradient #dc2626 → #f59e0b) that fills as buildings stream in. Legacy "Loading buildings (5/12)…" messages parse the fraction automatically; explicit setStatus({progress: 0.42}) callers get the bar too.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'alert-triangle',
+                text: 'Upstream failures now surface a tinted error pill with a Retry button instead of a generic toast — clicking Retry re-runs the full handlePick(), so the comparable sidebar also re-resolves.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'link',
+                text: 'Deep links: every address pick writes ?lat=&lng=&label= via replaceState. Refresh or share the URL → same scene. Clicking Search again strips the params so the back button to landing doesn\'t carry over a stale address.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'accessibility',
+                text: 'a11y: 3D canvas has role="img" + i18n aria-label; scene-status is a proper aria-live="polite" region with aria-atomic so screen readers announce each loading step.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Lowercase branding audit clean — every "similoo-three" occurrence in HTML, i18n, and CSS is lowercase per SwissNovo suite conventions.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.6.0',
         date: 'May 28, 2026',
         codename: 'Sun & Shadow',

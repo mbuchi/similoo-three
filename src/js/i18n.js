@@ -119,6 +119,9 @@ const translations = {
     'scene.sun_date_aria': 'Date',
     'scene.sun_time_aria': 'Time of day',
     'scene.sun_below_horizon': 'Below horizon',
+    'scene.retry': 'Retry',
+    'scene.error_load': 'Could not load 3D scene.',
+    'scene.canvas_aria': '3D viewer of the selected Swiss address: terrain, building, and nearby buildings rendered with shadows',
 
     // ---------- views dropdown ----------
     'views.button': 'Views',
