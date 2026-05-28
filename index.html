@@ -140,9 +140,9 @@
             <span data-i18n="scene.back">Search again</span>
         </button>
         <div class="scene-address" id="sceneAddress"></div>
-        <div class="scene-status" id="sceneStatus"></div>
+        <div class="scene-status" id="sceneStatus" role="status" aria-live="polite" aria-atomic="true"></div>
     </div>
-    <div id="sceneCanvas" class="scene-canvas"></div>
+    <div id="sceneCanvas" class="scene-canvas" role="img" aria-label="3D viewer of the selected Swiss address: terrain, building, and nearby buildings rendered with shadows" data-i18n-attr="aria-label:scene.canvas_aria"></div>
 </section>
 
 <script type="module" src="/src/js/main.js"></script>
