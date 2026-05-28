@@ -38,6 +38,11 @@
  *   meta.*            - <title>, og:title, og:description, etc.
  */
 
+import {
+    registerI18n,
+    setLocale as setSharedLocale,
+} from '@swissnovo/shared/cesium-app/i18n/engine.js';
+
 export const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'it'];
 const STORAGE_KEY = 'similoo-three:locale';
 const subscribers = new Set();
@@ -122,6 +127,11 @@ const translations = {
     'scene.retry': 'Retry',
     'scene.error_load': 'Could not load 3D scene.',
     'scene.canvas_aria': '3D viewer of the selected Swiss address: terrain, building, and nearby buildings rendered with shadows',
+    'save_parcel.idle': 'Save parcel',
+    'save_parcel.saving': 'Saving…',
+    'save_parcel.saved': 'Saved',
+    'save_parcel.sign_in': 'Sign in to save',
+    'save_parcel.error': 'Try again',
 
     // ---------- views dropdown ----------
     'views.button': 'Views',
@@ -467,6 +477,11 @@ const translations = {
     'scene.retry': 'Réessayer',
     'scene.error_load': 'Impossible de charger la scène 3D.',
     'scene.canvas_aria': 'Visualiseur 3D de l\'adresse suisse sélectionnée : terrain, bâtiment et bâtiments environnants avec ombres rendues.',
+    'save_parcel.idle': 'Enregistrer',
+    'save_parcel.saving': 'Enregistrement…',
+    'save_parcel.saved': 'Enregistré',
+    'save_parcel.sign_in': 'Se connecter pour enregistrer',
+    'save_parcel.error': 'Réessayer',
 
     // ---------- nav ----------
     'nav.logo_subtitle': '3D dès l\'adresse',
@@ -825,6 +840,11 @@ const translations = {
     'scene.retry': 'Erneut versuchen',
     'scene.error_load': '3D-Szene konnte nicht geladen werden.',
     'scene.canvas_aria': '3D-Ansicht der gewählten Schweizer Adresse: Gelände, Gebäude und Nachbargebäude mit Schatten gerendert.',
+    'save_parcel.idle': 'Parzelle speichern',
+    'save_parcel.saving': 'Speichern…',
+    'save_parcel.saved': 'Gespeichert',
+    'save_parcel.sign_in': 'Zum Speichern anmelden',
+    'save_parcel.error': 'Erneut versuchen',
 
     // ---------- nav ----------
     'nav.logo_subtitle': '3D ab Adresse',
@@ -1185,6 +1205,11 @@ const translations = {
     'scene.retry': 'Riprova',
     'scene.error_load': 'Impossibile caricare la scena 3D.',
     'scene.canvas_aria': 'Visualizzatore 3D dell\'indirizzo svizzero selezionato: terreno, edificio e edifici circostanti con ombre.',
+    'save_parcel.idle': 'Salva particella',
+    'save_parcel.saving': 'Salvataggio…',
+    'save_parcel.saved': 'Salvata',
+    'save_parcel.sign_in': 'Accedi per salvare',
+    'save_parcel.error': 'Riprova',
 
     // ---------- nav ----------
     'nav.logo_subtitle': '3D dall\'indirizzo',
@@ -1493,6 +1518,20 @@ function detectInitialLocale() {
 
 let currentLocale = detectInitialLocale();
 
+// Also register our catalog with the suite-shared i18n engine so
+// shared vanilla modules (e.g. the auth nav from
+// @swissnovo/shared/cesium-app/auth) resolve to our translations
+// instead of falling back to keys-as-strings.
+try {
+    registerI18n({
+        catalog: translations,
+        storageKey: STORAGE_KEY,
+        supportedLocales: SUPPORTED_LOCALES,
+    });
+} catch (err) {
+    console.warn('shared i18n registration failed', err);
+}
+
 export function getLocale() {
   return currentLocale;
 }
@@ -1571,6 +1610,9 @@ export function setLocale(locale) {
   }
   document.documentElement.lang = locale;
   applyTranslations(document);
+  // Mirror the change into the suite-shared engine so shared modules
+  // (auth nav, profile modal) re-render in the new language.
+  try { setSharedLocale(locale); } catch {}
   subscribers.forEach((cb) => {
     try {
       cb(locale);
