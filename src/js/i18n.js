@@ -107,7 +107,12 @@ const translations = {
     'scene_info.const_year': 'Built',
     'scene_info.floors': 'Floors',
     'scene_info.height': 'Height',
+    'scene_info.height_p95': 'Height (P95)',
+    'scene_info.volume': 'Volume',
+    'scene_info.footprint': 'Footprint',
     'scene_info.distance': 'Distance to centre',
+    'scene.layers_aria': 'Scene layers',
+    'scene.layer_vegetation': 'Vegetation',
 
     // ---------- views dropdown ----------
     'views.button': 'Views',

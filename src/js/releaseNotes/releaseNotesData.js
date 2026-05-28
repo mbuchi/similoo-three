@@ -38,6 +38,46 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.5.0',
+        date: 'May 28, 2026',
+        codename: 'Data Layers',
+        summary:
+            'Two more data dimensions surface into the scene. A vegetation overlay button (top-right under the compass) fetches a second Contoor terrain GLB filtered to LAS classes `vegetation` + `trees`, tints the points canopy-green, and renders them as a translucent overlay on the base terrain — toggle as you orbit. The building info panel, when you click a building, now also fires a background call to Contoor `/building-height-volume` and patches in LIDAR-measured peak height, P95 height, computed volume (m³), and footprint area (m²). A new `/api/three3d/height-volume` Vercel proxy fronts the upstream so the X-API-Key stays server-side. Vegetation toggle state persists across address changes (and across comparable-card clicks): if you had it on, the next scene re-loads it automatically.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'trees',
+                text: 'Vegetation overlay toggle (uses Contoor\'s `selected_pointcloud_class: ["vegetation","trees"]` filter — previously unexposed even though the upstream supported it). Tinted #16a34a, 85% opacity, points scaled ≥0.6 px so they read on the base terrain.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'ruler',
+                text: 'Click a building → background fetch of `/api/v1/building-height-volume` → info panel grows to show LIDAR peak height, P95 height, volume (m³), and footprint (m²). Falls back gracefully when upstream returns partial results.',
+                prs: [],
+            },
+            {
+                kind: 'new',
+                icon: 'cable',
+                text: 'New `/api/three3d/height-volume` Vercel proxy. JSON-mode response forwarding (vs binary GLB) added to the same handler — same caching headers, same X-API-Key handling.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'layers',
+                text: 'New `scene-layers` dock pattern (top-right, under compass) is now the home for future toggles too — zoning overlay, contour lines, traffic — each plugs in via `layersDock.addToggle(...)`.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'refresh-cw',
+                text: 'Vegetation toggle state survives address changes. If a user had it on and clicks a comparable card (which reloads the scene), the new scene re-fetches the overlay in the background without losing the toggle\'s "on" indicator.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.4.0',
         date: 'May 28, 2026',
         codename: 'Scene Quality',
