@@ -15,11 +15,19 @@
 // fetchSimilooComparables so the demo flow keeps working before the
 // backend goes live.
 
+import { getCached, setCached, TTL } from '../cache.js';
+
 const PARCEL_ENDPOINT = '/api/parcel';
 
 export async function resolveEgridFromLngLat(lngLat, fallbackFeature) {
     const ll = normaliseLngLat(lngLat);
     if (!ll) return synthesisedEgrid(fallbackFeature);
+
+    // Cache key is rounded to 5 decimals (~1 m precision) so coordinate
+    // round-trips through the URL don't reset the cache.
+    const cacheKey = `parcel:${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
 
     try {
         const res = await fetch(PARCEL_ENDPOINT, {
@@ -32,7 +40,11 @@ export async function resolveEgridFromLngLat(lngLat, fallbackFeature) {
         }
         const data = await res.json();
         const egrid = extractEgrid(data);
-        if (egrid) return { egrid, lat: ll.lat, lng: ll.lng, synthetic: false };
+        if (egrid) {
+            const value = { egrid, lat: ll.lat, lng: ll.lng, synthetic: false };
+            setCached(cacheKey, value, TTL.parcel);
+            return value;
+        }
         return synthesisedEgrid(fallbackFeature, ll);
     } catch (err) {
         console.warn('parcel_data lookup failed; using synthetic EGRID:', err?.message);

@@ -38,6 +38,40 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.7.3',
+        date: 'May 28, 2026',
+        codename: 'Cache Layer',
+        summary:
+            'Repeat lookups are now answered from localStorage instead of going back to the network. EGRID resolution caches at 1 m precision for 24 h; /score/similoo comparables cache by (egrid, years, limit) for 7 days (matches the backend Redis TTL); Contoor /building-height-volume caches by clicked-building lat/lng for 7 days. A small TTL-aware wrapper (src/js/cache.js) handles all three, with a 64-entry soft cap that evicts oldest-expiring first when localStorage gets crowded. Mock similoo responses and failed height-volume calls are deliberately NOT cached — they\'re either deterministic from the seed or transient enough that retrying is the right move.',
+        highlight: false,
+        items: [
+            {
+                kind: 'new',
+                icon: 'database',
+                text: 'New src/js/cache.js — tiny TTL-aware localStorage wrapper. Each entry stores {v, e: expiry}; reads check expiry and evict on the fly. Soft cap of 64 entries per namespace, sorted by oldest expiry on overflow.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'zap',
+                text: 'EGRID lookups (parcelLookup.js) cache by lat,lng rounded to 5 decimals (~1 m). Re-clicking the same building skips the /api/parcel roundtrip entirely.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'zap',
+                text: 'Comparable buildings (fetchSimilooComparables) cache by (egrid, years, limit) for 7 days. Re-opening a comparable\'s sidebar in a new session is instant. Mock data is bypassed (deterministic from EGRID seed).',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'zap',
+                text: 'Building height-volume metrics (Contoor /building-height-volume) cache by lat,lng for 7 days. Picking the same building twice in a session — no second Contoor call. Partial failures aren\'t cached so retries get a fresh attempt.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.7.2',
         date: 'May 28, 2026',
         codename: 'Locale Parity',
