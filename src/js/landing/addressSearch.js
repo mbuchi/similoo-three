@@ -65,6 +65,8 @@ export function bindLandingSearch({ input, list, onPick }) {
     function clearResults() {
         list.innerHTML = '';
         list.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
         activeIndex = -1;
         currentResults = [];
     }
@@ -77,6 +79,7 @@ export function bindLandingSearch({ input, list, onPick }) {
             const li = document.createElement('li');
             li.className = 'landing-result';
             li.setAttribute('role', 'option');
+            li.id = `landing-result-${i}`;
             li.dataset.index = String(i);
             li.textContent = r.label;
             li.addEventListener('mousedown', (e) => {
@@ -86,6 +89,7 @@ export function bindLandingSearch({ input, list, onPick }) {
             list.appendChild(li);
         }
         list.hidden = results.length === 0;
+        input.setAttribute('aria-expanded', results.length ? 'true' : 'false');
         activeIndex = -1;
         updateActive();
     }
@@ -95,6 +99,11 @@ export function bindLandingSearch({ input, list, onPick }) {
         children.forEach((c, i) => {
             c.setAttribute('aria-selected', i === activeIndex ? 'true' : 'false');
         });
+        if (activeIndex >= 0 && children[activeIndex]) {
+            input.setAttribute('aria-activedescendant', children[activeIndex].id);
+        } else {
+            input.removeAttribute('aria-activedescendant');
+        }
     }
 
     function pick(index) {

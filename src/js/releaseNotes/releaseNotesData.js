@@ -38,6 +38,40 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.8.1',
+        date: 'May 30, 2026',
+        codename: 'A11y polish',
+        summary:
+            'Accessibility polish pass on the 2D chrome around the 3D scene. A keyboard "Skip to content" link now lets users jump past the navbar straight to the address search; it stays visually hidden until focused and is localised in EN/FR/DE/IT. The landing address search is now a proper ARIA combobox — it exposes aria-expanded, aria-controls and aria-activedescendant so screen readers announce the live result list and the keyboard-highlighted option as you arrow through it. The whole interactive area is wrapped in a <main id="main-content"> landmark. Finally, prefers-reduced-motion now also calms the scene chrome (status-bar pulse, layer spinner, info-panel reveal), not just the skeleton loaders.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'accessibility',
+                text: 'Keyboard "Skip to content" link (visually hidden until focused) jumps past the navbar to the address search / 3D scene. Localised in EN/FR/DE/IT.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'search',
+                text: 'Landing address search is a proper ARIA combobox: aria-expanded reflects the result list, aria-controls points at it, and aria-activedescendant tracks the arrow-key-highlighted option so screen readers announce it.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'layout',
+                text: 'Interactive area wrapped in a <main id="main-content"> landmark for assistive-tech navigation.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'eye',
+                text: 'prefers-reduced-motion now also pauses the scene status-bar pulse, layer spinner and info-panel reveal animation, matching the skeleton-loader behaviour.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.8.0',
         date: 'May 28, 2026',
         codename: 'Auth & PRM',
