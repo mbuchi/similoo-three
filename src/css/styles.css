@@ -186,6 +186,32 @@ body {
     }
 }
 
+/* Skip-to-content link — visually hidden until focused, then pinned to the
+   top-left so keyboard users can jump past the navbar straight to the
+   landing search / 3D scene. */
+.skip-link {
+    position: absolute;
+    top: -48px;
+    left: 8px;
+    z-index: 2000;
+    padding: 8px 14px;
+    background: var(--hood-red);
+    color: #fff;
+    font-family: var(--hood-font);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--hood-radius-sm);
+    text-decoration: none;
+    box-shadow: var(--hood-shadow-md);
+    transition: top var(--hood-transition);
+}
+
+.skip-link:focus {
+    top: 8px;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
 html, body, #mapContainer {
     width: 100%;
     height: 100vh;

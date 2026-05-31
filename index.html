@@ -85,6 +85,7 @@
     <link rel="stylesheet" href="/src/css/scene.css">
 </head>
 <body>
+<a class="skip-link" href="#main-content" data-i18n="nav.skip_to_content">Skip to content</a>
 <div class="navbar">
     <div class="navbar-desktop">
       <div class="navbar-brand">
@@ -115,6 +116,7 @@
     </div>
 </div>
 
+<main id="main-content">
 <!-- Landing: address search (shown first; hidden once an address is picked) -->
 <section id="landingView" class="landing-view">
     <div class="landing-card">
@@ -124,6 +126,8 @@
             <input type="search" id="landingSearchInput" class="landing-search-input"
                    placeholder="e.g. Bahnhofstrasse 10, Zürich"
                    aria-label="Search address"
+                   role="combobox" aria-expanded="false" aria-controls="landingResults"
+                   aria-autocomplete="list" autocomplete="off"
                    data-i18n-attr="placeholder:landing.search_placeholder,aria-label:landing.search_aria" />
             <ul class="landing-results" id="landingResults" role="listbox" hidden></ul>
             <p class="landing-hint" data-i18n="landing.hint">Pick a result to load the 3D scene.</p>
@@ -146,6 +150,7 @@
     </div>
     <div id="sceneCanvas" class="scene-canvas" role="img" aria-label="3D viewer of the selected Swiss address: terrain, building, and nearby buildings rendered with shadows" data-i18n-attr="aria-label:scene.canvas_aria"></div>
 </section>
+</main>
 
 <script type="module" src="/src/js/main.js"></script>
 </body>
