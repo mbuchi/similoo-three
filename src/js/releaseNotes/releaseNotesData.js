@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.8.2',
+        date: 'May 31, 2026',
+        codename: 'Skip-link i18n fix',
+        summary:
+            'Follow-up to the v0.8.1 accessibility pass: the new keyboard "Skip to content" link referenced a translation key (nav.skip_to_content) that had not been added to the catalog, so it rendered the raw key text. The key is now translated in all four languages (EN/FR/DE/IT), so the link reads correctly for everyone.',
+        highlight: false,
+        items: [
+            {
+                kind: 'fixed',
+                icon: 'accessibility',
+                text: 'Skip-to-content link now shows localised text in EN/FR/DE/IT instead of the literal key "nav.skip_to_content" (the translation key was missing from the catalog in v0.8.1).',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.8.1',
         date: 'May 30, 2026',
         codename: 'A11y polish',

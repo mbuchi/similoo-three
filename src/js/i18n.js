@@ -85,6 +85,7 @@ const translations = {
     'nav.theme_to_dark': 'Switch to dark mode',
     'nav.theme_to_light': 'Switch to light mode',
     'nav.theme_toggle': 'Toggle dark mode',
+    'nav.skip_to_content': 'Skip to content',
 
     // ---------- landing ----------
     'landing.title': 'Type a Swiss address.',
@@ -491,6 +492,7 @@ const translations = {
     'nav.theme_to_dark': 'Passer en mode sombre',
     'nav.theme_to_light': 'Passer en mode clair',
     'nav.theme_toggle': 'Basculer le mode sombre',
+    'nav.skip_to_content': 'Aller au contenu',
 
     // ---------- views dropdown ----------
     'views.button': 'Vues',
@@ -854,6 +856,7 @@ const translations = {
     'nav.theme_to_dark': 'Zum dunklen Modus wechseln',
     'nav.theme_to_light': 'Zum hellen Modus wechseln',
     'nav.theme_toggle': 'Dunkelmodus umschalten',
+    'nav.skip_to_content': 'Zum Inhalt springen',
 
     // ---------- views dropdown ----------
     'views.button': 'Ansichten',
@@ -1219,6 +1222,7 @@ const translations = {
     'nav.theme_to_dark': 'Passa al tema scuro',
     'nav.theme_to_light': 'Passa al tema chiaro',
     'nav.theme_toggle': 'Attiva/disattiva tema scuro',
+    'nav.skip_to_content': 'Vai al contenuto',
 
     // ---------- views dropdown ----------
     'views.button': 'Viste',
