@@ -2,7 +2,7 @@
    Right-edge slide-in matching the building-info-panel visual language
    (.bip-*) but with its own .cmp-* scope so the two surfaces stay
    independent. Light + dark mode via [data-theme] (driven by the same
-   --similoo-three-* tokens the rest of the suite uses). */
+   --hood-* tokens the rest of the suite uses). */
 
 .cmp {
     position: fixed;
@@ -11,18 +11,18 @@
     bottom: 0;
     width: 400px;
     z-index: 51;            /* one above .bip so when both are mounted, cmp wins */
-    background: var(--similoo-three-panel-bg);
+    background: var(--hood-panel-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-left: 1px solid var(--similoo-three-panel-border);
-    color: var(--similoo-three-panel-text);
-    font-family: var(--similoo-three-font);
+    border-left: 1px solid var(--hood-panel-border);
+    color: var(--hood-panel-text);
+    font-family: var(--hood-font);
     transform: translateX(24px);
     opacity: 0;
     transition: transform 220ms ease, opacity 220ms ease;
     pointer-events: none;
     overflow-y: auto;
-    box-shadow: var(--similoo-three-panel-shadow);
+    box-shadow: var(--hood-panel-shadow);
 }
 .cmp[data-state="visible"] {
     transform: translateX(0);
@@ -34,13 +34,13 @@
 .cmp-header {
     position: relative;
     padding: 18px 22px 14px;
-    border-bottom: 1px solid var(--similoo-three-panel-border);
+    border-bottom: 1px solid var(--hood-panel-border);
 }
 .cmp-eyebrow {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--similoo-three-panel-source);
+    color: var(--hood-panel-source);
     font-weight: 600;
     margin-bottom: 4px;
 }
@@ -49,7 +49,7 @@
     font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
 }
 .cmp-close {
     position: absolute;
@@ -61,22 +61,22 @@
     align-items: center;
     justify-content: center;
     border: none;
-    background: var(--similoo-three-panel-row-bg);
-    color: var(--similoo-three-panel-muted);
+    background: var(--hood-panel-row-bg);
+    color: var(--hood-panel-muted);
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 150ms ease, color 150ms ease;
 }
 .cmp-close:hover {
-    background: var(--similoo-three-panel-row-bg-hover);
-    color: var(--similoo-three-panel-title);
+    background: var(--hood-panel-row-bg-hover);
+    color: var(--hood-panel-title);
 }
 .cmp-close i { width: 16px; height: 16px; }
 
 /* ---------- sections ---------- */
 .cmp-section {
     padding: 16px 22px;
-    border-bottom: 1px solid var(--similoo-three-panel-row-bg);
+    border-bottom: 1px solid var(--hood-panel-row-bg);
 }
 .cmp-section:last-child { border-bottom: none; }
 .cmp-section-title {
@@ -85,13 +85,13 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
 }
 
 /* ---------- target parcel block ---------- */
 .cmp-target-empty {
     font-size: 13px;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     text-align: center;
     padding: 12px 0;
 }
@@ -104,7 +104,7 @@
 }
 .cmp-target-ratiov {
     background: linear-gradient(135deg, rgba(220, 38, 38, 0.14), rgba(245, 158, 11, 0.10));
-    border: 1px solid var(--similoo-three-panel-border);
+    border: 1px solid var(--hood-panel-border);
     border-radius: 14px;
     padding: 12px 16px;
     text-align: center;
@@ -115,14 +115,14 @@
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.02em;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
 }
 .cmp-target-ratiov-label {
     margin-top: 6px;
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     font-weight: 600;
 }
 .cmp-target-meta {
@@ -141,20 +141,20 @@
     min-width: 0;
 }
 .cmp-target-key {
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     text-transform: uppercase;
     font-size: 9.5px;
     letter-spacing: 0.06em;
 }
 .cmp-target-val {
-    color: var(--similoo-three-panel-text);
+    color: var(--hood-panel-text);
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .cmp-target-egrid {
-    font-family: var(--similoo-three-mono);
+    font-family: var(--hood-mono);
     font-size: 11px;
 }
 .cmp-target-grid {
@@ -164,8 +164,8 @@
     margin-top: 4px;
 }
 .cmp-target-cell {
-    background: var(--similoo-three-panel-row-bg);
-    border: 1px solid var(--similoo-three-panel-border);
+    background: var(--hood-panel-row-bg);
+    border: 1px solid var(--hood-panel-border);
     border-radius: 8px;
     padding: 8px;
     text-align: center;
@@ -174,13 +174,13 @@
     font-size: 9.5px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
 }
 .cmp-target-cell-val {
     margin-top: 3px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
 }
 
 /* ---------- filters ---------- */
@@ -190,13 +190,13 @@
     gap: 6px;
     margin-bottom: 12px;
     font-size: 12px;
-    color: var(--similoo-three-panel-text);
+    color: var(--hood-panel-text);
 }
 .cmp-filter-row:last-child { margin-bottom: 0; }
 .cmp-years-label,
 .cmp-size-label {
     font-size: 11px;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: 600;
@@ -209,18 +209,18 @@
 }
 .cmp-years-range {
     width: 100%;
-    accent-color: var(--similoo-three-red);
+    accent-color: var(--hood-red);
     background: transparent;
 }
 .cmp-years-value {
     font-variant-numeric: tabular-nums;
     font-weight: 700;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
     min-width: 2ch;
     text-align: right;
 }
 .cmp-years-suffix {
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     font-size: 11px;
 }
 .cmp-size-control {
@@ -235,12 +235,12 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
 }
 .cmp-size-sub input {
-    background: var(--similoo-three-panel-row-bg);
-    border: 1px solid var(--similoo-three-panel-border);
-    color: var(--similoo-three-panel-title);
+    background: var(--hood-panel-row-bg);
+    border: 1px solid var(--hood-panel-border);
+    color: var(--hood-panel-title);
     border-radius: 8px;
     padding: 6px 8px;
     font-family: inherit;
@@ -250,7 +250,7 @@
 }
 .cmp-size-sub input:focus {
     outline: none;
-    border-color: var(--similoo-three-red);
+    border-color: var(--hood-red);
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
 }
 
@@ -270,12 +270,12 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
 }
 .cmp-sort {
-    background: var(--similoo-three-panel-row-bg);
-    border: 1px solid var(--similoo-three-panel-border);
-    color: var(--similoo-three-panel-title);
+    background: var(--hood-panel-row-bg);
+    border: 1px solid var(--hood-panel-border);
+    color: var(--hood-panel-title);
     font-family: inherit;
     font-size: 11px;
     border-radius: 6px;
@@ -286,13 +286,13 @@
 /* ---------- status (loading/empty/error) ---------- */
 .cmp-status {
     font-size: 12px;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     padding: 12px 4px;
     text-align: center;
 }
 .cmp-status:empty { display: none; }
 .cmp-status[data-state="error"] {
-    color: var(--similoo-three-red);
+    color: var(--hood-red);
 }
 
 /* ---------- list ---------- */
@@ -302,8 +302,8 @@
     gap: 8px;
 }
 .cmp-card {
-    background: var(--similoo-three-panel-row-bg);
-    border: 1px solid var(--similoo-three-panel-border);
+    background: var(--hood-panel-row-bg);
+    border: 1px solid var(--hood-panel-border);
     border-radius: 10px;
     padding: 10px 12px;
     cursor: pointer;
@@ -312,8 +312,8 @@
 }
 .cmp-card:hover,
 .cmp-card:focus {
-    background: var(--similoo-three-panel-row-bg-hover);
-    border-color: var(--similoo-three-red);
+    background: var(--hood-panel-row-bg-hover);
+    border-color: var(--hood-red);
     transform: translateX(-2px);
 }
 .cmp-card-head {
@@ -324,9 +324,9 @@
     margin-bottom: 6px;
 }
 .cmp-card-egrid {
-    font-family: var(--similoo-three-mono);
+    font-family: var(--hood-mono);
     font-size: 11px;
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -334,7 +334,7 @@
 .cmp-card-year {
     font-size: 12px;
     font-weight: 700;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
     font-variant-numeric: tabular-nums;
 }
 .cmp-card-ratiov-row {
@@ -347,19 +347,19 @@
 .cmp-card-ratiov-value {
     font-size: 16px;
     font-weight: 700;
-    color: var(--similoo-three-panel-title);
+    color: var(--hood-panel-title);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.01em;
 }
 .cmp-card-ratiov-bar {
     height: 6px;
-    background: var(--similoo-three-panel-border);
+    background: var(--hood-panel-border);
     border-radius: 3px;
     overflow: hidden;
 }
 .cmp-card-ratiov-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--similoo-three-red), #F59E0B);
+    background: linear-gradient(90deg, var(--hood-red), #F59E0B);
     border-radius: 3px;
     transition: width 200ms ease;
 }
@@ -376,13 +376,13 @@
     min-width: 0;
 }
 .cmp-card-foot-key {
-    color: var(--similoo-three-panel-muted);
+    color: var(--hood-panel-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 9px;
 }
 .cmp-card-foot-val {
-    color: var(--similoo-three-panel-text);
+    color: var(--hood-panel-text);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     overflow: hidden;
@@ -394,7 +394,7 @@
 .cmp-meta {
     margin-top: 12px;
     font-size: 10px;
-    color: var(--similoo-three-panel-faint);
+    color: var(--hood-panel-faint);
     text-align: right;
     text-transform: uppercase;
     letter-spacing: 0.06em;

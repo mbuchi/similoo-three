@@ -38,6 +38,34 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.8.5',
+        date: 'June 2, 2026',
+        codename: 'Suite UI consistency sweep',
+        summary:
+            'Suite-wide consistency pass. The CSS design tokens move back to the shared `--hood-*` prefix — the intentional suite standard every app inherits from the hood fork — so similoo-three lines up with the rest of the suite again. Dark mode also gets several missing overrides and the navbar controls gain proper styling with keyboard focus rings.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'palette',
+                text: 'CSS custom properties across styles/scene/landing/comparison renamed back to the suite-standard `--hood-*` prefix (from the app-specific `--similoo-three-*` namespace) for cross-suite consistency.',
+                prs: [22],
+            },
+            {
+                kind: 'improved',
+                icon: 'sun-moon',
+                text: 'Navbar theme-toggle and language selector now have proper styling (rounded card, accent-red hover) plus a suite-standard focus-visible ring for keyboard users; the sun/moon icon now swaps with the active theme.',
+                prs: [22],
+            },
+            {
+                kind: 'fixed',
+                icon: 'moon',
+                text: 'Dark-mode fixes: the mobile dropdown menu, camera monitor, and address header no longer stay white-on-dark — each now flips to the dark surface in dark mode.',
+                prs: [22],
+            },
+        ],
+    },
+    {
         version: '0.8.4',
         date: 'June 2, 2026',
         codename: 'CSS token namespace cleanup',
