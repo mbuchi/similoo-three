@@ -202,7 +202,7 @@
 
 .scene-compass-tick {
     position: absolute;
-    font-family: var(--similoo-three-mono, 'JetBrains Mono', monospace);
+    font-family: var(--hood-mono, 'JetBrains Mono', monospace);
     font-size: 10px;
     font-weight: 600;
     color: #475569;
@@ -263,7 +263,7 @@
 }
 
 .scene-scale-label {
-    font-family: var(--similoo-three-mono, 'JetBrains Mono', monospace);
+    font-family: var(--hood-mono, 'JetBrains Mono', monospace);
     font-size: 11px;
     font-weight: 500;
     color: #0f172a;
@@ -314,7 +314,7 @@
 }
 
 .scene-info-eyebrow {
-    font-family: var(--similoo-three-mono, 'JetBrains Mono', monospace);
+    font-family: var(--hood-mono, 'JetBrains Mono', monospace);
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -376,7 +376,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 60%;
-    font-family: var(--similoo-three-mono, 'JetBrains Mono', monospace);
+    font-family: var(--hood-mono, 'JetBrains Mono', monospace);
 }
 
 [data-theme='dark'] .scene-info-val { color: #f1f5f9; }
@@ -554,7 +554,7 @@
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
     color: #0f172a;
     font-size: 12px;
-    font-family: var(--similoo-three-mono, 'JetBrains Mono', monospace);
+    font-family: var(--hood-mono, 'JetBrains Mono', monospace);
 }
 
 [data-theme='dark'] .scene-sun {
