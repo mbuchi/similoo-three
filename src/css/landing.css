@@ -41,7 +41,7 @@
     /* Display hero: Inter at 700 with tight tracking reads like a modern
        tech-product wordmark and lets the brand mark in the navbar stay
        the only Varela Round on the page. */
-    font-family: var(--hood-font);
+    font-family: var(--similoo-three-font);
     font-size: 32px;
     font-weight: 700;
     letter-spacing: -0.025em;

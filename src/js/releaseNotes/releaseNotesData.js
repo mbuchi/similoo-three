@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.8.4',
+        date: 'June 2, 2026',
+        codename: 'CSS token namespace cleanup',
+        summary:
+            'Internal naming hygiene: the design-token and layout CSS custom properties were renamed from the inherited `--hood-` prefix to the app-specific `--similoo-three-` namespace, removing naming drift carried over from the hood fork. No visual changes.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'palette',
+                text: 'CSS custom properties across styles/scene/landing/comparison renamed from `--hood-*` to `--similoo-three-*` for a consistent app namespace.',
+                prs: [21],
+            },
+        ],
+    },
+    {
         version: '0.8.3',
         date: 'May 31, 2026',
         codename: 'Centralised share card',
