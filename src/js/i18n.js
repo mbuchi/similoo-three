@@ -65,7 +65,7 @@ const translations = {
     'common.open': 'Open',
 
     // ---------- meta ----------
-    'meta.title': 'similoo-three — 3D Comparable Buildings',
+    'meta.title': 'similoo-three - 3D Comparable Buildings',
     'meta.description':
       'Type an address, get a live 3D Three.js view of the building and its 100 m surroundings, plus comparable buildings across Switzerland.',
     'meta.og_title': 'similoo-three — address-first 3D comparable buildings',
@@ -425,7 +425,7 @@ const translations = {
 
     // ---------- meta ----------
     'meta.title':
-      'similoo-three — 3D Bâtiments comparables',
+      'similoo-three - 3D Bâtiments comparables',
     'meta.description':
       'Tapez une adresse, obtenez une vue 3D Three.js du bâtiment et de ses 100 m d\'environnement, plus des bâtiments comparables à travers la Suisse.',
     'meta.og_title': 'similoo-three — 3D dès l\'adresse',
@@ -789,7 +789,7 @@ const translations = {
     'common.open': 'Öffnen',
 
     // ---------- meta ----------
-    'meta.title': 'similoo-three — 3D Vergleichbare Gebäude',
+    'meta.title': 'similoo-three - 3D Vergleichbare Gebäude',
     'meta.description':
       'Adresse eingeben und das Gebäude samt 100 m Umgebung in 3D mit Three.js sehen, plus vergleichbare Gebäude aus der ganzen Schweiz.',
     'meta.og_title': 'similoo-three — 3D ab Adresse',
@@ -1155,7 +1155,7 @@ const translations = {
 
     // ---------- meta ----------
     'meta.title':
-      'similoo-three — 3D Edifici comparabili',
+      'similoo-three - 3D Edifici comparabili',
     'meta.description':
       'Digita un indirizzo, ottieni una vista 3D Three.js live dell\'edificio e dei suoi 100 m intorno, più edifici comparabili da tutta la Svizzera.',
     'meta.og_title': 'similoo-three — 3D dall\'indirizzo',

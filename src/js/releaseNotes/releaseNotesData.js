@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.9.2',
+        date: 'June 3, 2026',
+        codename: 'Hyphen, Not Dash',
+        summary:
+            'The browser tab title now uses a plain hyphen separator instead of an em dash, matching the suite convention.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'type',
+                text: 'Page title (static <title> and i18n meta.title in all languages) now uses a hyphen separator instead of an em dash.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.8.5',
         date: 'June 2, 2026',
         codename: 'Suite UI consistency sweep',
