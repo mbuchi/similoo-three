@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>similoo-three · splat — 3D Gaussian Splatting viewer</title>
+    <meta name="description" content="A web 3D Gaussian Splatting (3DGS) viewer for SwissNovo: photoreal building captures cleaned in SuperSplat, served as .splat/.ply and rendered in the browser." />
+    <meta name="robots" content="noindex" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="similoo-three" />
+    <meta property="og:title" content="similoo-three · splat — 3D Gaussian Splatting" />
+    <meta property="og:description" content="Photoreal building captures as 3D Gaussian Splats, rendered in the browser. Edit in SuperSplat, drop in via ?src=." />
+    <meta property="og:url" content="https://swissnovo-similoo-three.vercel.app/splat" />
+    <meta property="og:image" content="https://toolbox.swissnovo.com/meta/similoo-three.jpg" />
+
+    <link rel="icon" type="image/svg+xml" href="https://swissnovo-toolbox.vercel.app/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="https://swissnovo-toolbox.vercel.app/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://swissnovo-toolbox.vercel.app/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0f172a" />
+
+    <!-- Pre-paint theme bootstrap — shared with index.html so no white flash. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('similoo-three-theme');
+          var resolved = stored === 'light' || stored === 'dark'
+            ? stored
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', resolved);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Varela+Round&display=swap" rel="stylesheet" />
+
+    <style>
+      :root {
+        --bg: #0b1120;
+        --panel: rgba(15, 23, 42, 0.82);
+        --panel-border: rgba(148, 163, 184, 0.18);
+        --text: #e2e8f0;
+        --text-dim: #94a3b8;
+        --accent: #ef4444;
+        --chip: rgba(30, 41, 59, 0.9);
+      }
+      html[data-theme='light'] {
+        --bg: #eef2f7;
+        --panel: rgba(255, 255, 255, 0.9);
+        --panel-border: rgba(15, 23, 42, 0.1);
+        --text: #0f172a;
+        --text-dim: #475569;
+        --chip: rgba(241, 245, 249, 0.95);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        overflow: hidden;
+      }
+      /* Fixed studio backdrop regardless of UI theme — the splat canvas is
+         transparent, so this gives the scene consistent contrast. */
+      #viewer {
+        position: fixed; inset: 0; z-index: 0;
+        background: radial-gradient(circle at 50% 32%, #20304a 0%, #0b1120 68%);
+      }
+      /* mkkellogg injects its own canvas; make sure it fills the host. */
+      #viewer canvas { display: block; width: 100% !important; height: 100% !important; }
+
+      /* ── top bar ── */
+      .bar {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; padding: 10px 14px;
+        background: linear-gradient(180deg, rgba(2, 6, 23, 0.62), rgba(2, 6, 23, 0));
+        pointer-events: none;
+      }
+      html[data-theme='light'] .bar {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+      }
+      .bar > * { pointer-events: auto; }
+      .brand {
+        display: inline-flex; align-items: center; gap: 8px;
+        text-decoration: none; color: var(--text);
+        font-family: 'Varela Round', system-ui, sans-serif;
+        font-size: 20px; line-height: 1;
+      }
+      .brand .oo { color: var(--accent); }
+      .brand .dim { color: var(--text-dim); }
+      .pill {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+        padding: 3px 8px; border-radius: 999px;
+        background: var(--chip); color: var(--text-dim);
+        border: 1px solid var(--panel-border);
+      }
+      .actions { display: inline-flex; align-items: center; gap: 8px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 12.5px; font-weight: 600; text-decoration: none;
+        padding: 8px 12px; border-radius: 10px; cursor: pointer;
+        color: var(--text); background: var(--panel);
+        border: 1px solid var(--panel-border);
+        backdrop-filter: blur(8px); transition: transform 0.12s ease, border-color 0.12s ease;
+      }
+      .btn:hover { transform: translateY(-1px); border-color: rgba(239, 68, 68, 0.5); }
+      .btn.primary { background: var(--accent); color: #fff; border-color: transparent; }
+      .btn svg { width: 14px; height: 14px; }
+
+      /* ── info card ── */
+      .info {
+        position: fixed; left: 14px; bottom: 14px; z-index: 20;
+        width: min(360px, calc(100vw - 28px));
+        background: var(--panel); border: 1px solid var(--panel-border);
+        border-radius: 14px; backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(2, 6, 23, 0.35);
+        overflow: hidden;
+      }
+      .info-head {
+        display: flex; align-items: center; gap: 8px;
+        padding: 11px 14px; cursor: pointer; user-select: none;
+      }
+      .info-head h1 { margin: 0; font-size: 13.5px; font-weight: 700; }
+      .info-head .chev { margin-left: auto; color: var(--text-dim); transition: transform 0.2s ease; }
+      .info.collapsed .chev { transform: rotate(-90deg); }
+      .info-body { padding: 0 14px 14px; font-size: 12.5px; line-height: 1.5; color: var(--text-dim); }
+      .info.collapsed .info-body { display: none; }
+      .info-body p { margin: 0 0 10px; }
+      .info-body strong { color: var(--text); font-weight: 600; }
+      .steps { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 12px; }
+      .step {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        padding: 4px 7px; border-radius: 7px; background: var(--chip);
+        border: 1px solid var(--panel-border); color: var(--text);
+      }
+      .step b { color: var(--accent); font-weight: 700; }
+      .hint code {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        background: var(--chip); padding: 1px 5px; border-radius: 5px; color: var(--text);
+      }
+
+      /* ── overlays ── */
+      .overlay {
+        position: fixed; inset: 0; z-index: 15;
+        display: flex; align-items: center; justify-content: center;
+        background: radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.2), var(--bg));
+        text-align: center; padding: 24px;
+      }
+      .overlay[hidden] { display: none; }
+      .spinner {
+        width: 34px; height: 34px; border-radius: 50%;
+        border: 3px solid rgba(148, 163, 184, 0.25); border-top-color: var(--accent);
+        animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .overlay h2 { margin: 0 0 6px; font-size: 15px; }
+      .overlay p { margin: 0 0 4px; font-size: 13px; color: var(--text-dim); max-width: 420px; }
+      .overlay code { font-family: 'JetBrains Mono', monospace; font-size: 12px; word-break: break-all; }
+      .controls-hint {
+        position: fixed; right: 14px; bottom: 14px; z-index: 10;
+        font-size: 11px; color: var(--text-dim); pointer-events: none;
+        background: var(--panel); border: 1px solid var(--panel-border);
+        padding: 6px 10px; border-radius: 9px; backdrop-filter: blur(6px);
+      }
+      @media (max-width: 560px) { .controls-hint { display: none; } }
+    </style>
+</head>
+<body>
+    <div id="viewer" role="img" aria-label="3D Gaussian Splatting viewer"></div>
+
+    <header class="bar">
+      <div style="display:inline-flex;align-items:center;gap:10px">
+        <a class="brand" href="/" title="Back to similoo-three">
+          <span>simil<span class="oo">oo</span><span class="dim">-three</span></span>
+        </a>
+        <span class="pill">splat · 3DGS</span>
+      </div>
+      <nav class="actions">
+        <a class="btn" href="/" title="Back to the address-first 3D app">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>App</span>
+        </a>
+        <a class="btn primary" id="editBtn" href="https://superspl.at/editor" target="_blank" rel="noopener" title="Open the SuperSplat editor to clean / crop / compress a capture">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <span>Edit in SuperSplat</span>
+        </a>
+      </nav>
+    </header>
+
+    <aside class="info" id="info">
+      <div class="info-head" id="infoHead">
+        <h1>3D Gaussian Splatting</h1>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="info-body">
+        <p>This is a browser <strong>3D Gaussian Splatting</strong> viewer — the photoreal capture format. The scene is a <strong>synthetic demo</strong> (a stylised Swiss house) standing in for a real drone/phone capture of a property.</p>
+        <div class="steps">
+          <span class="step"><b>1</b> Capture</span>
+          <span class="step"><b>2</b> Train (3DGS)</span>
+          <span class="step"><b>3</b> Edit · SuperSplat</span>
+          <span class="step"><b>4</b> Host · RES</span>
+          <span class="step"><b>5</b> View · here</span>
+        </div>
+        <p class="hint">Drop in your own capture: <code>?src=URL</code> to a <code>.splat</code>, <code>.ply</code> or <code>.ksplat</code>. Clean &amp; compress it first in <strong>SuperSplat</strong>.</p>
+      </div>
+    </aside>
+
+    <div class="overlay" id="loading">
+      <div>
+        <div class="spinner"></div>
+        <h2>Loading splats…</h2>
+        <p id="loadingSrc"></p>
+      </div>
+    </div>
+
+    <div class="overlay" id="error" hidden>
+      <div>
+        <h2>Couldn't load that scene</h2>
+        <p id="errorMsg"></p>
+        <p><a class="btn" href="/splat" style="margin-top:12px;display:inline-flex">Load the demo scene</a></p>
+      </div>
+    </div>
+
+    <div class="controls-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "@mkkellogg/gaussian-splats-3d": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.7/build/gaussian-splats-3d.module.js"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
+
+      // Collapsible info card.
+      const info = document.getElementById('info');
+      document.getElementById('infoHead').addEventListener('click', () => info.classList.toggle('collapsed'));
+      if (window.matchMedia && window.matchMedia('(max-width: 560px)').matches) info.classList.add('collapsed');
+
+      const params = new URLSearchParams(location.search);
+      const src = params.get('src') || '/sample.splat';
+      // If the caller points at their own SuperSplat project, deep-link the editor at it too.
+      if (params.get('src')) document.getElementById('editBtn').href = 'https://superspl.at/editor';
+
+      const loading = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+      document.getElementById('loadingSrc').textContent = src;
+
+      function formatFor(url) {
+        const u = url.split('?')[0].toLowerCase();
+        if (u.endsWith('.ply')) return GaussianSplats3D.SceneFormat.Ply;
+        if (u.endsWith('.ksplat')) return GaussianSplats3D.SceneFormat.KSplat;
+        return GaussianSplats3D.SceneFormat.Splat;
+      }
+
+      const viewer = new GaussianSplats3D.Viewer({
+        rootElement: document.getElementById('viewer'),
+        cameraUp: [0, 1, 0],
+        initialCameraPosition: [16, 10, 20],
+        initialCameraLookAt: [0, 5.5, 0],
+        // No COOP/COEP headers on the static host — keep workers off SharedArrayBuffer.
+        sharedMemoryForWorkers: false,
+        dynamicScene: false,
+        antialiased: true,
+        sphericalHarmonicsDegree: 0,
+      });
+
+      viewer
+        .addSplatScene(src, {
+          format: formatFor(src),
+          showLoadingUI: false,
+          splatAlphaRemovalThreshold: 5,
+        })
+        .then(() => {
+          viewer.start();
+          loading.hidden = true;
+        })
+        .catch((err) => {
+          loading.hidden = true;
+          errorEl.hidden = false;
+          document.getElementById('errorMsg').innerHTML =
+            'Source: <code>' + src + '</code><br/>' + (err && err.message ? err.message : 'The file could not be read as a Gaussian-splat scene.');
+          console.error('splat load failed', err);
+        });
+    </script>
+</body>
+</html>
