@@ -4,6 +4,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/three3d/:op", "destination": "/api/three3d?path=:op" }
+    { "source": "/api/three3d/:op", "destination": "/api/three3d?path=:op" },
+    { "source": "/splat", "destination": "/splat.html" }
   ]
 }
