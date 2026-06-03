@@ -45,7 +45,7 @@ npm run build         # static bundle in dist/
 
 ## Deployment
 
-Vercel autodeploys `main`. Production URL: `https://swissnovo-similoo-three.vercel.app`.
+Vercel autodeploys `main`. Production URL: `https://similoo-three.vercel.app`.
 
 ## `/splat` — 3D Gaussian Splatting viewer
 
@@ -56,7 +56,7 @@ browser — the photoreal capture format you clean up in
 > **Capture** (drone/phone photos) → **Train** (3DGS) → **Edit** (SuperSplat: crop,
 > de-floater, compress) → **Host** (RES image storage) → **View** (here).
 
-- **Live:** `https://swissnovo-similoo-three.vercel.app/splat`
+- **Live:** `https://similoo-three.vercel.app/splat`
 - **Bring your own capture:** `?src=URL` to a `.splat`, `.ply` or `.ksplat`, e.g.
   `…/splat?src=https://example.com/property.ply`. Defaults to a synthetic demo scene.
 - **Renderer:** [three.js](https://threejs.org/) + [@mkkellogg/gaussian-splats-3d](https://github.com/mkkellogg/GaussianSplats3D),
