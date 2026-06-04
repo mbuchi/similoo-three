@@ -20,38 +20,51 @@
 // All endpoints are proxied to keep the optional X-API-Key server-side.
 
 import { getCached, setCached, TTL } from '../cache.js';
+import { cachedArrayBuffer } from './blobCache.js';
 
 const TERRAIN_ENDPOINT = '/api/three3d/terrain';
 const BUILDING_ENDPOINT = '/api/three3d/building';
 const FOOTPRINTS_ENDPOINT = '/api/three3d/footprints';
 const HEIGHT_VOLUME_ENDPOINT = '/api/three3d/height-volume';
 
+// GLB files begin with the little-endian magic "glTF" (0x46546C67). We use
+// this to detect the case where the upstream returned its JSON link
+// response instead of the binary — both on a fresh fetch and on a cache
+// read — without depending on the Content-Type header (which the
+// IndexedDB blob cache doesn't preserve across hits).
+const GLB_MAGIC = 0x46546c67;
+
+function looksLikeGLB(buf) {
+    if (!buf || buf.byteLength < 4) return false;
+    return new DataView(buf).getUint32(0, true) === GLB_MAGIC;
+}
+
 async function fetchGLBWithMeta(url, body) {
-    const res = await fetch(url, {
+    // Route the heavy GLB binary through the IndexedDB blob cache. The
+    // body (which carries the coordinate) is part of the cache key, so the
+    // same address re-opens from disk instead of re-hitting Contoor. On any
+    // storage failure cachedArrayBuffer degrades to a plain network fetch.
+    const init = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(`three3d ${res.status}: ${text.slice(0, 200)}`);
-    }
-    const ct = res.headers.get('Content-Type') || '';
-    if (ct.includes('application/json')) {
+    };
+    const buf = await cachedArrayBuffer(url, init);
+    if (!looksLikeGLB(buf)) {
         // Upstream answered with the link JSON rather than the binary —
-        // can happen if return_data is silently dropped. Surface it as
-        // an explicit error rather than handing the loader a JSON blob.
-        const text = await res.text().catch(() => '');
-        throw new Error(`three3d expected GLB binary, got JSON: ${text.slice(0, 200)}`);
+        // can happen if return_data is silently dropped. Surface it as an
+        // explicit error rather than handing the loader a JSON blob. (A
+        // non-GLB body is never written to the cache by a future fetch,
+        // and an old JSON body fails this check too.)
+        let text = '';
+        try { text = new TextDecoder().decode(buf.slice(0, 200)); } catch {}
+        throw new Error(`three3d expected GLB binary, got non-GLB: ${text.slice(0, 200)}`);
     }
-    const blob = await res.blob();
-    const metaHeader = res.headers.get('X-GLB-Metadata');
-    let metadata = null;
-    if (metaHeader) {
-        try { metadata = JSON.parse(metaHeader); }
-        catch (e) { console.warn('three3d: malformed X-GLB-Metadata header', e); }
-    }
-    return { blob, metadata };
+    // Metadata rides on a response header which the blob cache can't store;
+    // it's only populated on a network miss. Nothing downstream depends on
+    // it today (the scene viewer raycasts the terrain for elevation), so a
+    // null on a cache hit is harmless.
+    return { arrayBuffer: buf, metadata: null };
 }
 
 export function fetchTerrainGLB({ lat, lng, radius_m = 100, classes = null }) {

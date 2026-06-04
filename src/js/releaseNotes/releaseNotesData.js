@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.9.4',
+        date: 'June 4, 2026',
+        codename: 'Instant Reopen',
+        summary:
+            'Re-opening an address is now instant. A client-side IndexedDB blob cache (byte-budget LRU + 14-day TTL) fronts the streamed 3D terrain and building GLB meshes, so revisiting a coordinate renders from disk and offloads the Contoor 3D API.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'database',
+                text: 'Added a client-side IndexedDB blob cache (byte-budget LRU + TTL) for the streamed 3D terrain/building GLB meshes so re-opening an address is instant and offloads the Contoor 3D API. The cache is keyed by the request coordinate, capped at ~150 MB (least-recently-used eviction), expires after 14 days, and degrades silently to a plain network fetch in private-browsing or when storage is unavailable — the viewer never blocks on it.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.9.3',
         date: 'June 4, 2026',
         codename: 'Track Parcel',
