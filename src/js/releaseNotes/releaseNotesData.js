@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.9.3',
+        date: 'June 4, 2026',
+        codename: 'Track Parcel',
+        summary:
+            'The save-parcel button now reads "Track parcel" (and "Tracked" once saved) instead of "Save parcel"/"Saved", matching the suite-wide wording standard for clearer new-user intent. Relabelled in all four languages.',
+        highlight: false,
+        items: [
+            {
+                kind: 'improved',
+                icon: 'bookmark',
+                text: 'Info-panel save button relabelled to "Track parcel" / "Tracked" (was "Save parcel" / "Saved") for suite consistency: EN "Track parcel"/"Tracked", FR "Suivre la parcelle"/"Suivie", DE "Parzelle verfolgen"/"Verfolgt", IT "Segui la particella"/"Seguita". The saving / sign-in / error states are unchanged.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.9.2',
         date: 'June 3, 2026',
         codename: 'Hyphen, Not Dash',

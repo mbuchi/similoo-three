@@ -65,11 +65,11 @@ export function createSaveParcelButton({ container }) {
     }
 
     function defaultLabel(state) {
-        return state === 'saved' ? 'Saved'
+        return state === 'saved' ? 'Tracked'
             : state === 'saving' ? 'Saving…'
             : state === 'auth' ? 'Sign in to save'
             : state === 'error' ? 'Try again'
-            : 'Save parcel';
+            : 'Track parcel';
     }
 
     async function refreshState(parcel) {
