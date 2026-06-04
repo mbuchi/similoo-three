@@ -259,13 +259,13 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
     });
 
     async function loadVegetationOverlay({ lat, lng }) {
-        const { blob } = await fetchTerrainGLB({
+        const { arrayBuffer } = await fetchTerrainGLB({
             lat,
             lng,
             radius_m: SCENE_RADIUS_M,
             classes: ['vegetation', 'trees'],
         });
-        const gltf = await loadGLBBlob(blob);
+        const gltf = await loadGLBBuffer(arrayBuffer);
         const node = gltf.scene;
         node.name = 'vegetation-overlay';
         // Tint the vegetation points a translucent canopy green so they
@@ -336,8 +336,9 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         }
     }
 
-    async function loadGLBBlob(blob) {
-        const buf = await blob.arrayBuffer();
+    // Parse a GLB ArrayBuffer (as delivered by the IndexedDB-cached 3D
+    // API client) straight through GLTFLoader, with no intermediate Blob.
+    function loadGLBBuffer(buf) {
         return new Promise((resolve, reject) => {
             loader.parse(buf, '', resolve, reject);
         });
@@ -581,14 +582,14 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         let terrainMeta = null;
 
         try {
-            const { blob, metadata } = await fetchTerrainGLB({
+            const { arrayBuffer, metadata } = await fetchTerrainGLB({
                 lat,
                 lng,
                 radius_m: SCENE_RADIUS_M,
             });
             if (token !== loadToken) return { aborted: true };
             terrainMeta = metadata;
-            const gltf = await loadGLBBlob(blob);
+            const gltf = await loadGLBBuffer(arrayBuffer);
             const terrain = gltf.scene;
             terrain.name = 'terrain';
             applyTerrainMaterial(terrain);
@@ -648,9 +649,9 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         if (!buildings.length) {
             setStatus('Loading building…');
             try {
-                const { blob } = await fetchBuildingGLB({ lat, lng });
+                const { arrayBuffer } = await fetchBuildingGLB({ lat, lng });
                 if (token !== loadToken) return { aborted: true };
-                const gltf = await loadGLBBlob(blob);
+                const gltf = await loadGLBBuffer(arrayBuffer);
                 const building = gltf.scene;
                 building.name = 'target-building';
                 building.applyMatrix4(lv95ToLocal);
@@ -679,12 +680,12 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             async (b) => {
                 if (token !== loadToken) return;
                 try {
-                    const { blob } = await fetchBuildingGLB({
+                    const { arrayBuffer } = await fetchBuildingGLB({
                         lat: b.lat,
                         lng: b.lng,
                     });
                     if (token !== loadToken) return;
-                    const gltf = await loadGLBBlob(blob);
+                    const gltf = await loadGLBBuffer(arrayBuffer);
                     const node = gltf.scene;
                     node.name = `bldg-${b.id}`;
                     node.userData = {
