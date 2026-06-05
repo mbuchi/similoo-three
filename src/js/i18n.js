@@ -41,7 +41,7 @@
 import {
     registerI18n,
     setLocale as setSharedLocale,
-} from '@swissnovo/shared/cesium-app/i18n/engine.js';
+} from '@aireon/shared/cesium-app/i18n/engine.js';
 
 export const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'it'];
 const STORAGE_KEY = 'similoo-three:locale';
@@ -1524,7 +1524,7 @@ let currentLocale = detectInitialLocale();
 
 // Also register our catalog with the suite-shared i18n engine so
 // shared vanilla modules (e.g. the auth nav from
-// @swissnovo/shared/cesium-app/auth) resolve to our translations
+// @aireon/shared/cesium-app/auth) resolve to our translations
 // instead of falling back to keys-as-strings.
 try {
     registerI18n({

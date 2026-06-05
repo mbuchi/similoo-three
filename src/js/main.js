@@ -7,8 +7,8 @@ import { createComparisonSidebar } from './comparison/sidebar.js';
 import { resolveEgridFromLngLat } from './comparison/parcelLookup.js';
 import { sendSignalCollect } from './api/signalCollect.js';
 import { locationState } from './locationState.js';
-import { setupApp } from '@swissnovo/shared/cesium-app/app.js';
-import { setupAuth } from '@swissnovo/shared/cesium-app/auth/index.js';
+import { setupApp } from '@aireon/shared/cesium-app/app.js';
+import { setupAuth } from '@aireon/shared/cesium-app/auth/index.js';
 
 // Tag the suite-shared modules with this app's name so signal_collect
 // payloads, screenshot filename prefixes, and PRM records carry the
