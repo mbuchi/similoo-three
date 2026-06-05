@@ -200,19 +200,19 @@ export const RELEASES = [
         date: 'May 28, 2026',
         codename: 'Auth & PRM',
         summary:
-            'Suite parity step one: Zitadel auth + Parcel Registry Management (PRM) save-parcel. Signing in works through the standard SwissNovo OIDC flow (the same Zitadel realm the rest of the suite uses); the building info panel grows a "Save parcel" footer button that hits the proom PRM backend via @swissnovo/shared\'s vanilla helpers. The button is state-aware — "Save parcel" → "Saving…" → "Saved" (or "Sign in to save" for anonymous users, who get the login popup on click). Locale-correct labels for all five states in EN/FR/DE/IT. The shared i18n engine is now registered with our 293-key catalog so the suite-shared auth nav speaks the same language as the rest of the UI. Claire (text + voice) is the remaining parity gap — defer to a follow-up because the React-based ClaireAssistant component needs a tiny React island that doesn\'t exist in this vanilla app yet.',
+            'Suite parity step one: Zitadel auth + Parcel Registry Management (PRM) save-parcel. Signing in works through the standard SwissNovo OIDC flow (the same Zitadel realm the rest of the suite uses); the building info panel grows a "Save parcel" footer button that hits the proom PRM backend via @aireon/shared\'s vanilla helpers. The button is state-aware — "Save parcel" → "Saving…" → "Saved" (or "Sign in to save" for anonymous users, who get the login popup on click). Locale-correct labels for all five states in EN/FR/DE/IT. The shared i18n engine is now registered with our 293-key catalog so the suite-shared auth nav speaks the same language as the rest of the UI. Claire (text + voice) is the remaining parity gap — defer to a follow-up because the React-based ClaireAssistant component needs a tiny React island that doesn\'t exist in this vanilla app yet.',
         highlight: true,
         items: [
             {
                 kind: 'new',
                 icon: 'log-in',
-                text: 'Zitadel auth via @swissnovo/shared/cesium-app/auth: setupAuth() injects the login button + profile dropdown into the existing <div id="authNav"> placeholder. Standard SwissNovo OIDC redirect_uri / silent SSO flow, no app-specific config beyond setupApp({appName: "similoo-three"}).',
+                text: 'Zitadel auth via @aireon/shared/cesium-app/auth: setupAuth() injects the login button + profile dropdown into the existing <div id="authNav"> placeholder. Standard SwissNovo OIDC redirect_uri / silent SSO flow, no app-specific config beyond setupApp({appName: "similoo-three"}).',
                 prs: [],
             },
             {
                 kind: 'new',
                 icon: 'bookmark',
-                text: 'Save-parcel button in the building info panel footer. Calls @swissnovo/shared\'s createPrmRecord/fetchPrmByParcel with the picked building\'s GWR id as the parcel_id. State machine: idle → saving → saved (or auth → error). Re-clicking a saved parcel shows the "Saved" state without re-saving.',
+                text: 'Save-parcel button in the building info panel footer. Calls @aireon/shared\'s createPrmRecord/fetchPrmByParcel with the picked building\'s GWR id as the parcel_id. State machine: idle → saving → saved (or auth → error). Re-clicking a saved parcel shows the "Saved" state without re-saving.',
                 prs: [],
             },
             {

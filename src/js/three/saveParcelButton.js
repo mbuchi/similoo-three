@@ -4,7 +4,7 @@
 // When the user clicks "Save" on the info panel, we fetch (or create)
 // a PRM record keyed by the picked building's identifier. PRM lives
 // at https://res.zeroo.ch/api/v1/prm; both helpers below come from
-// @swissnovo/shared and tree-shake cleanly because the package is
+// @aireon/shared and tree-shake cleanly because the package is
 // `sideEffects: false`.
 //
 // Auth: PRM endpoints require a Zitadel token. We get it via
@@ -12,12 +12,12 @@
 // button still appears but click triggers `login()` from
 // shared/cesium-app/auth instead.
 
-import { fetchPrmByParcel, createPrmRecord, getAuthToken } from '@swissnovo/shared';
+import { fetchPrmByParcel, createPrmRecord, getAuthToken } from '@aireon/shared';
 import {
     isAuthenticated,
     onAuthChange,
     login as authLogin,
-} from '@swissnovo/shared/cesium-app/auth/index.js';
+} from '@aireon/shared/cesium-app/auth/index.js';
 import { t, onLocaleChange } from '../i18n.js';
 
 export function createSaveParcelButton({ container }) {
