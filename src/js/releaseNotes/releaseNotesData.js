@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
     {
+        version: '0.9.5',
+        date: 'June 5, 2026',
+        codename: 'One Sign-In',
+        summary:
+            'Cross-app single sign-on now works: if you are signed in to any Aireon app, similoo-three signs you in automatically on load via a brief, UI-less prompt=none check. Anonymous visitors are unaffected.',
+        highlight: true,
+        items: [
+            {
+                kind: 'new',
+                icon: 'log-in',
+                text: 'Added cross-app single sign-on: signed in to any Aireon app, similoo-three now signs you in automatically on load via a brief, UI-less prompt=none session check. Anonymous visitors are unaffected.',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.9.4',
         date: 'June 4, 2026',
         codename: 'Instant Reopen',
