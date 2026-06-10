@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>similoo-three · splat — 3D Gaussian Splatting viewer</title>
-    <meta name="description" content="A web 3D Gaussian Splatting (3DGS) viewer for SwissNovo: photoreal building captures cleaned in SuperSplat, served as .splat/.ply and rendered in the browser." />
+    <meta name="description" content="A web 3D Gaussian Splatting (3DGS) viewer for Aireon: photoreal building captures cleaned in SuperSplat, served as .splat/.ply and rendered in the browser." />
     <meta name="robots" content="noindex" />
 
     <!-- Open Graph -->
@@ -12,12 +12,12 @@
     <meta property="og:site_name" content="similoo-three" />
     <meta property="og:title" content="similoo-three · splat — 3D Gaussian Splatting" />
     <meta property="og:description" content="Photoreal building captures as 3D Gaussian Splats, rendered in the browser. Edit in SuperSplat, drop in via ?src=." />
-    <meta property="og:url" content="https://similoo-three.vercel.app/splat" />
-    <meta property="og:image" content="https://toolbox.swissnovo.com/meta/similoo-three.jpg" />
+    <meta property="og:url" content="https://similoo-three.aireon.ch/splat" />
+    <meta property="og:image" content="https://hub.aireon.ch/meta/similoo-three.jpg" />
 
-    <link rel="icon" type="image/svg+xml" href="https://swissnovo-toolbox.vercel.app/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="https://swissnovo-toolbox.vercel.app/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="https://swissnovo-toolbox.vercel.app/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="https://hub.aireon.ch/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="https://hub.aireon.ch/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://hub.aireon.ch/apple-touch-icon.png" />
     <meta name="theme-color" content="#0f172a" />
 
     <!-- Pre-paint theme bootstrap — shared with index.html so no white flash. -->
@@ -288,8 +288,17 @@
         .catch((err) => {
           loading.hidden = true;
           errorEl.hidden = false;
-          document.getElementById('errorMsg').innerHTML =
-            'Source: <code>' + src + '</code><br/>' + (err && err.message ? err.message : 'The file could not be read as a Gaussian-splat scene.');
+          // Build the error message with DOM nodes so any markup in `src`
+          // or `err.message` renders as inert text, not executable HTML.
+          const errorMsgEl = document.getElementById('errorMsg');
+          errorMsgEl.textContent = '';
+          errorMsgEl.appendChild(document.createTextNode('Source: '));
+          const codeEl = document.createElement('code');
+          codeEl.textContent = src;
+          errorMsgEl.appendChild(codeEl);
+          errorMsgEl.appendChild(document.createElement('br'));
+          errorMsgEl.appendChild(document.createTextNode(
+            err && err.message ? err.message : 'The file could not be read as a Gaussian-splat scene.'));
           console.error('splat load failed', err);
         });
     </script>
