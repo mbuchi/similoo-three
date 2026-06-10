@@ -39,6 +39,27 @@ export const KIND_META = {
 export const RELEASES = [
 
     {
+        version: '0.9.7',
+        date: 'June 10, 2026',
+        codename: 'Safe Splat',
+        summary:
+            'Hardened the /splat 3D Gaussian-splat viewer against a reflected cross-site-scripting (XSS) issue and brought its page metadata onto the Aireon domains.',
+        items: [
+            {
+                kind: 'fixed',
+                icon: 'shield',
+                text: 'Fixed a reflected-XSS issue in the /splat viewer: the ?src= parameter and load-error text are now rendered as inert text via DOM nodes instead of innerHTML, so a crafted ?src= link can no longer execute markup.',
+                prs: [],
+            },
+            {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Repointed the /splat page favicon, Open Graph and canonical metadata from the old swissnovo URLs to the Aireon hub (hub.aireon.ch / similoo-three.aireon.ch).',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.9.6',
         date: 'June 9, 2026',
         codename: 'Aligned Meta',
