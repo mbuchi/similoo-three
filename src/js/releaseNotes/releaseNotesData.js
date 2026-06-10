@@ -39,6 +39,21 @@ export const KIND_META = {
 export const RELEASES = [
 
     {
+        version: '0.9.8',
+        date: 'June 10, 2026',
+        codename: 'Aireon Copy',
+        summary:
+            'Cleaned up the last user-visible "SwissNovo" mentions in the release notes, replacing the retired brand and toolbox URL with Aireon / the Aireon hub.',
+        items: [
+            {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Renamed the remaining "SwissNovo" references in older release notes to "Aireon" and repointed the historical social-image URL to the Aireon hub (hub.aireon.ch).',
+                prs: [],
+            },
+        ],
+    },
+    {
         version: '0.9.7',
         date: 'June 10, 2026',
         codename: 'Safe Splat',
@@ -193,7 +208,7 @@ export const RELEASES = [
             {
                 kind: 'improved',
                 icon: 'image',
-                text: 'social-share preview image now uses the centralized toolbox URL (https://toolbox.swissnovo.com/meta/similoo-three.jpg) with correct dimensions.',
+                text: 'social-share preview image now uses the centralized toolbox URL (https://hub.aireon.ch/meta/similoo-three.jpg) with correct dimensions.',
                 prs: [],
             },
         ],
@@ -253,13 +268,13 @@ export const RELEASES = [
         date: 'May 28, 2026',
         codename: 'Auth & PRM',
         summary:
-            'Suite parity step one: Zitadel auth + Parcel Registry Management (PRM) save-parcel. Signing in works through the standard SwissNovo OIDC flow (the same Zitadel realm the rest of the suite uses); the building info panel grows a "Save parcel" footer button that hits the proom PRM backend via @aireon/shared\'s vanilla helpers. The button is state-aware — "Save parcel" → "Saving…" → "Saved" (or "Sign in to save" for anonymous users, who get the login popup on click). Locale-correct labels for all five states in EN/FR/DE/IT. The shared i18n engine is now registered with our 293-key catalog so the suite-shared auth nav speaks the same language as the rest of the UI. Claire (text + voice) is the remaining parity gap — defer to a follow-up because the React-based ClaireAssistant component needs a tiny React island that doesn\'t exist in this vanilla app yet.',
+            'Suite parity step one: Zitadel auth + Parcel Registry Management (PRM) save-parcel. Signing in works through the standard Aireon OIDC flow (the same Zitadel realm the rest of the suite uses); the building info panel grows a "Save parcel" footer button that hits the proom PRM backend via @aireon/shared\'s vanilla helpers. The button is state-aware — "Save parcel" → "Saving…" → "Saved" (or "Sign in to save" for anonymous users, who get the login popup on click). Locale-correct labels for all five states in EN/FR/DE/IT. The shared i18n engine is now registered with our 293-key catalog so the suite-shared auth nav speaks the same language as the rest of the UI. Claire (text + voice) is the remaining parity gap — defer to a follow-up because the React-based ClaireAssistant component needs a tiny React island that doesn\'t exist in this vanilla app yet.',
         highlight: true,
         items: [
             {
                 kind: 'new',
                 icon: 'log-in',
-                text: 'Zitadel auth via @aireon/shared/cesium-app/auth: setupAuth() injects the login button + profile dropdown into the existing <div id="authNav"> placeholder. Standard SwissNovo OIDC redirect_uri / silent SSO flow, no app-specific config beyond setupApp({appName: "similoo-three"}).',
+                text: 'Zitadel auth via @aireon/shared/cesium-app/auth: setupAuth() injects the login button + profile dropdown into the existing <div id="authNav"> placeholder. Standard Aireon OIDC redirect_uri / silent SSO flow, no app-specific config beyond setupApp({appName: "similoo-three"}).',
                 prs: [],
             },
             {
@@ -419,7 +434,7 @@ export const RELEASES = [
             {
                 kind: 'improved',
                 icon: 'sparkles',
-                text: 'Lowercase branding audit clean — every "similoo-three" occurrence in HTML, i18n, and CSS is lowercase per SwissNovo suite conventions.',
+                text: 'Lowercase branding audit clean — every "similoo-three" occurrence in HTML, i18n, and CSS is lowercase per Aireon suite conventions.',
                 prs: [],
             },
         ],
@@ -607,7 +622,7 @@ export const RELEASES = [
             {
                 kind: 'improved',
                 icon: 'badge-check',
-                text: 'Brand wordmark untouched: `similoo-three` stays in Varela Round with the red `oo`, matching SwissNovo suite branding.',
+                text: 'Brand wordmark untouched: `similoo-three` stays in Varela Round with the red `oo`, matching Aireon suite branding.',
                 prs: [],
             },
             {
