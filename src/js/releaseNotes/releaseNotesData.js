@@ -39,6 +39,22 @@ export const KIND_META = {
 export const RELEASES = [
 
     {
+        version: '0.9.9',
+        date: 'June 11, 2026',
+        codename: 'Shared Avatar Picker',
+        summary:
+            'The profile avatar picker now matches the rest of Aireon: three rows, horizontal scroll, instant update and a compact confirmation pill.',
+        items: [
+            {
+                kind: 'improved',
+                icon: 'user',
+                text: 'Updated @aireon/shared to v1.14.6 so the vanilla shared account menu uses the same avatar catalogue and picker behavior as the React apps. Choosing an avatar updates the header immediately and saves without pressing the profile Save button.',
+                prs: [],
+            },
+        ],
+    },
+
+    {
         version: '0.9.8',
         date: 'June 10, 2026',
         codename: 'Aireon Copy',

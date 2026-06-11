@@ -1,4 +1,5 @@
 import './i18n.js';
+import '@aireon/shared/cesium-app/css/auth.css';
 
 import { applyTranslations, bindLocaleSelect, t } from './i18n.js';
 import { bindLandingSearch } from './landing/addressSearch.js';
