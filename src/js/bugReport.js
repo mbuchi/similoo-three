@@ -109,7 +109,7 @@ export function setupBugReport({ appName, endpoint = '/api/errorlog-collect', me
     root.id = 'aireon-bug-report-root';
     root.innerHTML = `
         <button class="aireon-bug-launcher" type="button" aria-label="${t.button}" title="${t.button}">
-            <i data-lucide="bug" aria-hidden="true"></i>
+            <i data-lucide="shield-alert" aria-hidden="true"></i>
         </button>
         <div class="aireon-bug-overlay" hidden>
             <form class="aireon-bug-dialog" role="dialog" aria-modal="true" aria-labelledby="${titleId}">
@@ -117,7 +117,7 @@ export function setupBugReport({ appName, endpoint = '/api/errorlog-collect', me
                     <i data-lucide="x" aria-hidden="true"></i>
                 </button>
                 <div class="aireon-bug-head">
-                    <span class="aireon-bug-head-icon"><i data-lucide="bug" aria-hidden="true"></i></span>
+                    <span class="aireon-bug-head-icon"><i data-lucide="shield-alert" aria-hidden="true"></i></span>
                     <div>
                         <h2 id="${titleId}">${t.title}</h2>
                         <p>${t.subtitle}</p>

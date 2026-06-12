@@ -43,12 +43,12 @@ export const RELEASES = [
         date: 'June 12, 2026',
         codename: 'Bug Report Button',
         summary:
-            'A small bug icon now lets users report bugs or feedback without leaving similoo-three.',
+            'A compact shield-alert button now lets users report bugs or feedback without leaving similoo-three.',
         items: [
             {
                 kind: 'new',
-                icon: 'bug',
-                text: 'Added a compact bug-report button with a modal form for bugs and feedback. Submissions go through the suite errorlog proxy with page URL, browser context and optional email, while leaving empty numeric fields out of the payload.',
+                icon: 'shield-alert',
+                text: 'Added a compact shield-alert bug-report button with a modal form for bugs and feedback. Submissions go through the suite errorlog proxy with page URL, browser context and optional email, while leaving empty numeric fields out of the payload.',
                 prs: [],
             },
         ],
