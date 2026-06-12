@@ -46,6 +46,12 @@ export const RELEASES = [
             'A compact shield-alert button now lets users report bugs or feedback without leaving similoo-three.',
         items: [
             {
+                kind: 'improved',
+                icon: 'sparkles',
+                text: 'Added the standard top-left Aireon hub icon to the navbar, using the canonical favicon from hub.aireon.ch.',
+                prs: [],
+            },
+            {
                 kind: 'new',
                 icon: 'shield-alert',
                 text: 'Added a compact shield-alert bug-report button with a modal form for bugs and feedback. Submissions go through the suite errorlog proxy with page URL, browser context and optional email, while leaving empty numeric fields out of the payload.',
