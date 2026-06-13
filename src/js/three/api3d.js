@@ -98,6 +98,16 @@ export function fetchBuildingGLB({ lat, lng }) {
 }
 
 export async function fetchFootprintsBBox({ lat, lng, radius_m = 100 }) {
+    // Footprints in a bbox are static cadastre — panning/zooming back to an
+    // area should hit localStorage instead of re-querying Contoor. The radius
+    // is part of the key because a larger bbox is a superset, not the same
+    // response. Rounding to 5 decimals (~1 m) keeps coordinate round-trips
+    // through the URL on the same cache entry. Degrades silently to a plain
+    // fetch on any storage error (getCached/setCached swallow their own).
+    const cacheKey = `footprints:${lat.toFixed(5)},${lng.toFixed(5)}:r${radius_m}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const res = await fetch(FOOTPRINTS_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -107,7 +117,15 @@ export async function fetchFootprintsBBox({ lat, lng, radius_m = 100 }) {
         const text = await res.text().catch(() => '');
         throw new Error(`footprints ${res.status}: ${text.slice(0, 200)}`);
     }
-    return res.json();
+    const payload = await res.json();
+    // Cache only a non-empty footprint list. The proxy always answers 200
+    // with a `buildings` array (empty when the WFS bbox hit nothing), and an
+    // empty bbox can be transient (tile not yet ingested upstream), so don't
+    // pin an empty answer for 7 days.
+    if (Array.isArray(payload?.buildings) && payload.buildings.length) {
+        setCached(cacheKey, payload, TTL.footprints);
+    }
+    return payload;
 }
 
 // Combined height + volume metrics for the building footprint at

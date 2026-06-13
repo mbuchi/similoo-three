@@ -38,6 +38,22 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.9.13',
+    date: 'June 13, 2026',
+    codename: 'Cached Footprints',
+    summary:
+      'Nearby-building footprint lookups are now cached locally, so panning back to an area you already explored loads instantly instead of re-querying the 3D backend.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'database',
+        text: 'The nearby-building footprint list is now cached in your browser for 7 days, keyed by the rounded view centre and radius. Revisiting an area you already loaded skips the network round-trip; the cache degrades silently to a fresh fetch if storage is unavailable.',
+        prs: [],
+      },
+    ],
+  },
+
+  {
     version: '0.9.12',
     date: 'June 13, 2026',
     codename: 'UI Review Residuals',
