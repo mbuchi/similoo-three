@@ -38,6 +38,34 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.0',
+    date: 'June 13, 2026',
+    codename: 'React Shell',
+    summary:
+      'Rebuilt the app on React 18 + TypeScript while keeping the 3D viewer, the address search, the comparable-buildings sidebar and the /splat viewer exactly as before. Same look, same features — just a modern shell that lines up with the rest of the Aireon suite.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'component',
+        text: 'Migrated the top bar and page scaffold from hand-written HTML/JS to React 18 + TypeScript components. The Three.js scene engine, sun cycle, comparison sidebar, address geocoder and the /splat Gaussian-splat viewer are preserved unchanged and mounted from the React shell.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'sun',
+        text: 'Fixed a long-standing initialisation-order bug that could throw "Cannot access currentLatLng before initialization" and leave the 3D scene blank: the first-paint sun update now runs after its state is declared.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'link',
+        text: 'A plain page load no longer attempts to render a phantom 0,0 scene; the deep-link loader now only fires when both lat and lng are actually present in the URL.',
+        prs: [],
+      },
+    ],
+  },
+
+  {
     version: '0.9.13',
     date: 'June 13, 2026',
     codename: 'Cached Footprints',

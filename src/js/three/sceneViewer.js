@@ -183,9 +183,10 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
     // Sky palette refinement that accounts for solar elevation on top
     // of the page theme. Below horizon dims the dome to night; near
     // horizon warms the horizon stripe.
-    // First paint with the default location + 'now' so the scene
-    // doesn't open with the boilerplate (80, 120, 60) sun direction.
-    updateSunFromDate();
+    // (The first-paint updateSunFromDate() call lives after currentLatLng is
+    // declared below — calling it here would hit a `let` temporal-dead-zone
+    // under strict ESM and throw "Cannot access 'currentLatLng' before
+    // initialization".)
 
     function applyAtmosphere(elevation) {
         const themeAttr = document.documentElement.getAttribute('data-theme');
@@ -237,6 +238,12 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
     let vegetationLoading = null;       // in-flight promise; reused on rapid toggling
     let vegetationActive = false;       // user intent — preserved across address changes
     let currentLatLng = null;           // last loaded address for vegetation re-fetch
+
+    // First paint with the default location + 'now' so the scene doesn't open
+    // with the boilerplate (80, 120, 60) sun direction. Must run after the
+    // currentLatLng declaration above (see the TDZ note further up).
+    updateSunFromDate();
+
     layersDock.addToggle({
         id: 'vegetation',
         labelKey: 'scene.layer_vegetation',

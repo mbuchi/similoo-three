@@ -1,8 +1,18 @@
-import './i18n.js';
-import '@aireon/shared/cesium-app/css/auth.css';
-import '../css/bugReport.css';
+// Imperative engine boot for similoo-three.
+//
+// This is the PRESERVED engine wiring lifted near-verbatim from the original
+// vanilla-JS main.js. The React shell (src/App.tsx) renders the static DOM
+// scaffold (same element IDs the engine expects) and the top bar, then calls
+// bootScene() once from a useEffect. Everything below — the landing search,
+// the Three.js scene viewer, the comparison sidebar, the deep-link bootstrap,
+// the status/progress UI — is identical to the old app; only the navbar-owned
+// concerns (theme toggle, locale <select>, auth nav) have moved into React,
+// which calls into the same shared i18n / auth singletons so there is still a
+// single source of truth.
 
-import { applyTranslations, bindLocaleSelect, t } from './i18n.js';
+import './i18n.js';
+
+import { applyTranslations, t } from './i18n.js';
 import { bindLandingSearch } from './landing/addressSearch.js';
 import { createSceneViewer } from './three/sceneViewer.js';
 import { createComparisonSidebar } from './comparison/sidebar.js';
@@ -18,24 +28,27 @@ import { setupBugReport } from './bugReport.js';
 // right `app_name`. Must run before any shared module that reads it.
 setupApp({ appName: 'similoo-three', appLabel: 'similoo-three' });
 
-// Apply translations as soon as the static DOM is parsed — before window.onload
-// fires — so users don't see a flash of English text while the bundle boots.
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-} else {
-    boot();
+// Re-export so the React shell can run the static-DOM i18n sweep after it
+// renders the scaffold (mirrors the old DOMContentLoaded → applyTranslations).
+export function applyEngineTranslations() {
+    applyTranslations(document);
 }
 
-function boot() {
+/**
+ * Wire up the whole scene experience against the React-rendered scaffold.
+ * Returns a handle with dispose() so the React effect can tear everything
+ * down on unmount (idempotent — the engine is mounted once in practice).
+ */
+export function bootScene() {
     applyTranslations(document);
-    bindLocaleSelect('locale-select');
-    setupThemeToggle();
     setupBugReport({ appName: 'similoo-three' });
 
     // Wire suite-shared Zitadel auth into the existing <div id="authNav">.
     // setupAuth() injects the login button + profile dropdown into that
     // placeholder and handles the OIDC callback automatically. Fire-and-
-    // forget: the auth state propagates via shared's onAuthChange.
+    // forget: the auth state propagates via shared's onAuthChange. Kept
+    // imperative (not the React MapUserMenu) so the engine's Save-parcel
+    // button shares ONE oidc-client userManager + onAuthChange bus.
     setupAuth().catch((err) => {
         console.warn('auth bootstrap failed', err);
     });
@@ -52,6 +65,7 @@ function boot() {
     let viewer = null;
     let sidebar = null;
     let pickSeq = 0;
+    let searchDispose = null;
 
     // setStatus accepts either a plain string (the legacy shape) or an
     // options bag with progress + optional retry handler. The status
@@ -237,7 +251,7 @@ function boot() {
     }
 
     if (input && list) {
-        bindLandingSearch({ input, list, onPick: handlePick });
+        searchDispose = bindLandingSearch({ input, list, onPick: handlePick });
         setTimeout(() => input.focus(), 80);
     }
 
@@ -246,15 +260,31 @@ function boot() {
     // sharing a specific address and for headless tests.
     try {
         const params = new URLSearchParams(window.location.search);
-        const lat = Number(params.get('lat'));
-        const lng = Number(params.get('lng'));
-        if (Number.isFinite(lat) && Number.isFinite(lng)) {
-            const label = params.get('label') || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-            handlePick({ lat, lng, label });
+        // Guard with has(): Number(null) === 0 (not NaN), so a plain `/` with
+        // no params would otherwise pass Number.isFinite and load a phantom
+        // 0,0 scene. Only deep-link when both params are actually present.
+        if (params.has('lat') && params.has('lng')) {
+            const lat = Number(params.get('lat'));
+            const lng = Number(params.get('lng'));
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                const label = params.get('label') || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                handlePick({ lat, lng, label });
+            }
         }
     } catch (_) { /* no-op */ }
 
     if (window.lucide?.createIcons) window.lucide.createIcons();
+
+    return {
+        dispose() {
+            try { searchDispose?.(); } catch {}
+            try { backBtn?.removeEventListener('click', showLanding); } catch {}
+            try { viewer?.destroy?.(); } catch {}
+            try { sidebar?.destroy?.(); } catch {}
+            viewer = null;
+            sidebar = null;
+        },
+    };
 }
 
 function escapeHtml(str) {
@@ -264,23 +294,4 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
-}
-
-function setupThemeToggle() {
-    const btn = document.getElementById('themeToggleButton');
-    if (!btn) return;
-    const root = document.documentElement;
-    const sync = () => {
-        const isDark = root.getAttribute('data-theme') === 'dark';
-        btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-    };
-    btn.addEventListener('click', () => {
-        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        try {
-            localStorage.setItem('similoo-three-theme', next);
-        } catch {}
-        sync();
-    });
-    sync();
 }
