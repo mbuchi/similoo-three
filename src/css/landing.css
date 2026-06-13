@@ -141,6 +141,15 @@
     color: #dc2626;
 }
 
+.landing-result-error,
+.landing-result-error:hover,
+[data-theme='dark'] .landing-result-error {
+    cursor: default;
+    color: #dc2626;
+    background: transparent;
+    font-weight: 500;
+}
+
 .landing-hint {
     margin: 14px 0 0;
     color: var(--muted, #94a3b8);

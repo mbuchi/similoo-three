@@ -7,6 +7,8 @@
 // the repo so secret scanners stay happy. Set it in Vercel env vars and
 // in a local .env file (see .env.example).
 
+import { t } from '../i18n.js';
+
 const TOKEN = import.meta.env?.VITE_MAPBOX_TOKEN || '';
 const DEBOUNCE_MS = 200;
 
@@ -94,6 +96,23 @@ export function bindLandingSearch({ input, list, onPick }) {
         updateActive();
     }
 
+    // Surfaces a localized, non-interactive error row in the results list so
+    // geocode failures (Mapbox 401/429, network, or a missing token) aren't
+    // silent. The row is cleared on the next keystroke like any result.
+    function renderError() {
+        currentResults = [];
+        list.innerHTML = '';
+        const li = document.createElement('li');
+        li.className = 'landing-result landing-result-error';
+        li.setAttribute('role', 'alert');
+        li.textContent = t('landing.search_error');
+        list.appendChild(li);
+        list.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        input.removeAttribute('aria-activedescendant');
+        activeIndex = -1;
+    }
+
     function updateActive() {
         const children = Array.from(list.children);
         children.forEach((c, i) => {
@@ -125,6 +144,7 @@ export function bindLandingSearch({ input, list, onPick }) {
         } catch (err) {
             if (err?.name === 'AbortError') return;
             console.warn('addressSearch: geocode failed', err?.message);
+            renderError();
         }
     }
 

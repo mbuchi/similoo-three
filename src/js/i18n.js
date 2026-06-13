@@ -94,6 +94,7 @@ const translations = {
     'landing.search_placeholder': 'e.g. Bahnhofstrasse 10, Zürich',
     'landing.search_aria': 'Search a Swiss address',
     'landing.hint': 'Pick a result to load the 3D scene.',
+    'landing.search_error': 'Address search is unavailable right now. Please try again.',
 
     // ---------- scene ----------
     'scene.back': 'Search again',
@@ -444,6 +445,7 @@ const translations = {
     'landing.search_placeholder': 'p. ex. Bahnhofstrasse 10, Zürich',
     'landing.search_aria': 'Rechercher une adresse suisse',
     'landing.hint': 'Sélectionnez un résultat pour charger la scène 3D.',
+    'landing.search_error': "La recherche d'adresse est momentanément indisponible. Veuillez réessayer.",
 
     // ---------- scene ----------
     'scene.back': 'Nouvelle recherche',
@@ -808,6 +810,7 @@ const translations = {
     'landing.search_placeholder': 'z. B. Bahnhofstrasse 10, Zürich',
     'landing.search_aria': 'Schweizer Adresse suchen',
     'landing.hint': 'Wählen Sie einen Treffer, um die 3D-Szene zu laden.',
+    'landing.search_error': 'Die Adresssuche ist momentan nicht verfügbar. Bitte versuchen Sie es erneut.',
 
     // ---------- scene ----------
     'scene.back': 'Neu suchen',
@@ -1174,6 +1177,7 @@ const translations = {
     'landing.search_placeholder': 'es. Bahnhofstrasse 10, Zürich',
     'landing.search_aria': 'Cerca un indirizzo svizzero',
     'landing.hint': 'Seleziona un risultato per caricare la scena 3D.',
+    'landing.search_error': "La ricerca di indirizzi non è al momento disponibile. Riprova.",
 
     // ---------- scene ----------
     'scene.back': 'Cerca di nuovo',
