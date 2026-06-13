@@ -79,84 +79,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Varela+Round&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="/src/css/styles.css">
-    <link rel="stylesheet" href="/src/css/comparison.css">
-    <link rel="stylesheet" href="/src/css/landing.css">
-    <link rel="stylesheet" href="/src/css/scene.css">
 </head>
 <body>
-<a class="skip-link" href="#main-content" data-i18n="nav.skip_to_content">Skip to content</a>
-<div class="navbar">
-    <div class="navbar-desktop">
-      <div class="navbar-brand">
-        <a href="https://hub.aireon.ch/" class="aireon-hub-link" aria-label="Aireon hub" title="Aireon hub">
-          <span class="aireon-hub-mark" aria-hidden="true"></span>
-        </a>
-        <span class="aireon-hub-divider" aria-hidden="true"></span>
-        <a href="/" class="logo">
-            <span class="logo-first">simil</span><span class="logo-second">oo</span><span class="logo-first">-three</span>
-        </a>
-        <span class="logo-subtitle" data-i18n="nav.logo_subtitle">Address-first 3D</span>
-      </div>
-      <div class="navbar-actions">
-        <button id="themeToggleButton" class="theme-toggle-button" title="Toggle dark mode" aria-label="Toggle dark mode" aria-pressed="false"
-                data-i18n-attr="aria-label:nav.theme_toggle,title:nav.theme_toggle">
-            <svg class="theme-toggle-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-            </svg>
-            <svg class="theme-toggle-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-        </button>
-        <select id="locale-select" class="locale-select" aria-label="Select language"
-                data-i18n-attr="aria-label:nav.select_language,title:nav.select_language" title="Select language">
-            <option value="en">EN</option>
-            <option value="fr">FR</option>
-            <option value="de">DE</option>
-            <option value="it">IT</option>
-        </select>
-        <div id="authNav" class="auth-nav" aria-live="polite"></div>
-      </div>
-    </div>
-</div>
-
-<main id="main-content">
-<!-- Landing: address search (shown first; hidden once an address is picked) -->
-<section id="landingView" class="landing-view">
-    <div class="landing-card">
-        <h1 class="landing-title" data-i18n="landing.title">Type a Swiss address.</h1>
-        <p class="landing-subtitle" data-i18n="landing.subtitle">We render the building and a 100 m slice around it in live 3D, with comparable buildings from across Switzerland.</p>
-        <form class="landing-search" id="landingSearchForm" role="search" autocomplete="off">
-            <input type="search" id="landingSearchInput" class="landing-search-input"
-                   placeholder="e.g. Bahnhofstrasse 10, Zürich"
-                   aria-label="Search address"
-                   role="combobox" aria-expanded="false" aria-controls="landingResults"
-                   aria-autocomplete="list" autocomplete="off"
-                   data-i18n-attr="placeholder:landing.search_placeholder,aria-label:landing.search_aria" />
-            <ul class="landing-results" id="landingResults" role="listbox" hidden></ul>
-            <p class="landing-hint" data-i18n="landing.hint">Pick a result to load the 3D scene.</p>
-        </form>
-    </div>
-</section>
-
-<!-- Scene: Three.js viewer (shown after address pick) -->
-<section id="sceneView" class="scene-view" hidden>
-    <div id="sceneHeader" class="scene-header">
-        <button id="backToSearch" class="scene-back" type="button" aria-label="Back to search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span data-i18n="scene.back">Search again</span>
-        </button>
-        <div class="scene-address" id="sceneAddress"></div>
-        <div class="scene-status" id="sceneStatus" role="status" aria-live="polite" aria-atomic="true"></div>
-    </div>
-    <div id="sceneCanvas" class="scene-canvas" role="img" aria-label="3D viewer of the selected Swiss address: terrain, building, and nearby buildings rendered with shadows" data-i18n-attr="aria-label:scene.canvas_aria"></div>
-</section>
-</main>
-
-<script type="module" src="/src/js/main.js"></script>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
