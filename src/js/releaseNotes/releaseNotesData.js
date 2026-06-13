@@ -38,6 +38,34 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.9.12',
+    date: 'June 13, 2026',
+    codename: 'UI Review Residuals',
+    summary:
+      'Localized the dark-mode toggle, surfaced address-search failures instead of failing silently, and tidied the /splat editor link.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'languages',
+        text: 'The dark-mode toggle now announces its label and tooltip in the active language (FR/DE/IT), matching the rest of the navbar.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'search-x',
+        text: 'When address search cannot reach the geocoder, a localized inline message now appears in the results list instead of the search appearing to do nothing.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'sparkles',
+        text: 'Removed a no-op "Edit in SuperSplat" link rewrite on the /splat viewer that promised to deep-link the editor but never did.',
+        prs: [],
+      },
+    ],
+  },
+
+  {
     version: '0.9.11',
     date: 'June 12, 2026',
     codename: 'Theme-Aware Hub Mark',
