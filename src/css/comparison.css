@@ -6,7 +6,7 @@
 
 .cmp {
     position: fixed;
-    top: 60px;
+    top: 56px;
     right: 0;
     bottom: 0;
     width: 400px;
@@ -415,7 +415,7 @@ body.cmp-shifted .scene-layers {
 @media (max-width: 640px) {
     .cmp {
         width: 100%;
-        top: 60px;
+        top: 56px;
     }
     body.cmp-shifted .scene-compass,
     body.cmp-shifted .scene-layers {
