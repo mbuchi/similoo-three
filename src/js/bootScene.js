@@ -19,6 +19,7 @@ import { createComparisonSidebar } from './comparison/sidebar.js';
 import { resolveEgridFromLngLat } from './comparison/parcelLookup.js';
 import { sendSignalCollect } from './api/signalCollect.js';
 import { locationState } from './locationState.js';
+import { searchHistoryStore } from '@aireon/shared';
 import { setupApp } from '@aireon/shared/cesium-app/app.js';
 import { setupAuth } from '@aireon/shared/cesium-app/auth/index.js';
 import { setupBugReport } from './bugReport.js';
@@ -194,6 +195,16 @@ export function bootScene() {
             longitude: result.lng,
             displayName: result.label,
         }).catch(() => {});
+
+        // Cross-app address-search history (shared v1.21.0). Records the
+        // picked address so it shows up in "My search history" across the
+        // suite; persists to the backend when signed in, localStorage otherwise.
+        searchHistoryStore.record({
+            label: result.label,
+            lat: result.lat,
+            lng: result.lng,
+            appName: 'similoo-three',
+        });
 
         showScene(result.label);
         syncDeepLink(result);
