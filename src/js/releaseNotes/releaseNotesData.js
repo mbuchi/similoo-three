@@ -38,6 +38,21 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.1',
+    date: 'June 14, 2026',
+    codename: 'Shared Navbar',
+    summary:
+      'The top bar now uses the suite-shared AppNavbar shell, so the Aireon hub badge and the simil-oo-three wordmark match every other app in the suite. The theme toggle, language picker and account menu are unchanged — they just live in the shared bar now.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'component',
+        text: 'Adopted the suite-shared AppNavbar for the top bar: the Aireon hub badge + wordmark and the bar chrome now come from @aireon/shared, while the theme toggle, language selector and account menu were relocated into the shared bar with their wiring untouched.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.0',
     date: 'June 13, 2026',
     codename: 'React Shell',
