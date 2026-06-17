@@ -91,7 +91,7 @@
     --hood-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Cascadia Code', Consolas, monospace;
 
     /* Layout metrics */
-    --navbar-h: 60px;
+    --navbar-h: var(--aireon-navbar-height, 56px);
     --rail-w: 56px;
     --panel-w: 280px;
 }
@@ -720,7 +720,7 @@ html, body, #mapContainer {
     }
 
     #mapContainer {
-        padding-top: 60px;
+        padding-top: var(--aireon-navbar-height, 56px);
     }
 
     .logo {
