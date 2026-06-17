@@ -47,6 +47,12 @@ export const RELEASES = [
       {
         kind: 'improved',
         icon: 'component',
+        text: 'The navbar height now reads from the shared Aireon token, so the 3D viewport offset stays locked to the same 56px AppNavbar height as the rest of the suite.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'component',
         text: 'Adopted the suite-shared AppNavbar for the top bar: the Aireon hub badge + wordmark and the bar chrome now come from @aireon/shared, while the theme toggle, language selector and account menu were relocated into the shared bar with their wiring untouched.',
         prs: [],
       },
