@@ -38,6 +38,21 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.3',
+    date: 'June 18, 2026',
+    codename: 'Lighter Boot',
+    summary:
+      'The Three.js engine now ships in its own JavaScript chunk instead of riding along in the main entry bundle, so the app shell paints sooner and the browser can cache the heavy 3D library separately across releases.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'component',
+        text: 'perf: code-split the heavy Three.js library out of the entry bundle via a conservative manualChunks rule — only the third-party three package is bucketed, no app code is chunked.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.1',
     date: 'June 14, 2026',
     codename: 'Shared Navbar',

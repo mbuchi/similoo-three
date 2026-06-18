@@ -10,4 +10,18 @@ import react from '@vitejs/plugin-react';
 // stale-node_modules compiler-runtime gotcha.
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Conservative manualChunks: bucket ONLY specific heavy third-party
+        // packages out of the eager entry bundle. We never chunk app code or
+        // React here — app-code chunking is what triggers circular-dep TDZ
+        // white-screens. Return undefined for everything else.
+        manualChunks(id) {
+          if (id.includes('node_modules/three')) return 'three';
+          return undefined;
+        },
+      },
+    },
+  },
 });
