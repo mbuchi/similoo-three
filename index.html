@@ -41,7 +41,13 @@
         // applied so users on dark mode don't see a white flash on load.
         (function () {
             try {
-                var stored = localStorage.getItem('similoo-three-theme');
+                // Cross-app theme: the `aireon_theme` cookie (scoped to
+                // .aireon.ch by @aireon/shared) is the suite-wide source of
+                // truth, so a choice made in any *.aireon.ch app applies here.
+                // Cookie wins over the legacy per-app localStorage mirror.
+                var m = document.cookie.match(/(?:^|; )aireon_theme=([^;]*)/);
+                var cookie = m ? decodeURIComponent(m[1]) : null;
+                var stored = cookie || localStorage.getItem('similoo-three-theme');
                 var resolved = stored === 'light' || stored === 'dark'
                     ? stored
                     : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches

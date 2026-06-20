@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AppNavbar } from '@aireon/shared';
+import { AppNavbar, setTheme } from '@aireon/shared';
 // The locale switcher and theme toggle drive the SAME imperative i18n / theme
 // singletons the preserved engine uses, so there is one source of truth. We
 // import the engine's i18n helpers directly (typed loosely via the .js module).
@@ -9,8 +9,6 @@ import {
   onLocaleChange,
   type Locale,
 } from '../js/i18n.js';
-
-const THEME_KEY = 'similoo-three-theme';
 
 /**
  * similoo-three top bar — the suite-shared {@link AppNavbar} shell.
@@ -48,12 +46,13 @@ export default function Navbar() {
 
   const toggleTheme = () => {
     const next = isDark ? 'light' : 'dark';
+    // This app styles via the [data-theme] attribute, so drive it directly.
     document.documentElement.setAttribute('data-theme', next);
-    try {
-      localStorage.setItem(THEME_KEY, next);
-    } catch {
-      /* private mode — choice is session-scoped */
-    }
+    // Persist suite-wide: the shared store writes the `.aireon.ch` cookie +
+    // localStorage mirror (+ member profile when signed in), so the choice
+    // carries across every Aireon app and across the user's devices. This
+    // replaces the old per-app `localStorage.setItem('similoo-three-theme', …)`.
+    setTheme(next);
     setIsDark(next === 'dark');
   };
 
