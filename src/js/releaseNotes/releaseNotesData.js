@@ -38,6 +38,21 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.5',
+    date: 'July 11, 2026',
+    codename: 'Native Typecheck',
+    summary:
+      'Type-checking now runs on the TypeScript 7 native compiler (~10x faster). Developer tooling only — nothing changes in the app itself.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'zap',
+        text: 'Type-checking now runs on the TypeScript 7 native compiler (~10x faster). The existing TypeScript 5 toolchain stays in place for editor and lint tooling; only the typecheck script switched engines.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.4',
     date: 'June 20, 2026',
     codename: 'Theme Follows You',
