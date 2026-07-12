@@ -38,6 +38,27 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.8',
+    date: 'July 12, 2026',
+    codename: 'Clean finish',
+    summary:
+      'The last phone audit findings are cleared, including a noisy but expected no-match response from the comparison service.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'smartphone',
+        text: 'Expanded the compact navigation overflow button to a 44-pixel phone target and raised the final comparison value label to the 12-pixel readability floor.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'wrench',
+        text: 'Treats a comparison-service no-match as an empty 204 response instead of a failed 404 resource, preserving the deterministic demo fallback without a false console error.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.7',
     date: 'July 12, 2026',
     codename: 'Clear controls',
