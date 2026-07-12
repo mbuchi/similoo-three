@@ -14,7 +14,11 @@ import './i18n.js';
 
 import { applyTranslations, t } from './i18n.js';
 import { bindLandingSearch } from './landing/addressSearch.js';
-import { createSceneViewer } from './three/sceneViewer.js';
+// The Three.js scene engine (sceneViewer.js pulls in three + all the
+// three/* modules, ~160 kB gzip) is only needed once an address is picked —
+// the landing view never touches it. Load it lazily on the first scene
+// reveal so the initial paint (landing search) doesn't ship the 3D engine.
+// Imported dynamically inside showScene(); see below.
 import { createComparisonSidebar } from './comparison/sidebar.js';
 import { resolveEgridFromLngLat } from './comparison/parcelLookup.js';
 import { sendSignalCollect } from './api/signalCollect.js';
@@ -122,15 +126,23 @@ export function bootScene() {
         }
     }
 
-    function showScene(addressLabel) {
+    async function showScene(addressLabel) {
         landingView.hidden = true;
         sceneView.hidden = false;
         sceneAddress.textContent = addressLabel;
         if (!viewer) {
-            viewer = createSceneViewer({
-                container: sceneCanvas,
-                onStatus: setStatus,
-            });
+            // Give feedback while the lazy Three.js engine chunk downloads
+            // (first scene only) so the revealed canvas isn't a blank void.
+            setStatus({ message: t('scene.loading') || 'Loading…', progress: 0 });
+            const { createSceneViewer } = await import('./three/sceneViewer.js');
+            // Re-check under concurrency: a second pick could resolve the
+            // import first. createSceneViewer must run exactly once.
+            if (!viewer) {
+                viewer = createSceneViewer({
+                    container: sceneCanvas,
+                    onStatus: setStatus,
+                });
+            }
         }
         if (!sidebar) {
             sidebar = createComparisonSidebar({
@@ -206,7 +218,10 @@ export function bootScene() {
             appName: 'similoo-three',
         });
 
-        showScene(result.label);
+        // showScene lazily imports the Three.js engine on the first scene, so
+        // it must be awaited before `viewer` is available for loadAddress().
+        await showScene(result.label);
+        if (seq !== pickSeq) return;
         syncDeepLink(result);
         setStatus({
             message: t('scene.loading') || 'Loading…',

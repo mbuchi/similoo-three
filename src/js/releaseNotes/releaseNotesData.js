@@ -38,6 +38,27 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.6',
+    date: 'July 12, 2026',
+    codename: 'Lighter First Paint',
+    summary:
+      'The 3D engine now loads only once you pick an address, so the landing page appears far sooner — especially on phones — and the on-canvas scene controls are now comfortably tappable on touch.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'zap',
+        text: 'Deferred the Three.js scene engine so it downloads only when you open an address, not on the initial landing page. This cuts the eager first-load JavaScript by about 61% (roughly 170 kB gzipped), so the address search paints much sooner on mobile connections. The 3D scene itself is unchanged.',
+        prs: [52],
+      },
+      {
+        kind: 'fixed',
+        icon: 'smartphone',
+        text: 'Enlarged the on-canvas scene controls (back, layer toggles, sun reset, save, and the info-panel close button) to a comfortable 40 px touch target on phones. Desktop is unchanged.',
+        prs: [52],
+      },
+    ],
+  },
+  {
     version: '0.10.5',
     date: 'July 11, 2026',
     codename: 'Native Typecheck',
