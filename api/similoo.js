@@ -94,6 +94,15 @@ export default async function handler(req, res) {
             body: JSON.stringify({ egrid, years, limit }),
             signal: controller.signal,
         });
+        // "No parcel found" is a normal no-match result for the comparison
+        // service, not a missing route. Return a quiet 204 so browsers do not
+        // log a failed network resource; the client will use its deterministic
+        // demo data for this supported empty state.
+        if (upstream.status === 404) {
+            for (const [k, v] of Object.entries(CORS_HEADERS)) res.setHeader(k, v);
+            res.status(204).end();
+            return;
+        }
         const text = await upstream.text();
         let parsed = null;
         try {

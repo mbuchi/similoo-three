@@ -42,9 +42,11 @@ export async function fetchSimilooComparables(egrid, opts = {}) {
             body: JSON.stringify({ egrid, years, limit }),
         });
 
-        // 404 → backend not deployed yet → mock.
+        // 204 → the backend found no matching parcel → mock without causing a
+        // browser-level failed-resource error.
+        // 404 → compatibility with older proxy deployments → mock.
         // 5xx → backend up but broken → mock so demo doesn't break.
-        if (res.status === 404 || res.status >= 500) {
+        if (res.status === 204 || res.status === 404 || res.status >= 500) {
             console.warn(`similoo /score/similoo returned ${res.status}; using mock data`);
             return mockSimilooResponse(egrid, { years, limit });
         }

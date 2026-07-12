@@ -433,6 +433,7 @@ body.cmp-shifted .scene-layers {
         grid-template-columns: repeat(2, 1fr);
     }
     .cmp-close { width: 44px; height: 44px; }
+    .cmp-target-val { font-size: 12px; }
     .cmp-years-range { min-height: 44px; }
     .cmp-size-sub input { min-height: 44px; }
     .cmp-sort { min-height: 44px; font-size: 12px; }

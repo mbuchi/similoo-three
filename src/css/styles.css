@@ -1176,6 +1176,10 @@ html, body, #mapContainer {
 
 @media (max-width: 560px) {
     .skip-link { min-height: 44px; }
+    .aireon-onav-btn {
+        width: 44px;
+        height: 44px;
+    }
     .aireon-hublink-btn,
     .theme-toggle-button {
         width: 44px;
