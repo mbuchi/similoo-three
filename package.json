@@ -1,12 +1,13 @@
 {
   "name": "similoo-three",
   "private": true,
-  "version": "0.10.6",
+  "version": "0.10.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "node --test",
     "typecheck": "node node_modules/typescript7/bin/tsc --noEmit -p tsconfig.app.json"
   },
   "devDependencies": {

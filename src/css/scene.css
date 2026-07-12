@@ -650,7 +650,17 @@
         padding: 6px 10px;
     }
     .scene-status { min-width: 0; }
-    .scene-address { max-width: 40vw; }
+    .scene-address {
+        max-width: 40vw;
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+    }
+    .scene-status-msg {
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+    }
 
     .scene-compass {
         top: 10px;
@@ -658,13 +668,13 @@
         width: 44px;
         height: 44px;
     }
-    .scene-compass-tick { font-size: 9px; }
+    .scene-compass-tick { font-size: 12px; }
     .scene-compass-needle { height: 14px; }
 
     .scene-layers { top: 64px; right: 10px; }
     .scene-layers-btn {
         padding: 6px 10px 6px 8px;
-        font-size: 11px;
+        font-size: 12px;
     }
 
     .scene-scale {
@@ -672,6 +682,7 @@
         left: 8px;
         padding: 6px 9px;
     }
+    .scene-scale-label { font-size: 12px; }
 
     .scene-info {
         left: 8px;
@@ -699,21 +710,25 @@
        24–32 px tall — below the ~40 px comfortable-touch minimum. Enlarge the
        hit area without changing their look (content stays centred). Scoped to
        ≤560 px so desktop (≥640 px) is byte-identical. */
-    .scene-back { min-height: 40px; }
-    .scene-layers-btn { min-height: 40px; }
-    .scene-info-save { min-height: 40px; }
+    .scene-back { min-height: 44px; }
+    .scene-layers-btn { min-height: 44px; }
+    .scene-info-save { min-height: 44px; }
     .scene-sun-now {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 40px;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 12px;
     }
-    .scene-sun-date { min-height: 40px; }
+    .scene-sun-date { min-height: 44px; font-size: 12px; }
+    .scene-sun-slider { min-height: 44px; }
+    .scene-status-retry { min-height: 44px; font-size: 12px; }
     .scene-info-close {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 40px;
-        min-height: 40px;
+        width: 44px;
+        height: 44px;
     }
 }

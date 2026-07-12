@@ -38,6 +38,21 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.7',
+    date: 'July 12, 2026',
+    codename: 'Clear controls',
+    summary:
+      'The complete 3D workspace is now comfortable to tap and read on a phone, including its comparison filters and status overlays.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'smartphone',
+        text: 'Raised every phone control in the shared navbar, sun timeline, building actions, and comparable-building filters to a 44-pixel touch area. Compass, scale, filter, and comparison labels now stay at 12 pixels or larger; long address and loading messages wrap instead of clipping; hidden building actions leave the accessibility tree; and the Aireon badge uses a local asset so it no longer produces a cross-origin load error.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.6',
     date: 'July 12, 2026',
     codename: 'Lighter First Paint',

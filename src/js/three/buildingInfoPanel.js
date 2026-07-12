@@ -14,6 +14,7 @@ export function createBuildingInfoPanel({ container }) {
     const root = document.createElement('aside');
     root.className = 'scene-info';
     root.setAttribute('data-state', 'hidden');
+    root.setAttribute('aria-hidden', 'true');
     root.setAttribute('role', 'complementary');
     root.innerHTML = `
         <header class="scene-info-header">
@@ -47,11 +48,13 @@ export function createBuildingInfoPanel({ container }) {
         current = info;
         relabel();
         root.setAttribute('data-state', 'visible');
+        root.setAttribute('aria-hidden', 'false');
     }
 
     function hide() {
         current = null;
         root.setAttribute('data-state', 'hidden');
+        root.setAttribute('aria-hidden', 'true');
     }
 
     function relabel() {

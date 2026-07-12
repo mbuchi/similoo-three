@@ -281,8 +281,8 @@ html, body, #mapContainer {
     height: 24px;
     display: block;
     background: currentColor;
-    -webkit-mask: url("https://hub.aireon.ch/brand/aireon-mark.svg") center / contain no-repeat;
-    mask: url("https://hub.aireon.ch/brand/aireon-mark.svg") center / contain no-repeat;
+    -webkit-mask: url("/brand/aireon-mark.svg") center / contain no-repeat;
+    mask: url("/brand/aireon-mark.svg") center / contain no-repeat;
 }
 
 .aireon-hub-divider {
@@ -1171,5 +1171,20 @@ html, body, #mapContainer {
         padding: 0 10px;
         font-size: 12px;
         height: 32px;
+    }
+}
+
+@media (max-width: 560px) {
+    .skip-link { min-height: 44px; }
+    .aireon-hublink-btn,
+    .theme-toggle-button {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    .locale-select,
+    .auth-nav-button {
+        min-height: 44px;
     }
 }
