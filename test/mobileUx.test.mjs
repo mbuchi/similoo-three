@@ -44,3 +44,11 @@ test('release and package metadata are aligned at 0.10.7', () => {
   assert.equal(lock.packages[''].version, '0.10.7');
   assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.7'/s);
 });
+
+test('clean builds use the pinned local shared package artifact', () => {
+  assert.equal(pkg.dependencies['@aireon/shared'], 'file:vendor/aireon-shared-1.93.1.tgz');
+  assert.equal(
+    lock.packages['node_modules/@aireon/shared'].resolved,
+    'file:vendor/aireon-shared-1.93.1.tgz',
+  );
+});

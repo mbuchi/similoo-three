@@ -50,6 +50,12 @@ export const RELEASES = [
         text: 'Raised every phone control in the shared navbar, sun timeline, building actions, and comparable-building filters to a 44-pixel touch area. Compass, scale, filter, and comparison labels now stay at 12 pixels or larger; long address and loading messages wrap instead of clipping; hidden building actions leave the accessibility tree; and the Aireon badge uses a local asset so it no longer produces a cross-origin load error.',
         prs: [],
       },
+      {
+        kind: 'fixed',
+        icon: 'wrench',
+        text: 'Pinned the exact Aireon shared package as a local build artifact so clean CI and Vercel deployments no longer depend on an unavailable GitHub SSH key.',
+        prs: [],
+      },
     ],
   },
   {
