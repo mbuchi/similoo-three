@@ -694,4 +694,26 @@
     }
     .scene-sun-slider-wrap { min-width: 0; width: 100%; order: 3; }
     .scene-sun-altitude { order: 2; }
+
+    /* Touch tap targets: on phones the on-canvas scene controls were only
+       24–32 px tall — below the ~40 px comfortable-touch minimum. Enlarge the
+       hit area without changing their look (content stays centred). Scoped to
+       ≤560 px so desktop (≥640 px) is byte-identical. */
+    .scene-back { min-height: 40px; }
+    .scene-layers-btn { min-height: 40px; }
+    .scene-info-save { min-height: 40px; }
+    .scene-sun-now {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+    }
+    .scene-sun-date { min-height: 40px; }
+    .scene-info-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        min-height: 40px;
+    }
 }
