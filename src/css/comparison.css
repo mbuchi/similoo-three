@@ -432,4 +432,24 @@ body.cmp-shifted .scene-layers {
     .cmp-target-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    .cmp-close { width: 44px; height: 44px; }
+    .cmp-years-range { min-height: 44px; }
+    .cmp-size-sub input { min-height: 44px; }
+    .cmp-sort { min-height: 44px; font-size: 12px; }
+    .cmp-eyebrow,
+    .cmp-section-title,
+    .cmp-target-ratiov-label,
+    .cmp-target-key,
+    .cmp-target-cell-key,
+    .cmp-years-label,
+    .cmp-size-label,
+    .cmp-years-suffix,
+    .cmp-size-sub,
+    .cmp-sort-wrap,
+    .cmp-card-egrid,
+    .cmp-card-foot,
+    .cmp-card-foot-key,
+    .cmp-meta {
+        font-size: 12px;
+    }
 }

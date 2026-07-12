@@ -1,12 +1,13 @@
 {
   "name": "similoo-three",
   "private": true,
-  "version": "0.10.6",
+  "version": "0.10.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "node --test",
     "typecheck": "node node_modules/typescript7/bin/tsc --noEmit -p tsconfig.app.json"
   },
   "devDependencies": {
@@ -18,7 +19,7 @@
     "vite": "^5.4.2"
   },
   "dependencies": {
-    "@aireon/shared": "github:mbuchi/aireon-shared#v1.93.1",
+    "@aireon/shared": "file:vendor/aireon-shared-1.93.1.tgz",
     "lucide": "^0.358.0",
     "oidc-client-ts": "^3.5.0",
     "react": "^18.3.1",
