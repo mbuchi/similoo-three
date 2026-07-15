@@ -6,6 +6,8 @@ const scene = readFileSync(new URL('../src/css/scene.css', import.meta.url), 'ut
 const comparison = readFileSync(new URL('../src/css/comparison.css', import.meta.url), 'utf8');
 const chrome = readFileSync(new URL('../src/css/styles.css', import.meta.url), 'utf8');
 const info = readFileSync(new URL('../src/js/three/buildingInfoPanel.js', import.meta.url), 'utf8');
+const mobileControls = readFileSync(new URL('../src/js/three/mobileSceneControls.js', import.meta.url), 'utf8');
+const sidebar = readFileSync(new URL('../src/js/comparison/sidebar.js', import.meta.url), 'utf8');
 const releases = readFileSync(new URL('../src/js/releaseNotes/releaseNotesData.js', import.meta.url), 'utf8');
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const lock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'));
@@ -28,6 +30,17 @@ test('phone comparison controls expose 44px targets and readable labels', () => 
   assert.match(comparison, /\.cmp-target-val[^}]*font-size:\s*12px/s);
 });
 
+test('mobile map settings and comparisons are closed behind dismissible launchers', () => {
+  assert.match(scene, /\.scene-controls-fab:not\(\[hidden\]\)/);
+  assert.match(scene, /\.scene-controls-overlay\[hidden\]/);
+  assert.match(mobileControls, /overlay\.hidden = true/);
+  assert.match(mobileControls, /document\.body\.classList\.toggle\('scene-controls-open', open\)/);
+  assert.match(mobileControls, /event\.key === 'Escape'/);
+  assert.match(mobileControls, /scrim\.addEventListener\('click', closeSheet\)/);
+  assert.match(sidebar, /if \(mobileMedia\.matches\) \{\s*collapseToLauncher\(\)/s);
+  assert.match(comparison, /\.cmp-launcher:not\(\[hidden\]\)/);
+});
+
 test('hidden scene info is removed from the accessibility tree', () => {
   assert.match(info, /root\.setAttribute\('aria-hidden', 'true'\)/);
   assert.match(info, /root\.setAttribute\('aria-hidden', 'false'\)/);
@@ -40,11 +53,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.10.8', () => {
-  assert.equal(pkg.version, '0.10.8');
-  assert.equal(lock.version, '0.10.8');
-  assert.equal(lock.packages[''].version, '0.10.8');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.8'/s);
+test('release and package metadata are aligned at 0.10.9', () => {
+  assert.equal(pkg.version, '0.10.9');
+  assert.equal(lock.version, '0.10.9');
+  assert.equal(lock.packages[''].version, '0.10.9');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.9'/s);
 });
 
 test('clean builds use the pinned local shared package artifact', () => {
