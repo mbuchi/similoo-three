@@ -38,6 +38,27 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.9',
+    date: 'July 15, 2026',
+    codename: 'Scene first',
+    summary:
+      'The mobile 3D view now opens clear, with scene settings and comparisons available only when you ask for them.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'smartphone',
+        text: 'On phones and small tablets, the layer dock and wide sun timeline now live in one closed-by-default bottom-right control sheet. It dismisses by its close button, backdrop, or Escape, while desktop positions stay unchanged.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'sidebar',
+        text: 'Comparable-building results no longer open a full-screen sidebar automatically on mobile. A compact launcher appears when results are ready and the user can open or collapse the comparison panel at any time.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.8',
     date: 'July 12, 2026',
     codename: 'Clean finish',

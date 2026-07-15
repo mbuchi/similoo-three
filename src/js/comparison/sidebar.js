@@ -22,9 +22,12 @@ const DEBOUNCE_MS = 250;
 
 const SORT_KEYS = ['similarity', 'ratioV', 'size', 'year'];
 
-export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
+export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) {
     let aside = buildShell();
     document.body.appendChild(aside);
+    const launcher = buildLauncher();
+    document.body.appendChild(launcher);
+    const mobileMedia = window.matchMedia('(max-width: 640px)');
 
     let currentEgrid = null;
     let currentData = null;
@@ -51,9 +54,11 @@ export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
     };
 
     els.closeBtn.addEventListener('click', () => {
-        hide();
+        if (mobileMedia.matches && currentEgrid) collapseToLauncher({ restoreFocus: true });
+        else hide();
         if (typeof onClose === 'function') onClose();
     });
+    launcher.addEventListener('click', openComparison);
 
     els.yearsRange.addEventListener('input', () => {
         years = clampInt(els.yearsRange.value, 1, 30, DEFAULT_YEARS);
@@ -88,14 +93,37 @@ export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
     function show(egrid) {
         if (!egrid) return;
         currentEgrid = egrid;
+        if (mobileMedia.matches) {
+            collapseToLauncher();
+            if (typeof onClose === 'function') onClose();
+        } else openComparison();
+        loadFor(egrid);
+    }
+
+    function openComparison() {
+        if (!currentEgrid) return;
+        launcher.hidden = true;
+        launcher.setAttribute('aria-expanded', 'true');
         aside.setAttribute('data-state', 'visible');
         aside.setAttribute('aria-hidden', 'false');
-        loadFor(egrid);
+        if (typeof onOpen === 'function') onOpen();
+        requestAnimationFrame(() => els.closeBtn.focus());
+    }
+
+    function collapseToLauncher({ restoreFocus = false } = {}) {
+        aside.setAttribute('data-state', 'hidden');
+        aside.setAttribute('aria-hidden', 'true');
+        launcher.hidden = !currentEgrid;
+        launcher.setAttribute('aria-expanded', 'false');
+        clearHighlight();
+        if (restoreFocus && !launcher.hidden) requestAnimationFrame(() => launcher.focus());
     }
 
     function hide() {
         aside.setAttribute('data-state', 'hidden');
         aside.setAttribute('aria-hidden', 'true');
+        launcher.hidden = true;
+        launcher.setAttribute('aria-expanded', 'false');
         currentEgrid = null;
         currentData = null;
         clearHighlight();
@@ -352,6 +380,8 @@ export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
         aside.querySelector('.cmp-eyebrow').textContent = t('comparison.eyebrow');
         aside.querySelector('.cmp-title').textContent = t('comparison.title');
         aside.querySelector('.cmp-close').setAttribute('aria-label', t('comparison.close'));
+        launcher.querySelector('.cmp-launcher-label').textContent = t('comparison.title');
+        launcher.setAttribute('aria-label', t('comparison.open'));
         aside.querySelector('.cmp-filters-title').textContent = t('comparison.filters_title');
         aside.querySelector('.cmp-years-label').textContent = t('comparison.years_window');
         aside.querySelector('.cmp-size-label').textContent = t('comparison.parcel_size_range');
@@ -373,11 +403,27 @@ export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
         if (els.status.dataset.state) setStatus(els.status.dataset.state);
     }
 
-    onLocaleChange(() => relabel());
+    const unlinkLocale = onLocaleChange(() => relabel());
     relabel();
+
+    function handleViewportChange() {
+        if (!currentEgrid) return;
+        if (mobileMedia.matches) {
+            collapseToLauncher();
+            if (typeof onClose === 'function') onClose();
+        } else {
+            openComparison();
+        }
+    }
+    if (mobileMedia.addEventListener) mobileMedia.addEventListener('change', handleViewportChange);
+    else mobileMedia.addListener(handleViewportChange);
 
     function destroy() {
         clearHighlight();
+        try { unlinkLocale?.(); } catch {}
+        if (mobileMedia.removeEventListener) mobileMedia.removeEventListener('change', handleViewportChange);
+        else mobileMedia.removeListener(handleViewportChange);
+        launcher.remove();
         aside?.remove();
         aside = null;
     }
@@ -389,6 +435,7 @@ export function createComparisonSidebar({ map, onClose, onFlyTo } = {}) {
 
 function buildShell() {
     const aside = document.createElement('aside');
+    aside.id = 'comparison-panel';
     aside.className = 'cmp';
     aside.setAttribute('data-state', 'hidden');
     aside.setAttribute('aria-hidden', 'true');
@@ -452,6 +499,20 @@ function buildShell() {
         </section>
     `;
     return aside;
+}
+
+function buildLauncher() {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'cmp-launcher';
+    button.hidden = true;
+    button.setAttribute('aria-controls', 'comparison-panel');
+    button.setAttribute('aria-expanded', 'false');
+    button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 16 4-5 4 3 5-7"/></svg>
+        <span class="cmp-launcher-label"></span>
+    `;
+    return button;
 }
 
 // ---------- helpers -------------------------------------------------------

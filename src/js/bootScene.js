@@ -147,6 +147,7 @@ export function bootScene() {
         if (!sidebar) {
             sidebar = createComparisonSidebar({
                 map: null,
+                onOpen: () => document.body.classList.add('cmp-shifted'),
                 onClose: () => document.body.classList.remove('cmp-shifted'),
                 onFlyTo: (comparable) => flyToComparable(comparable),
             });
@@ -250,7 +251,6 @@ export function bootScene() {
             });
             if (seq !== pickSeq) return;
             if (egrid && sidebar) {
-                document.body.classList.add('cmp-shifted');
                 sidebar.show(egrid);
             }
         } catch (err) {

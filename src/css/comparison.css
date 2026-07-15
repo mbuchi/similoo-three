@@ -401,6 +401,10 @@
 }
 .cmp-meta:empty { display: none; }
 
+/* A loaded mobile comparison stays behind this compact launcher until the
+   user asks for it, instead of covering the 3D scene automatically. */
+.cmp-launcher { display: none; }
+
 /* ---------- right-side control shift ---------- */
 /* When the comparison sidebar opens, slide the scene's right-edge
    overlays (compass + layers dock) out from under it so they don't
@@ -413,6 +417,28 @@ body.cmp-shifted .scene-layers {
 
 /* ---------- mobile ---------- */
 @media (max-width: 640px) {
+    .cmp-launcher:not([hidden]) {
+        position: fixed;
+        left: 12px;
+        bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+        z-index: 48;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        max-width: min(72vw, 260px);
+        padding: 0 14px;
+        border: 1px solid var(--hood-panel-border);
+        border-radius: 999px;
+        background: var(--hood-panel-bg);
+        color: var(--hood-panel-title);
+        box-shadow: var(--hood-panel-shadow);
+        font: 600 12px/1 var(--hood-font);
+        cursor: pointer;
+    }
+    .cmp-launcher svg { width: 17px; height: 17px; flex: none; color: var(--hood-red); }
+    .cmp-launcher-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cmp-launcher:focus-visible { outline: 2px solid var(--hood-red); outline-offset: 2px; }
     .cmp {
         width: 100%;
         top: 56px;

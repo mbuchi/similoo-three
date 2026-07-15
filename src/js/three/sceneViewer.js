@@ -36,6 +36,7 @@ import { createLayersToggle } from './layersToggle.js';
 import { sunDirection, sunTint } from './sunCalc.js';
 import { createSunControl } from './sunControl.js';
 import { createSaveParcelButton } from './saveParcelButton.js';
+import { createMobileSceneControls } from './mobileSceneControls.js';
 
 const SCENE_RADIUS_M = 100;
 // The upstream API serialises heavy Roofer jobs, so the proxy retries
@@ -263,6 +264,13 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
                 vegetationOverlay.node.visible = false;
             }
         },
+    });
+
+    // Keep the canvas clear by default on phones: the layer dock and wide sun
+    // timeline share one bottom-right launcher and dismissible bottom sheet.
+    const mobileSceneControls = createMobileSceneControls({
+        container,
+        controls: [layersDock.root, sunControl.root],
     });
 
     async function loadVegetationOverlay({ lat, lng }) {
@@ -1006,6 +1014,7 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
             scaleLegend.destroy();
             saveParcel.destroy();
             infoPanel.destroy();
+            mobileSceneControls.destroy();
             layersDock.destroy();
             sunControl.destroy();
             sky.dispose();
