@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AppNavbar, setTheme } from '@aireon/shared';
+import { AboutModal, AppNavbar, NavIconButton, setTheme } from '@aireon/shared';
 // The locale switcher and theme toggle drive the SAME imperative i18n / theme
 // singletons the preserved engine uses, so there is one source of truth. We
 // import the engine's i18n helpers directly (typed loosely via the .js module).
@@ -7,6 +7,7 @@ import {
   getLocale,
   setLocale as setEngineLocale,
   onLocaleChange,
+  t,
   type Locale,
 } from '../js/i18n.js';
 
@@ -35,6 +36,7 @@ export default function Navbar() {
     () => document.documentElement.getAttribute('data-theme') === 'dark',
   );
   const [locale, setLocaleState] = useState<Locale>(() => getLocale());
+  const [showAbout, setShowAbout] = useState(false);
   const selectRef = useRef<HTMLSelectElement>(null);
 
   // Keep the React mirror of the locale in sync if anything else (the shared
@@ -61,9 +63,9 @@ export default function Navbar() {
   };
 
   return (
-    // Fixed wrapper supplies the positioning (this is a non-Tailwind app, so we
-    // use an inline style rather than utility classes); AppNavbar renders the
-    // bar shell + brand. position="" keeps AppNavbar's <header> in-flow inside it.
+    <>
+    {/* Fixed wrapper supplies the positioning; AppNavbar renders the bar shell
+        and brand, while position="" keeps its header in-flow here. */}
     <div
       style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}
     >
@@ -108,6 +110,17 @@ export default function Navbar() {
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
             </button>
+            <NavIconButton
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg>
+              }
+              label={t('about.menu')}
+              onClick={() => setShowAbout(true)}
+              dark={isDark}
+            />
             <select
               ref={selectRef}
               id="locale-select"
@@ -131,5 +144,23 @@ export default function Navbar() {
         }
       />
     </div>
+      {showAbout && (
+        <AboutModal
+          wordmark={<>simil<span style={{ color: '#dc2626' }}>oo</span>-three</>}
+          description={t('about.description')}
+          aboutLabel={t('about.label')}
+          creditsLabel={t('about.credits')}
+          hubLabel={t('about.hub')}
+          credits={[
+            { label: t('about.map_data'), name: '© swisstopo', href: 'https://www.swisstopo.admin.ch' },
+            { label: t('about.building_data'), name: 'Swiss GWR · Aireon RES', href: 'https://www.housing-stat.ch' },
+            { label: t('about.renderer'), name: 'Three.js', href: 'https://threejs.org' },
+          ]}
+          closeLabel={t('common.close')}
+          dark={isDark}
+          onClose={() => setShowAbout(false)}
+        />
+      )}
+    </>
   );
 }
