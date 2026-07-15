@@ -86,6 +86,14 @@ const translations = {
     'nav.theme_to_light': 'Switch to light mode',
     'nav.theme_toggle': 'Toggle dark mode',
     'nav.skip_to_content': 'Skip to content',
+    'about.menu': 'About similoo-three',
+    'about.label': 'About similoo-three',
+    'about.description': 'Explore a Swiss address as a live 3D building scene, inspect its 100 metre surroundings, and compare similar buildings across Switzerland.',
+    'about.credits': 'Data & technology',
+    'about.map_data': 'Map data',
+    'about.building_data': 'Building data',
+    'about.renderer': 'Renderer',
+    'about.hub': 'See all Aireon applications',
 
     // ---------- landing ----------
     'landing.title': 'Type a Swiss address.',
@@ -502,6 +510,14 @@ const translations = {
     'nav.theme_to_light': 'Passer en mode clair',
     'nav.theme_toggle': 'Basculer le mode sombre',
     'nav.skip_to_content': 'Aller au contenu',
+    'about.menu': 'À propos de similoo-three',
+    'about.label': 'À propos de similoo-three',
+    'about.description': 'Explorez une adresse suisse sous forme de scène 3D en direct, examinez ses environs sur 100 mètres et comparez des bâtiments similaires dans toute la Suisse.',
+    'about.credits': 'Données et technologie',
+    'about.map_data': 'Données cartographiques',
+    'about.building_data': 'Données des bâtiments',
+    'about.renderer': 'Moteur de rendu',
+    'about.hub': 'Voir toutes les applications Aireon',
 
     // ---------- views dropdown ----------
     'views.button': 'Vues',
@@ -871,6 +887,14 @@ const translations = {
     'nav.theme_to_light': 'Zum hellen Modus wechseln',
     'nav.theme_toggle': 'Dunkelmodus umschalten',
     'nav.skip_to_content': 'Zum Inhalt springen',
+    'about.menu': 'Über similoo-three',
+    'about.label': 'Über similoo-three',
+    'about.description': 'Erkunden Sie eine Schweizer Adresse als interaktive 3D-Gebäudeszene, untersuchen Sie die 100-Meter-Umgebung und vergleichen Sie ähnliche Gebäude in der ganzen Schweiz.',
+    'about.credits': 'Daten & Technologie',
+    'about.map_data': 'Kartendaten',
+    'about.building_data': 'Gebäudedaten',
+    'about.renderer': 'Renderer',
+    'about.hub': 'Alle Aireon-Anwendungen ansehen',
 
     // ---------- views dropdown ----------
     'views.button': 'Ansichten',
@@ -1242,6 +1266,14 @@ const translations = {
     'nav.theme_to_light': 'Passa al tema chiaro',
     'nav.theme_toggle': 'Attiva/disattiva tema scuro',
     'nav.skip_to_content': 'Vai al contenuto',
+    'about.menu': 'Informazioni su similoo-three',
+    'about.label': 'Informazioni su similoo-three',
+    'about.description': 'Esplora un indirizzo svizzero come scena edilizia 3D interattiva, analizza i dintorni entro 100 metri e confronta edifici simili in tutta la Svizzera.',
+    'about.credits': 'Dati e tecnologia',
+    'about.map_data': 'Dati cartografici',
+    'about.building_data': 'Dati degli edifici',
+    'about.renderer': 'Motore di rendering',
+    'about.hub': 'Vedi tutte le applicazioni Aireon',
 
     // ---------- views dropdown ----------
     'views.button': 'Viste',

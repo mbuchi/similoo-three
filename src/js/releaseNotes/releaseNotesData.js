@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.10',
+    date: 'July 15, 2026',
+    codename: 'Meet similoo-three',
+    summary: 'A new professional About dialog explains the 3D viewer and opens the complete Aireon catalog.',
+    items: [
+      {
+        kind: 'new',
+        icon: 'info',
+        text: 'Added a localized About action to the shared navbar and its mobile overflow. The accessible dialog explains similoo-three, credits its data and renderer, remains readable and scrollable on phones, and includes a prominent button to browse all Aireon applications.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.9',
     date: 'July 15, 2026',
     codename: 'Scene first',

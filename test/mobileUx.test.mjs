@@ -53,17 +53,17 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.10.9', () => {
-  assert.equal(pkg.version, '0.10.9');
-  assert.equal(lock.version, '0.10.9');
-  assert.equal(lock.packages[''].version, '0.10.9');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.9'/s);
+test('release and package metadata are aligned at 0.10.10', () => {
+  assert.equal(pkg.version, '0.10.10');
+  assert.equal(lock.version, '0.10.10');
+  assert.equal(lock.packages[''].version, '0.10.10');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.10'/s);
 });
 
 test('clean builds use the pinned local shared package artifact', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'file:vendor/aireon-shared-1.93.1.tgz');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'file:vendor/aireon-shared-1.99.0.tgz');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'file:vendor/aireon-shared-1.93.1.tgz',
+    'file:vendor/aireon-shared-1.99.0.tgz',
   );
 });
