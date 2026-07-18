@@ -38,6 +38,21 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.11',
+    date: 'July 18, 2026',
+    codename: 'Nothing to show',
+    summary:
+      'The comparison panel always explains an empty result list, including when your parcel-size filter rules every match out.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'wrench',
+        text: 'Removed a dead branch in the comparison panel status handling. Whenever the comparable list comes back empty, the panel reliably shows its "no comparable buildings" notice instead of depending on an unreachable code path.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.10',
     date: 'July 15, 2026',
     codename: 'Meet similoo-three',

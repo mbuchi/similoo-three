@@ -221,7 +221,7 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
         const sorted = sortComparables(filtered, sortBy);
         if (!sorted.length) {
             els.list.innerHTML = '';
-            setStatus(currentData.comparables?.length ? 'empty' : 'empty');
+            setStatus('empty');
             return;
         }
         setStatus('ready');
