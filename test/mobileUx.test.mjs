@@ -38,6 +38,8 @@ test('mobile map settings and comparisons are closed behind dismissible launcher
   assert.match(mobileControls, /event\.key === 'Escape'/);
   assert.match(mobileControls, /scrim\.addEventListener\('click', closeSheet\)/);
   assert.match(sidebar, /if \(mobileMedia\.matches\) \{\s*collapseToLauncher\(\)/s);
+  assert.match(sidebar, /<details class="cmp-section cmp-filters">/);
+  assert.doesNotMatch(sidebar, /<details class="cmp-section cmp-filters" open>/);
   assert.match(comparison, /\.cmp-launcher:not\(\[hidden\]\)/);
 });
 
@@ -53,11 +55,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.10.12', () => {
-  assert.equal(pkg.version, '0.10.12');
-  assert.equal(lock.version, '0.10.12');
-  assert.equal(lock.packages[''].version, '0.10.12');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.12'/s);
+test('release and package metadata are aligned at 0.10.13', () => {
+  assert.equal(pkg.version, '0.10.13');
+  assert.equal(lock.version, '0.10.13');
+  assert.equal(lock.packages[''].version, '0.10.13');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.13'/s);
 });
 
 test('clean builds use the pinned local shared package artifact', () => {
