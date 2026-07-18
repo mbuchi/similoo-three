@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.13',
+    date: 'July 18, 2026',
+    codename: 'Focused comparisons',
+    summary: 'Comparison filters are now optional and the ranked result prints as a clean brief.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'file-text',
+        text: 'The year and parcel-size filters now stay in a closed optional section until you need them, keeping the common comparison focused on the target and ranked matches. Printing removes the 3D controls and filter UI and preserves the complete comparison metrics as a paper or PDF brief.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.12',
     date: 'July 18, 2026',
     codename: 'Reachable controls',
