@@ -647,7 +647,10 @@
     .scene-controls-fab:not([hidden]) {
         position: absolute;
         right: 12px;
-        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        /* Clear the global bug-report launcher (44px, pinned to the same
+           bottom-right corner at a far higher z-index) so this FAB — the
+           only route to Layers + Sun on phones — stays tappable. */
+        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
         z-index: 14;
         display: grid;
         place-items: center;
@@ -870,4 +873,13 @@
         width: 44px;
         height: 44px;
     }
+}
+
+/* Respect the OS "reduce motion" setting: stop the loading-bar pulse and the
+   layer-toggle spinner from looping forever, and reveal the building info
+   panel without the scale/slide animation. */
+@media (prefers-reduced-motion: reduce) {
+    .scene-status.is-indeterminate .scene-status-bar::after,
+    .scene-layers-btn-spinner { animation: none; }
+    .scene-info { transition: none; }
 }

@@ -38,6 +38,27 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.12',
+    date: 'July 18, 2026',
+    codename: 'Reachable controls',
+    summary:
+      'The phone map-settings button no longer hides behind the bug-report button, and the viewer honours your "reduce motion" setting.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'smartphone',
+        text: 'On phones the map-settings button sat directly underneath the bug-report button in the bottom-right corner, so tapping it opened the bug-report dialog instead. It now sits above that button, making the Layers and Sun controls reachable again.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'accessibility',
+        text: 'If your device is set to reduce motion, the loading bar no longer pulses, the layer-toggle spinner no longer rotates, and the building info panel appears without the slide-and-scale animation.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.11',
     date: 'July 18, 2026',
     codename: 'Nothing to show',
