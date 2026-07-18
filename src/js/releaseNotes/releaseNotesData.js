@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.14',
+    date: 'July 18, 2026',
+    codename: 'Readable building panel',
+    summary: 'The "no details" line in the building panel is legible in light mode.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'eye',
+        text: 'When a selected building has no details to show, the placeholder line in the building info panel used a pale grey that washed out against the light panel and the map behind it. It now uses the same readable grey as the other labels in that panel.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.13',
     date: 'July 18, 2026',
     codename: 'Focused comparisons',
