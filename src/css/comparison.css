@@ -176,6 +176,43 @@
     font-family: var(--hood-mono);
     font-size: 11px;
 }
+.cmp-target-egrid-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.cmp-target-egrid-wrap .cmp-target-val {
+    flex: 1 1 auto;
+}
+.cmp-copy-egrid {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: var(--hood-panel-row-bg);
+    color: var(--hood-panel-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+.cmp-copy-egrid svg { width: 13px; height: 13px; }
+.cmp-copy-egrid:hover {
+    background: var(--hood-panel-row-bg-hover);
+    color: var(--hood-panel-title);
+}
+.cmp-copy-egrid:focus-visible {
+    outline: 2px solid var(--hood-red);
+    outline-offset: 2px;
+}
+.cmp-copy-egrid.is-copied {
+    background: rgba(16, 185, 129, 0.16);
+    color: #10b981;
+}
 .cmp-target-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -532,6 +569,8 @@ body.cmp-shifted .scene-layers {
         grid-template-columns: repeat(2, 1fr);
     }
     .cmp-close { width: 44px; height: 44px; }
+    .cmp-copy-egrid { width: 40px; height: 40px; }
+    .cmp-copy-egrid svg { width: 16px; height: 16px; }
     .cmp-target-val { font-size: 12px; }
     .cmp-years-range { min-height: 44px; }
     .cmp-size-sub input { min-height: 44px; }
