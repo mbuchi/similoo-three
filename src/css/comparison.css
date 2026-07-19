@@ -553,3 +553,10 @@ body.cmp-shifted .scene-layers {
         font-size: 12px;
     }
 }
+
+/* 16px stops iOS Safari from auto-zooming the page when the size fields are focused. */
+@media (max-width: 768px) {
+    .cmp-size-sub input {
+        font-size: 16px;
+    }
+}

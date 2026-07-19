@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.15',
+    date: 'July 19, 2026',
+    codename: 'No more surprise zoom',
+    summary: 'iOS Safari no longer auto-zooms and gets stuck when a text field is focused on phones.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'search',
+        text: 'Stopped iOS Safari from auto-zooming the page when a text field is focused on phones, which left the page stuck wider than the screen. The bug report fields and the comparison size filters now use 16px text on phones and the page scale stays at 100%.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.14',
     date: 'July 18, 2026',
     codename: 'Readable building panel',

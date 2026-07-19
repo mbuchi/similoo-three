@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
+const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const scene = readFileSync(new URL('../src/css/scene.css', import.meta.url), 'utf8');
 const comparison = readFileSync(new URL('../src/css/comparison.css', import.meta.url), 'utf8');
+const bugReport = readFileSync(new URL('../src/css/bugReport.css', import.meta.url), 'utf8');
 const chrome = readFileSync(new URL('../src/css/styles.css', import.meta.url), 'utf8');
 const info = readFileSync(new URL('../src/js/three/buildingInfoPanel.js', import.meta.url), 'utf8');
 const mobileControls = readFileSync(new URL('../src/js/three/mobileSceneControls.js', import.meta.url), 'utf8');
@@ -43,6 +45,15 @@ test('mobile map settings and comparisons are closed behind dismissible launcher
   assert.match(comparison, /\.cmp-launcher:not\(\[hidden\]\)/);
 });
 
+test('focused inputs do not trigger the iOS Safari auto-zoom', () => {
+  assert.match(
+    html,
+    /<meta name="viewport" content="width=device-width, initial-scale=1\.0, maximum-scale=1\.0, viewport-fit=cover">/,
+  );
+  assert.match(bugReport, /\.aireon-bug-field input,\s*\.aireon-bug-field textarea\s*{\s*font-size:\s*16px/s);
+  assert.match(comparison, /\.cmp-size-sub input\s*{\s*font-size:\s*16px/s);
+});
+
 test('hidden scene info is removed from the accessibility tree', () => {
   assert.match(info, /root\.setAttribute\('aria-hidden', 'true'\)/);
   assert.match(info, /root\.setAttribute\('aria-hidden', 'false'\)/);
@@ -55,11 +66,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.10.14', () => {
-  assert.equal(pkg.version, '0.10.14');
-  assert.equal(lock.version, '0.10.14');
-  assert.equal(lock.packages[''].version, '0.10.14');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.14'/s);
+test('release and package metadata are aligned at 0.10.15', () => {
+  assert.equal(pkg.version, '0.10.15');
+  assert.equal(lock.version, '0.10.15');
+  assert.equal(lock.packages[''].version, '0.10.15');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.10\.15'/s);
 });
 
 test('clean builds use the pinned local shared package artifact', () => {
