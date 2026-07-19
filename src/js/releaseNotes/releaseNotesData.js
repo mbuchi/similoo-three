@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.16',
+    date: 'July 19, 2026',
+    codename: 'Copyable EGRID',
+    summary: 'The target parcel EGRID in the comparison sidebar is now one click to copy.',
+    items: [
+      {
+        kind: 'new',
+        icon: 'copy',
+        text: 'Added a copy button next to the EGRID shown in the comparison sidebar\'s target parcel details, so the identifier can be pasted elsewhere without selecting the text by hand.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.15',
     date: 'July 19, 2026',
     codename: 'No more surprise zoom',

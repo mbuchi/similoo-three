@@ -60,6 +60,38 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
     });
     launcher.addEventListener('click', openComparison);
 
+    // Copy-EGRID affordance — delegated on the target section (which
+    // survives re-renders; only its innerHTML is replaced by renderTarget)
+    // so a single listener keeps working across locale changes and refetches.
+    let copyResetTimer = null;
+    els.targetSection.addEventListener('click', (e) => {
+        const btn = e.target.closest('.cmp-copy-egrid');
+        if (!btn) return;
+        const egrid = btn.dataset.egrid;
+        if (egrid) copyEgrid(btn, egrid);
+    });
+
+    async function copyEgrid(btn, egrid) {
+        try {
+            await copyToClipboard(egrid);
+        } catch (err) {
+            console.warn('EGRID copy failed', err);
+            return;
+        }
+        if (copyResetTimer) clearTimeout(copyResetTimer);
+        btn.classList.add('is-copied');
+        btn.setAttribute('aria-label', t('comparison.egrid_copied') || 'Copied!');
+        btn.title = t('comparison.egrid_copied') || 'Copied!';
+        btn.innerHTML = checkIcon();
+        copyResetTimer = setTimeout(() => {
+            copyResetTimer = null;
+            btn.classList.remove('is-copied');
+            btn.setAttribute('aria-label', t('comparison.copy_egrid') || 'Copy EGRID');
+            btn.title = t('comparison.copy_egrid') || 'Copy EGRID';
+            btn.innerHTML = copyIcon();
+        }, 1600);
+    }
+
     els.yearsRange.addEventListener('input', () => {
         years = clampInt(els.yearsRange.value, 1, 30, DEFAULT_YEARS);
         els.yearsValue.textContent = String(years);
@@ -195,9 +227,15 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
                         <span class="cmp-target-key">${escapeHtml(t('comparison.metric_zoning'))}</span>
                         <span class="cmp-target-val">${escapeHtml(target.cz_local || target.cz_abbrev || dash())}</span>
                     </div>
-                    <div class="cmp-target-line">
+                    <div class="cmp-target-line cmp-target-line--egrid">
                         <span class="cmp-target-key">${escapeHtml(t('comparison.metric_egrid'))}</span>
-                        <span class="cmp-target-val cmp-target-egrid">${escapeHtml(target.egrid || dash())}</span>
+                        <span class="cmp-target-egrid-wrap">
+                            <span class="cmp-target-val cmp-target-egrid">${escapeHtml(target.egrid || dash())}</span>
+                            ${target.egrid ? `
+                            <button type="button" class="cmp-copy-egrid" data-egrid="${escapeHtml(target.egrid)}" aria-label="${escapeHtml(t('comparison.copy_egrid'))}" title="${escapeHtml(t('comparison.copy_egrid'))}">
+                                ${copyIcon()}
+                            </button>` : ''}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -563,6 +601,32 @@ function formatPct(n) {
 
 function dash() {
     return '—';
+}
+
+// Clipboard write with a document.execCommand fallback for browsers/contexts
+// where navigator.clipboard is unavailable (e.g. non-HTTPS local testing).
+function copyToClipboard(text) {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        return navigator.clipboard.writeText(text);
+    }
+    if (typeof document === 'undefined') return Promise.reject(new Error('Clipboard unavailable'));
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    textarea.remove();
+    return copied ? Promise.resolve() : Promise.reject(new Error('Copy failed'));
+}
+
+function copyIcon() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
+}
+
+function checkIcon() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
 }
 
 function escapeHtml(str) {
