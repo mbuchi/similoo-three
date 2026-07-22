@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.17',
+    date: 'July 22, 2026',
+    codename: 'Sharper Claire',
+    summary: 'Claire\'s AI assistant now runs on Gemini 3.6 Flash for faster, sharper answers.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'sparkles',
+        text: 'Claire\'s AI assistant now runs on Gemini 3.6 Flash, our latest model, for faster and sharper answers about your parcel.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.16',
     date: 'July 19, 2026',
     codename: 'Copyable EGRID',
