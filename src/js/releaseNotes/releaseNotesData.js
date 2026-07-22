@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.18',
+    date: 'July 22, 2026',
+    codename: 'Resilient Claire',
+    summary: 'Claire\'s AI assistant gains a lighter Gemini fallback tier for even faster responses under load.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'sparkles',
+        text: 'Claire\'s AI assistant now has an additional fast fallback model (Gemini 3.5 Flash Lite) between its primary and lighter-weight models, for more resilient answers when demand is high.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.17',
     date: 'July 22, 2026',
     codename: 'Sharper Claire',
