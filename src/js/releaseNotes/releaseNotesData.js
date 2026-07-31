@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.19',
+    date: 'July 31, 2026',
+    codename: 'Look away',
+    summary: 'Navbar tooltips no longer stay pinned open after clicking a button.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'mouse-pointer-click',
+        text: 'Toolbar tooltips no longer stay open after clicking a button. Ships the shared suite package v1.122.1, which reveals tooltips only on hover or keyboard focus.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.18',
     date: 'July 22, 2026',
     codename: 'Resilient Claire',
