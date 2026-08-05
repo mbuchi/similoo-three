@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.20',
+    date: 'August 5, 2026',
+    codename: 'Stay in the scene',
+    summary: 'Signing in now keeps the exact scene, parcel, panel and in-progress comparison in place.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'shield-check',
+        text: 'Sign in now completes without reloading similoo-three, so the current camera, selected building or parcel, open comparison panel and unfinished work remain exactly as they were.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.19',
     date: 'July 31, 2026',
     codename: 'Look away',
