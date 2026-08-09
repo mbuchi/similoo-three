@@ -74,9 +74,15 @@ test('release and package metadata are aligned at 0.10.20', () => {
 });
 
 test('clean builds use the pinned local shared package artifact', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'file:vendor/aireon-shared-1.132.1.tgz');
+  // Exact-pin on purpose: this repo installs shared from a vendored tarball, so
+  // the guard is what proves a clean build gets the artifact that is committed
+  // rather than whatever a lockfile merge happened to leave behind. It must be
+  // re-encoded in the SAME PR that vendors a new tarball, never loosened to a
+  // range. It went stale when #68 vendored 1.137.0 and left this on 1.132.1, a
+  // tarball no longer present in vendor/, so the suite was red on main.
+  assert.equal(pkg.dependencies['@aireon/shared'], 'file:vendor/aireon-shared-1.137.0.tgz');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'file:vendor/aireon-shared-1.132.1.tgz',
+    'file:vendor/aireon-shared-1.137.0.tgz',
   );
 });
