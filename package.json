@@ -1,7 +1,7 @@
 {
   "name": "similoo-three",
   "private": true,
-  "version": "0.10.20",
+  "version": "0.10.21",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,10 +13,10 @@
   "devDependencies": {
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-react": "^6.0.5",
     "typescript": "^5.5.3",
     "typescript7": "npm:typescript@^7.0.2",
-    "vite": "^5.4.2"
+    "vite": "^8.2.1"
   },
   "dependencies": {
     "@aireon/shared": "file:vendor/aireon-shared-1.137.0.tgz",

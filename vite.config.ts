@@ -8,6 +8,14 @@ import react from '@vitejs/plugin-react';
 // the engine modules are plain ESM and need no special handling. We do NOT
 // enable the React Compiler here — the shell is tiny and we avoid the
 // stale-node_modules compiler-runtime gotcha.
+//
+// Build baseline: Vite 8 (Rolldown — one bundler for dev and prod, so CJS
+// interop no longer differs between the two). @vitejs/plugin-react 6 transforms
+// JSX with Oxc and has dropped its `babel` option entirely; because this app
+// runs no React Compiler pass, it needs no @rolldown/plugin-babel companion
+// plugin (apps that do compile pass reactCompilerPreset through that plugin).
+// `rollupOptions` is still the accepted spelling under Rolldown and is left
+// as-is on purpose.
 export default defineConfig({
   plugins: [react()],
   build: {

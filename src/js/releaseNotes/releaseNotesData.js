@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.21',
+    date: 'August 9, 2026',
+    codename: 'Rolldown',
+    summary: 'similoo-three now builds on Vite 8, the suite-wide build baseline, so releases are produced faster and cached in smaller pieces.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'zap',
+        text: 'Moved the build to Vite 8 (Rolldown), matching the rest of the Aireon suite. The viewer behaves exactly as before, but each release is built faster and ships as more, smaller cached files so a returning visitor re-downloads less.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.20',
     date: 'August 5, 2026',
     codename: 'Stay in the scene',
