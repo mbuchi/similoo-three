@@ -46,6 +46,12 @@ export const RELEASES = [
       {
         kind: 'improved',
         icon: 'zap',
+        text: 'Adopted the Aireon first-load performance standard: replaced external Google Fonts stylesheet with self-hosted @aireon/shared/fonts.css, removed render-blocking external scripts in favor of bundled icons, and switched theme imports to subpaths.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'zap',
         text: 'Moved the build to Vite 8 (Rolldown), matching the rest of the Aireon suite. The viewer behaves exactly as before, but each release is built faster and ships as more, smaller cached files so a returning visitor re-downloads less.',
         prs: [],
       },
