@@ -11,19 +11,20 @@
     "typecheck": "node node_modules/typescript7/bin/tsc --noEmit -p tsconfig.app.json"
   },
   "devDependencies": {
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.5",
     "typescript": "^5.5.3",
     "typescript7": "npm:typescript@^7.0.2",
     "vite": "^8.2.1"
   },
   "dependencies": {
-    "@aireon/shared": "file:vendor/aireon-shared-1.137.0.tgz",
+    "@aireon/shared": "github:mbuchi/aireon-shared#v1.170.0",
     "lucide": "^0.358.0",
+    "lucide-react": "^1.31.0",
     "oidc-client-ts": "^3.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "three": "^0.184.0"
   }
 }

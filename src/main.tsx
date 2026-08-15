@@ -1,7 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { initTheme, getStoredTheme, setTheme } from '@aireon/shared';
+import { initTheme, getStoredTheme, setTheme } from '@aireon/shared/theme';
+import { createIcons, ShieldAlert, X, Send } from 'lucide';
 import App from './App.tsx';
+
+// Bundled Lucide icons for vanilla modules without external unpkg script
+if (typeof window !== 'undefined') {
+  (window as unknown as { lucide: unknown }).lucide = {
+    createIcons: () => createIcons({ icons: { ShieldAlert, X, Send } }),
+  };
+}
 
 // Cross-app + cross-device theme. The inline pre-paint script in index.html
 // already applied the right `data-theme` (reading the suite-wide `aireon_theme`
@@ -28,6 +36,7 @@ import App from './App.tsx';
 // App stylesheets — the same bespoke CSS the vanilla app shipped, plus the
 // shared cesium-app auth styles + the bug-report styles main.js imported.
 // map-ui.css carries the self-contained AppNavbar bar + brand styling.
+import '@aireon/shared/fonts.css';
 import '@aireon/shared/map-ui.css';
 import '@aireon/shared/cesium-app/css/auth.css';
 import './css/styles.css';
