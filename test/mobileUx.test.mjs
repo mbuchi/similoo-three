@@ -64,7 +64,7 @@ test('the shared-package setup enforces its deploy key and configures secure SSH
   const sshKeyscanStub = join(stubBin, 'ssh-keyscan');
   writeFileSync(
     sshKeyscanStub,
-    '#!/bin/sh\nprintf "%s\\n" "github.com ssh-ed25519 AAAA-test-known-host"\n',
+    '#!/bin/sh\ntouch "$HOME/ssh-keyscan-called"\nexit 97\n',
   );
   chmodSync(sshKeyscanStub, 0o755);
   const gitStub = join(stubBin, 'git');
@@ -92,8 +92,9 @@ test('the shared-package setup enforces its deploy key and configures secure SSH
   assert.equal(statSync(knownHosts).mode & 0o777, 0o600);
   assert.equal(
     readFileSync(knownHosts, 'utf8'),
-    'github.com ssh-ed25519 AAAA-test-known-host\n',
+    'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl\n',
   );
+  assert.equal(existsSync(join(tempHome, 'ssh-keyscan-called')), false);
   assert.deepEqual(
     readFileSync(join(tempHome, 'git-args'), 'utf8').trim().split('\n'),
     [
@@ -101,6 +102,77 @@ test('the shared-package setup enforces its deploy key and configures secure SSH
       '--global',
       'core.sshCommand',
       `ssh -i ${keyFile} -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=${knownHosts}`,
+    ],
+  );
+  assert.doesNotMatch(readFileSync(join(tempHome, 'git-args'), 'utf8'), /test-only-deploy-key/);
+});
+
+test('the configured SSH command round-trips paths containing shell metacharacters', (t) => {
+  const tempHome = mkdtempSync(join(tmpdir(), 'similoo three $safe; deploy-'));
+  const stubBin = join(tempHome, 'bin');
+  const mkdirResult = spawnSync('/bin/mkdir', ['-p', stubBin]);
+  assert.equal(mkdirResult.status, 0);
+  t.after(() => rmSync(tempHome, { recursive: true, force: true }));
+
+  const sshKeyscanStub = join(stubBin, 'ssh-keyscan');
+  writeFileSync(
+    sshKeyscanStub,
+    '#!/bin/sh\nprintf "%s\\n" "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"\n',
+  );
+  chmodSync(sshKeyscanStub, 0o755);
+  const gitStub = join(stubBin, 'git');
+  writeFileSync(
+    gitStub,
+    '#!/bin/sh\nprintf "%s\\n" "$@" > "$HOME/git-args"\n',
+  );
+  chmodSync(gitStub, 0o755);
+  const sshStub = join(stubBin, 'ssh');
+  writeFileSync(
+    sshStub,
+    '#!/bin/sh\nprintf "%s\\n" "$@" > "$HOME/ssh-args"\n',
+  );
+  chmodSync(sshStub, 0o755);
+
+  const baseEnv = {
+    HOME: tempHome,
+    PATH: `${stubBin}:/usr/bin:/bin`,
+  };
+  const configured = spawnSync('/bin/bash', [deploySetupScript], {
+    encoding: 'utf8',
+    env: {
+      ...baseEnv,
+      AIREON_SHARED_DEPLOY_KEY: 'test-only-deploy-key',
+    },
+  });
+  assert.equal(configured.status, 0, `${configured.stdout}${configured.stderr}`);
+
+  const gitArgs = readFileSync(join(tempHome, 'git-args'), 'utf8').trim().split('\n');
+  const sshCommand = gitArgs[3];
+  assert.deepEqual(gitArgs.slice(0, 3), ['config', '--global', 'core.sshCommand']);
+  assert.doesNotMatch(sshCommand, /test-only-deploy-key/);
+
+  const executed = spawnSync('/bin/bash', ['-c', `${sshCommand} -- verification-target`], {
+    encoding: 'utf8',
+    env: baseEnv,
+  });
+  assert.equal(executed.status, 0, `${executed.stdout}${executed.stderr}`);
+  assert.doesNotMatch(`${executed.stdout}${executed.stderr}`, /test-only-deploy-key/);
+
+  const keyFile = join(tempHome, '.ssh', 'aireon_shared_deploy_key');
+  const knownHosts = join(tempHome, '.ssh', 'known_hosts');
+  assert.deepEqual(
+    readFileSync(join(tempHome, 'ssh-args'), 'utf8').trim().split('\n'),
+    [
+      '-i',
+      keyFile,
+      '-o',
+      'IdentitiesOnly=yes',
+      '-o',
+      'StrictHostKeyChecking=yes',
+      '-o',
+      `UserKnownHostsFile=${knownHosts}`,
+      '--',
+      'verification-target',
     ],
   );
 });
