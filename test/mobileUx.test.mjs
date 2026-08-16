@@ -7,6 +7,7 @@ const scene = readFileSync(new URL('../src/css/scene.css', import.meta.url), 'ut
 const comparison = readFileSync(new URL('../src/css/comparison.css', import.meta.url), 'utf8');
 const bugReport = readFileSync(new URL('../src/css/bugReport.css', import.meta.url), 'utf8');
 const chrome = readFileSync(new URL('../src/css/styles.css', import.meta.url), 'utf8');
+const landing = readFileSync(new URL('../src/css/landing.css', import.meta.url), 'utf8');
 const info = readFileSync(new URL('../src/js/three/buildingInfoPanel.js', import.meta.url), 'utf8');
 const mobileControls = readFileSync(new URL('../src/js/three/mobileSceneControls.js', import.meta.url), 'utf8');
 const sidebar = readFileSync(new URL('../src/js/comparison/sidebar.js', import.meta.url), 'utf8');
@@ -21,6 +22,7 @@ test('phone scene and navbar controls expose 44px targets', () => {
   assert.match(chrome, /\.aireon-hublink-btn[^}]*min-width:\s*44px[^}]*min-height:\s*44px/s);
   assert.match(chrome, /\.skip-link[^}]*min-height:\s*44px/s);
   assert.match(chrome, /\.aireon-onav-btn[^}]*width:\s*44px[^}]*height:\s*44px/s);
+  assert.match(landing, /\.landing-result-remove[^}]*min-height:\s*44px/s);
 });
 
 test('phone comparison controls expose 44px targets and readable labels', () => {

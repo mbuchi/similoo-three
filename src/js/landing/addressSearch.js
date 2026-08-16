@@ -29,25 +29,53 @@ export async function geocodeAddress(query, signal) {
 //   onPick   — function({ id, label, lat, lng }) => void
 //
 // Returns a disposer that detaches listeners and the shared-history subscription.
-export function bindLandingSearch({ input, list, onPick, historyStore }) {
+export function bindLandingSearch({ input, list, popup = list, actions = null, onPick, historyStore }) {
     let abortCtrl = null;
     let timer = null;
+    let blurTimer = null;
     let activeIndex = -1;
     let currentResults = [];
+    let currentMode = 'closed';
     let hasFocus = false;
+    let queryGeneration = 0;
+
+    function cancelPendingQuery() {
+        queryGeneration += 1;
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        if (abortCtrl) {
+            const controller = abortCtrl;
+            abortCtrl = null;
+            controller.abort();
+        }
+    }
+
+    function setExpanded(open) {
+        list.hidden = !open;
+        popup.hidden = !open;
+        input.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
 
     function clearResults() {
         list.innerHTML = '';
-        list.hidden = true;
-        input.setAttribute('aria-expanded', 'false');
+        if (actions) {
+            actions.innerHTML = '';
+            actions.hidden = true;
+        }
+        setExpanded(false);
         input.removeAttribute('aria-activedescendant');
         activeIndex = -1;
         currentResults = [];
+        currentMode = 'closed';
     }
 
     function renderResults(results, { recent = false } = {}) {
         currentResults = results;
+        currentMode = recent ? 'recent' : 'live';
         list.innerHTML = '';
+        if (actions) actions.innerHTML = '';
         for (let i = 0; i < results.length; i++) {
             const r = results[i];
             const li = document.createElement('li');
@@ -60,28 +88,25 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
                 e.preventDefault(); // keep focus on input
                 pick(i);
             });
-            if (recent) {
+            list.appendChild(li);
+            if (recent && actions) {
                 const remove = document.createElement('button');
                 remove.type = 'button';
                 remove.className = 'landing-result-remove';
-                remove.textContent = '×';
+                remove.textContent = t('common.delete');
                 remove.setAttribute('aria-label', `${t('common.delete')}: ${r.label}`);
                 remove.setAttribute('title', t('common.delete'));
-                remove.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
+                remove.dataset.index = String(i);
                 remove.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    void historyStore?.remove?.(r.id);
+                    removeRecent(i);
                 });
-                li.appendChild(remove);
+                actions.appendChild(remove);
             }
-            list.appendChild(li);
         }
-        list.hidden = results.length === 0;
-        input.setAttribute('aria-expanded', results.length ? 'true' : 'false');
+        if (actions) actions.hidden = !recent || results.length === 0;
+        setExpanded(results.length > 0);
         activeIndex = -1;
         updateActive();
     }
@@ -107,14 +132,18 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
     // silent. The row is cleared on the next keystroke like any result.
     function renderError() {
         currentResults = [];
+        currentMode = 'error';
         list.innerHTML = '';
+        if (actions) {
+            actions.innerHTML = '';
+            actions.hidden = true;
+        }
         const li = document.createElement('li');
         li.className = 'landing-result landing-result-error';
         li.setAttribute('role', 'alert');
         li.textContent = t('landing.search_error');
         list.appendChild(li);
-        list.hidden = false;
-        input.setAttribute('aria-expanded', 'true');
+        setExpanded(true);
         input.removeAttribute('aria-activedescendant');
         activeIndex = -1;
     }
@@ -134,28 +163,52 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
     function pick(index) {
         const r = currentResults[index];
         if (!r) return;
+        cancelPendingQuery();
         input.value = r.label;
         clearResults();
         if (typeof onPick === 'function') onPick(r);
     }
 
-    async function runQuery() {
-        const q = input.value;
-        if (abortCtrl) abortCtrl.abort();
-        abortCtrl = new AbortController();
+    function removeRecent(index) {
+        if (currentMode !== 'recent') return;
+        const result = currentResults[index];
+        if (!result) return;
+        void historyStore?.remove?.(result.id);
+        input.focus();
+    }
+
+    function isCurrentRequest(controller, generation, query, allowSettled = false) {
+        const modeMatches = allowSettled
+            ? currentMode === 'live-pending' || currentMode === 'live' || currentMode === 'error'
+            : currentMode === 'live-pending';
+        return abortCtrl === controller
+            && queryGeneration === generation
+            && input.value.trim() === query
+            && modeMatches;
+    }
+
+    async function runQuery(query, generation) {
+        timer = null;
+        if (queryGeneration !== generation
+            || input.value.trim() !== query
+            || currentMode !== 'live-pending') return;
+        const controller = new AbortController();
+        abortCtrl = controller;
         try {
-            const results = await geocodeAddress(q, abortCtrl.signal);
-            if (abortCtrl.signal.aborted) return;
+            const results = await geocodeAddress(query, controller.signal);
+            if (!isCurrentRequest(controller, generation, query)) return;
             renderResults(results);
         } catch (err) {
-            if (err?.name === 'AbortError') return;
+            if (err?.name === 'AbortError' || !isCurrentRequest(controller, generation, query)) return;
             console.warn('addressSearch: geocode failed', err?.message);
             renderError();
+        } finally {
+            if (isCurrentRequest(controller, generation, query, true)) abortCtrl = null;
         }
     }
 
     function onInput() {
-        if (timer) clearTimeout(timer);
+        cancelPendingQuery();
         const query = input.value.trim();
         if (query.length === 0) {
             renderRecentResults();
@@ -165,12 +218,22 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
             clearResults();
             return;
         }
-        timer = setTimeout(runQuery, DEBOUNCE_MS);
+        clearResults();
+        currentMode = 'live-pending';
+        const generation = queryGeneration;
+        timer = setTimeout(() => runQuery(query, generation), DEBOUNCE_MS);
     }
 
     function onFocus() {
         hasFocus = true;
-        if (input.value.trim().length === 0) renderRecentResults();
+        if (blurTimer) {
+            clearTimeout(blurTimer);
+            blurTimer = null;
+        }
+        if (input.value.trim().length === 0) {
+            cancelPendingQuery();
+            renderRecentResults();
+        }
     }
 
     function onKey(e) {
@@ -191,15 +254,52 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
                 e.preventDefault();
                 pick(0);
             }
+        } else if ((e.key === 'Delete' || e.key === 'Backspace')
+            && currentMode === 'recent'
+            && activeIndex >= 0) {
+            e.preventDefault();
+            removeRecent(activeIndex);
         } else if (e.key === 'Escape') {
+            cancelPendingQuery();
             clearResults();
         }
     }
 
-    function onBlur() {
+    function scheduleBlurCleanup() {
+        if (blurTimer) clearTimeout(blurTimer);
+        blurTimer = setTimeout(() => {
+            blurTimer = null;
+            if (!hasFocus) clearResults();
+        }, 120);
+    }
+
+    function onBlur(e) {
+        if (popup?.contains?.(e.relatedTarget)) {
+            hasFocus = true;
+            if (blurTimer) {
+                clearTimeout(blurTimer);
+                blurTimer = null;
+            }
+            return;
+        }
         hasFocus = false;
-        // Defer so mousedown on a result can still register.
-        setTimeout(clearResults, 120);
+        cancelPendingQuery();
+        scheduleBlurCleanup();
+    }
+
+    function onPopupFocusIn() {
+        hasFocus = true;
+        if (blurTimer) {
+            clearTimeout(blurTimer);
+            blurTimer = null;
+        }
+    }
+
+    function onPopupFocusOut(e) {
+        if (e.relatedTarget === input || popup?.contains?.(e.relatedTarget)) return;
+        hasFocus = false;
+        cancelPendingQuery();
+        scheduleBlurCleanup();
     }
 
     const unsubscribeHistory = historyStore?.subscribe?.(() => {
@@ -211,14 +311,18 @@ export function bindLandingSearch({ input, list, onPick, historyStore }) {
     input.addEventListener('focus', onFocus);
     input.addEventListener('keydown', onKey);
     input.addEventListener('blur', onBlur);
+    popup?.addEventListener?.('focusin', onPopupFocusIn);
+    popup?.addEventListener?.('focusout', onPopupFocusOut);
 
     return function dispose() {
-        if (timer) clearTimeout(timer);
-        if (abortCtrl) abortCtrl.abort();
+        cancelPendingQuery();
+        if (blurTimer) clearTimeout(blurTimer);
         input.removeEventListener('input', onInput);
         input.removeEventListener('focus', onFocus);
         input.removeEventListener('keydown', onKey);
         input.removeEventListener('blur', onBlur);
+        popup?.removeEventListener?.('focusin', onPopupFocusIn);
+        popup?.removeEventListener?.('focusout', onPopupFocusOut);
         if (typeof unsubscribeHistory === 'function') unsubscribeHistory();
         clearResults();
     };

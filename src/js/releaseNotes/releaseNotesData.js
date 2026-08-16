@@ -49,6 +49,12 @@ export const RELEASES = [
         text: 'Focus the empty address search to revisit up to six recent coordinate-backed addresses selected in similoo-three or another Aireon app. Recent picks follow the same 3D loading path as live results and can be removed directly from the list.',
         prs: [],
       },
+      {
+        kind: 'fixed',
+        icon: 'shield-check',
+        text: 'Clearing a pending address query now keeps recent places visible even if the old provider request finishes late. Recent removal is available through Delete or Backspace and through a localized 44-pixel touch action outside the listbox option.',
+        prs: [],
+      },
     ],
   },
   {
