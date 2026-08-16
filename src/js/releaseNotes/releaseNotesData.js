@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.23',
+    date: 'August 17, 2026',
+    codename: 'Secure delivery',
+    summary: 'Production builds can securely install the private Aireon shared package again.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'shield-check',
+        text: 'Added the hardened deployment SSH setup used across the suite, so Vercel verifies GitHub and installs the pinned private @aireon/shared dependency with its scoped deploy key instead of failing at npm install.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.22',
     date: 'August 17, 2026',
     codename: 'Recent places, everywhere',
