@@ -277,7 +277,12 @@ export function bootScene() {
     }
 
     if (input && list) {
-        searchDispose = bindLandingSearch({ input, list, onPick: handlePick });
+        searchDispose = bindLandingSearch({
+            input,
+            list,
+            onPick: handlePick,
+            historyStore: searchHistoryStore,
+        });
         setTimeout(() => input.focus(), 80);
     }
 

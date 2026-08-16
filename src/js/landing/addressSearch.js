@@ -28,12 +28,13 @@ export async function geocodeAddress(query, signal) {
 //   list     — HTMLUListElement (the results dropdown)
 //   onPick   — function({ id, label, lat, lng }) => void
 //
-// Returns a disposer that detaches listeners.
-export function bindLandingSearch({ input, list, onPick }) {
+// Returns a disposer that detaches listeners and the shared-history subscription.
+export function bindLandingSearch({ input, list, onPick, historyStore }) {
     let abortCtrl = null;
     let timer = null;
     let activeIndex = -1;
     let currentResults = [];
+    let hasFocus = false;
 
     function clearResults() {
         list.innerHTML = '';
@@ -44,27 +45,61 @@ export function bindLandingSearch({ input, list, onPick }) {
         currentResults = [];
     }
 
-    function renderResults(results) {
+    function renderResults(results, { recent = false } = {}) {
         currentResults = results;
         list.innerHTML = '';
         for (let i = 0; i < results.length; i++) {
             const r = results[i];
             const li = document.createElement('li');
-            li.className = 'landing-result';
+            li.className = recent ? 'landing-result landing-result-recent' : 'landing-result';
             li.setAttribute('role', 'option');
             li.id = `landing-result-${i}`;
             li.dataset.index = String(i);
-            li.textContent = r.label;
+            li.textContent = recent ? `◷ ${r.label}` : r.label;
             li.addEventListener('mousedown', (e) => {
                 e.preventDefault(); // keep focus on input
                 pick(i);
             });
+            if (recent) {
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'landing-result-remove';
+                remove.textContent = '×';
+                remove.setAttribute('aria-label', `${t('common.delete')}: ${r.label}`);
+                remove.setAttribute('title', t('common.delete'));
+                remove.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                remove.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    void historyStore?.remove?.(r.id);
+                });
+                li.appendChild(remove);
+            }
             list.appendChild(li);
         }
         list.hidden = results.length === 0;
         input.setAttribute('aria-expanded', results.length ? 'true' : 'false');
         activeIndex = -1;
         updateActive();
+    }
+
+    function renderRecentResults() {
+        const entries = historyStore?.getSnapshot?.()?.entries;
+        const recent = Array.isArray(entries)
+            ? entries
+                .filter((entry) => Number.isFinite(entry?.lat) && Number.isFinite(entry?.lng))
+                .slice(0, 6)
+                .map((entry) => ({
+                    id: entry.id,
+                    label: entry.label,
+                    lat: entry.lat,
+                    lng: entry.lng,
+                }))
+            : [];
+        renderResults(recent, { recent: true });
     }
 
     // Surfaces a localized, non-interactive error row in the results list so
@@ -121,11 +156,21 @@ export function bindLandingSearch({ input, list, onPick }) {
 
     function onInput() {
         if (timer) clearTimeout(timer);
-        if (input.value.trim().length < 3) {
+        const query = input.value.trim();
+        if (query.length === 0) {
+            renderRecentResults();
+            return;
+        }
+        if (query.length < 3) {
             clearResults();
             return;
         }
         timer = setTimeout(runQuery, DEBOUNCE_MS);
+    }
+
+    function onFocus() {
+        hasFocus = true;
+        if (input.value.trim().length === 0) renderRecentResults();
     }
 
     function onKey(e) {
@@ -152,11 +197,18 @@ export function bindLandingSearch({ input, list, onPick }) {
     }
 
     function onBlur() {
+        hasFocus = false;
         // Defer so mousedown on a result can still register.
         setTimeout(clearResults, 120);
     }
 
+    const unsubscribeHistory = historyStore?.subscribe?.(() => {
+        if (hasFocus && input.value.trim().length === 0) renderRecentResults();
+    });
+    historyStore?.ensureInitialized?.();
+
     input.addEventListener('input', onInput);
+    input.addEventListener('focus', onFocus);
     input.addEventListener('keydown', onKey);
     input.addEventListener('blur', onBlur);
 
@@ -164,8 +216,10 @@ export function bindLandingSearch({ input, list, onPick }) {
         if (timer) clearTimeout(timer);
         if (abortCtrl) abortCtrl.abort();
         input.removeEventListener('input', onInput);
+        input.removeEventListener('focus', onFocus);
         input.removeEventListener('keydown', onKey);
         input.removeEventListener('blur', onBlur);
+        if (typeof unsubscribeHistory === 'function') unsubscribeHistory();
         clearResults();
     };
 }
