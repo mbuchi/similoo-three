@@ -66,6 +66,8 @@ export function bootScene() {
     const backBtn = document.getElementById('backToSearch');
     const input = document.getElementById('landingSearchInput');
     const list = document.getElementById('landingResults');
+    const searchPopup = document.getElementById('landingResultsPopup');
+    const searchActions = document.getElementById('landingResultActions');
 
     let viewer = null;
     let sidebar = null;
@@ -277,7 +279,14 @@ export function bootScene() {
     }
 
     if (input && list) {
-        searchDispose = bindLandingSearch({ input, list, onPick: handlePick });
+        searchDispose = bindLandingSearch({
+            input,
+            list,
+            popup: searchPopup,
+            actions: searchActions,
+            onPick: handlePick,
+            historyStore: searchHistoryStore,
+        });
         setTimeout(() => input.focus(), 80);
     }
 

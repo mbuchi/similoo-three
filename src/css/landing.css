@@ -99,10 +99,8 @@
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
 }
 
-.landing-results {
-    list-style: none;
+.landing-results-popup {
     margin: 6px 0 0;
-    padding: 6px;
     background: var(--card-bg, #fff);
     border: 1px solid var(--border, rgba(0, 0, 0, 0.08));
     border-radius: 12px;
@@ -115,14 +113,26 @@
     z-index: 10;
 }
 
-[data-theme='dark'] .landing-results {
+[data-theme='dark'] .landing-results-popup {
     background: #111827;
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-.landing-results[hidden] { display: none; }
+.landing-results-popup[hidden],
+.landing-results[hidden],
+.landing-result-actions[hidden] { display: none; }
+
+.landing-results {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+}
 
 .landing-result {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
     padding: 10px 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -131,6 +141,53 @@
     letter-spacing: -0.005em;
     color: var(--text, #0f172a);
     line-height: 1.4;
+}
+
+.landing-result-recent {
+    height: 44px;
+    overflow: hidden;
+    padding-right: 112px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.landing-result-actions {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.landing-result-remove {
+    min-width: 96px;
+    min-height: 44px;
+    padding: 0 10px;
+    color: var(--muted, #64748b);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.landing-result-remove:hover,
+.landing-result-remove:focus-visible {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+    outline: none;
+}
+
+[data-theme='dark'] .landing-result-remove {
+    color: #cbd5e1;
+}
+
+[data-theme='dark'] .landing-result-remove:hover,
+[data-theme='dark'] .landing-result-remove:focus-visible {
+    color: #f87171;
 }
 
 [data-theme='dark'] .landing-result { color: #f1f5f9; }

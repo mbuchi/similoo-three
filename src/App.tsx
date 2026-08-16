@@ -66,7 +66,10 @@ export default function App() {
                 autoComplete="off"
                 data-i18n-attr="placeholder:landing.search_placeholder,aria-label:landing.search_aria"
               />
-              <ul className="landing-results" id="landingResults" role="listbox" hidden />
+              <div className="landing-results-popup" id="landingResultsPopup" hidden>
+                <ul className="landing-results" id="landingResults" role="listbox" hidden />
+                <div className="landing-result-actions" id="landingResultActions" hidden />
+              </div>
               <p className="landing-hint" data-i18n="landing.hint">
                 Pick a result to load the 3D scene.
               </p>

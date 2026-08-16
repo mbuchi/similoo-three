@@ -38,6 +38,26 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.10.22',
+    date: 'August 17, 2026',
+    codename: 'Recent places, everywhere',
+    summary: 'Your latest valid Aireon address picks are now available from the empty landing search.',
+    items: [
+      {
+        kind: 'new',
+        icon: 'clock',
+        text: 'Focus the empty address search to revisit up to six recent coordinate-backed addresses selected in similoo-three or another Aireon app. Recent picks follow the same 3D loading path as live results and can be removed directly from the list.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'shield-check',
+        text: 'Clearing a pending address query now keeps recent places visible even if the old provider request finishes late. Recent removal is available through Delete or Backspace and through a localized 44-pixel touch action outside the listbox option.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.10.21',
     date: 'August 9, 2026',
     codename: 'Rolldown',
