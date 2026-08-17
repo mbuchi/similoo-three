@@ -158,6 +158,7 @@ export default function Navbar() {
           ]}
           closeLabel={t('common.close')}
           dark={isDark}
+          locale={locale}
           onClose={() => setShowAbout(false)}
         />
       )}
