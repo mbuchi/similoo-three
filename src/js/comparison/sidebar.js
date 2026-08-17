@@ -1,10 +1,13 @@
 import { t, onLocaleChange } from '../i18n.js';
+import { resolveZoneLabel } from '@aireon/shared/parcel-zone';
 import { fetchSimilooComparables } from '../api/similoo.js';
 
 // Right-edge "Comparable Buildings" sidebar.
 //
 // Three stacked sections:
-//   1. Target parcel metrics — municipality, zoning, EGRID, parcel size,
+//   1. Target parcel metrics: municipality, zone (the harmonized federal
+//      category via @aireon/shared/parcel-zone; see PARCEL_ZONE_STANDARD.md),
+//      EGRID, parcel size,
 //      building volume + footprint + height + floors, construction year,
 //      ratioV (headline metric, big number).
 //   2. Filters — "years window" slider (1–30, default 10) and parcel-size
@@ -225,7 +228,7 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
                     </div>
                     <div class="cmp-target-line">
                         <span class="cmp-target-key">${escapeHtml(t('comparison.metric_zoning'))}</span>
-                        <span class="cmp-target-val">${escapeHtml(target.cz_local || target.cz_abbrev || dash())}</span>
+                        <span class="cmp-target-val">${escapeHtml(resolveZoneLabel(target) || dash())}</span>
                     </div>
                     <div class="cmp-target-line cmp-target-line--egrid">
                         <span class="cmp-target-key">${escapeHtml(t('comparison.metric_egrid'))}</span>
