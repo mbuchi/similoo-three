@@ -230,18 +230,22 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.11.0', () => {
-  assert.equal(pkg.version, '0.11.0');
-  assert.equal(lock.version, '0.11.0');
-  assert.equal(lock.packages[''].version, '0.11.0');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.11\.0'/s);
+test('release and package metadata are aligned at 0.11.1', () => {
+  assert.equal(pkg.version, '0.11.1');
+  assert.equal(lock.version, '0.11.1');
+  assert.equal(lock.packages[''].version, '0.11.1');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.11\.1'/s);
 });
 
-// Re-pinned to v1.172.2, the data-vintage release: the shared AboutModal fetches
-// the RES dataset version on open and names the parcel snapshot, when it was
-// last computed, and (behind "Pipeline details") the date of each enrichment
-// layer. A repin below this is not a build error, the About dialog simply loses
-// the line that says how old the building volume on screen is.
+// Re-pinned to v1.173.1, the harmonized-zone release: @aireon/shared/parcel-zone
+// exports resolveZoneLabel(), the suite-wide rule that a parcel's zone is the
+// federal "Hauptnutzung CH" category (cz_harmonized) with the municipal
+// designation only as fallback. The comparison sidebar imports it, so a repin
+// below this is a build error (module not found), not a silent downgrade.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.172.2');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.173.1');
+  assert.equal(
+    lock.packages['node_modules/@aireon/shared'].resolved,
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#7ffa9a371097bfb7a3c0d2259a42ca0060f45449',
+  );
 });

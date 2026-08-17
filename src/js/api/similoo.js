@@ -15,6 +15,12 @@
 //   comparable — { egrid, municipality, cz_local, parcel_area_m2,
 //                  building_volume_m3, footprint_m2, height_m, floors,
 //                  construction_year, ratioV, similarity_score, lat, lng }
+//
+// `cz_local` is the backend's cohort key (comparables share the target's
+// municipal zone); it is NOT the display label. Anything shown AS the zone
+// goes through resolveZoneLabel() from @aireon/shared/parcel-zone, which
+// prefers `cz_harmonized` when the payload carries it and otherwise falls
+// back to the municipal designation (PARCEL_ZONE_STANDARD.md).
 
 import { getCached, setCached, TTL } from '../cache.js';
 

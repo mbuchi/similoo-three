@@ -38,6 +38,26 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.11.1',
+    date: 'August 18, 2026',
+    codename: 'One zone per parcel',
+    summary: 'The comparison sidebar now shows the harmonized federal zone category for the target parcel, the same zone label as every other Aireon app.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'map',
+        text: 'The zone line in the target parcel details now shows the harmonized federal zone category (for example "Wohnzonen") instead of the municipal designation, so a parcel reads the same in similoo-three as in the rest of the suite. Where the data has no harmonized category yet, such as the canton of Zurich, the municipal designation is shown as a fallback, and legal cross-references such as "siehe gueltige Bau- und Zonenordnung" are no longer printed as a zone.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon library to v1.173.1, which carries the suite-wide zone resolver. The comparable-buildings search itself is unchanged: comparables are still selected from the same municipal zone as the target.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.11.0',
     date: 'August 17, 2026',
     codename: 'How old is this number?',
