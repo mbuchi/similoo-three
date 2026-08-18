@@ -5,9 +5,10 @@ import { fetchSimilooComparables } from '../api/similoo.js';
 // Right-edge "Comparable Buildings" sidebar.
 //
 // Three stacked sections:
-//   1. Target parcel metrics: municipality, zone (the harmonized federal
-//      category via @aireon/shared/parcel-zone; see PARCEL_ZONE_STANDARD.md),
-//      EGRID, parcel size,
+//   1. Target parcel metrics: municipality, zone (the municipal designation,
+//      e.g. "Wohnzone, Bauklasse 4", via resolveZoneLabel() from
+//      @aireon/shared/parcel-zone; see PARCEL_ZONE_STANDARD.md), EGRID,
+//      parcel size,
 //      building volume + footprint + height + floors, construction year,
 //      ratioV (headline metric, big number).
 //   2. Filters — "years window" slider (1–30, default 10) and parcel-size

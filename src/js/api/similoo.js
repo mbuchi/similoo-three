@@ -17,10 +17,13 @@
 //                  construction_year, ratioV, similarity_score, lat, lng }
 //
 // `cz_local` is the backend's cohort key (comparables share the target's
-// municipal zone); it is NOT the display label. Anything shown AS the zone
-// goes through resolveZoneLabel() from @aireon/shared/parcel-zone, which
-// prefers `cz_harmonized` when the payload carries it and otherwise falls
-// back to the municipal designation (PARCEL_ZONE_STANDARD.md).
+// municipal zone). Anything shown AS the zone still goes through
+// resolveZoneLabel() from @aireon/shared/parcel-zone rather than reading the
+// column directly: since v1.177.0 the resolver returns the municipal
+// designation (`cz_local`, e.g. "Wohnzone, Bauklasse 4") with the legal-
+// reference guard, and only falls back to `cz_harmonized` / `cz_abbrev` /
+// `cz_canton` when the municipal one is missing (PARCEL_ZONE_STANDARD.md).
+// The federal category `cz_harmonized` is a filter, never the label.
 
 import { getCached, setCached, TTL } from '../cache.js';
 
