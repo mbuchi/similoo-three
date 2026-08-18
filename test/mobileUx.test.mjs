@@ -230,22 +230,23 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.11.1', () => {
-  assert.equal(pkg.version, '0.11.1');
-  assert.equal(lock.version, '0.11.1');
-  assert.equal(lock.packages[''].version, '0.11.1');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.11\.1'/s);
+test('release and package metadata are aligned at 0.12.0', () => {
+  assert.equal(pkg.version, '0.12.0');
+  assert.equal(lock.version, '0.12.0');
+  assert.equal(lock.packages[''].version, '0.12.0');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.12\.0'/s);
 });
 
-// Re-pinned to v1.173.1, the harmonized-zone release: @aireon/shared/parcel-zone
-// exports resolveZoneLabel(), the suite-wide rule that a parcel's zone is the
-// federal "Hauptnutzung CH" category (cz_harmonized) with the municipal
-// designation only as fallback. The comparison sidebar imports it, so a repin
-// below this is a build error (module not found), not a silent downgrade.
+// Re-pinned to v1.177.0, the municipal-zone release: default single / cz_local.
+// @aireon/shared/parcel-zone's resolveZoneLabel() now returns the municipal
+// designation ("Wohnzone, Bauklasse 4"); the federal cz_harmonized category is
+// a filter, never the label. The comparison sidebar imports it, so a repin
+// below v1.173.x is a build error (module not found) and a repin between
+// v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.173.1');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.177.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#7ffa9a371097bfb7a3c0d2259a42ca0060f45449',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#f332f2d0901ace2daa9a5626f4526014e40bc278',
   );
 });

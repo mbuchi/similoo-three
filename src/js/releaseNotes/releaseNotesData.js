@@ -38,6 +38,26 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.12.0',
+    date: 'August 19, 2026',
+    codename: 'Municipal zone',
+    summary: 'The zone in the comparison sidebar is the municipal designation again: "Wohnzone, Bauklasse 4", not the federal "Wohnzonen".',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'map',
+        text: 'The zone line in the target parcel details now shows the designation the municipality itself uses ("Dorfzone 2", "Wohnzone, Bauklasse 4") instead of the federal main-use category ("Zentrumszonen", "Wohnzonen"). The federal category stays available in the raw data and as a filter; it is no longer presented as the zone. Legal cross-references such as "siehe gueltige Bau- und Zonenordnung" are still never printed as a zone. Suite-wide rule via @aireon/shared v1.177.0.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon library to v1.177.0, the municipal-zone release. The comparable-buildings search itself is unchanged: comparables are still selected from the same municipal zone as the target.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.11.1',
     date: 'August 18, 2026',
     codename: 'One zone per parcel',
