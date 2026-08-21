@@ -38,6 +38,13 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.12.1',
+    date: 'August 21, 2026',
+    codename: 'Varela Round',
+    summary: 'The Aireon wordmark is now consistent across the suite.',
+    items: [{ kind: 'improved', icon: 'package', text: 'Updated @aireon/shared to v1.178.1 so the canonical Aireon wordmark uses Varela Round with its red oo everywhere it appears.', prs: [] }],
+  },
+  {
     version: '0.12.0',
     date: 'August 19, 2026',
     codename: 'Municipal zone',

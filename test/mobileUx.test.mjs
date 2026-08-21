@@ -230,14 +230,14 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.12.0', () => {
-  assert.equal(pkg.version, '0.12.0');
-  assert.equal(lock.version, '0.12.0');
-  assert.equal(lock.packages[''].version, '0.12.0');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.12\.0'/s);
+test('release and package metadata are aligned at 0.12.1', () => {
+  assert.equal(pkg.version, '0.12.1');
+  assert.equal(lock.version, '0.12.1');
+  assert.equal(lock.packages[''].version, '0.12.1');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.12\.1'/s);
 });
 
-// Re-pinned to v1.178.0, the deferred session-replay boot release (this app
+// Re-pinned to v1.178.1, the canonical-wordmark release (this app
 // does not start the tracker itself, so the pin is a plain dependency bump).
 // The zone-label contract from v1.177.0 still applies:
 // @aireon/shared/parcel-zone's resolveZoneLabel() returns the municipal
@@ -246,9 +246,9 @@ test('release and package metadata are aligned at 0.12.0', () => {
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.178.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.178.1');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#d90c2910a71ab5098a71e43b4cba3dcc060a1c5c',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#2619b8fda3308a4ada06aaa063d9ce6aab576bf1',
   );
 });

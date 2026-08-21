@@ -1,7 +1,7 @@
 {
   "name": "similoo-three",
   "private": true,
-  "version": "0.12.0",
+  "version": "0.12.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,7 +19,7 @@
     "vite": "^8.2.1"
   },
   "dependencies": {
-    "@aireon/shared": "github:mbuchi/aireon-shared#v1.178.0",
+    "@aireon/shared": "github:mbuchi/aireon-shared#v1.178.1",
     "lucide": "^0.358.0",
     "lucide-react": "^1.31.0",
     "oidc-client-ts": "^3.5.0",
