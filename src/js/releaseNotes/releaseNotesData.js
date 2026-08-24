@@ -38,6 +38,32 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.13.0',
+    date: 'August 24, 2026',
+    codename: 'Steps, not a slider',
+    summary: 'The years window is now a ladder of fixed steps, including All, instead of a free slider that stopped at 30.',
+    items: [
+      {
+        kind: 'new',
+        icon: 'sliders-horizontal',
+        text: 'The years window in the comparison sidebar is now seven fixed steps: 5, 10, 15, 20, 40, 60 and All. It was a free slider that stopped at 30 years, so the 40 and 60 year windows the rest of the suite uses could not be asked for at all, and there was no way to drop the construction year limit entirely. All does exactly that: no year floor, not a very large number. The default is still 10 years, so nothing changes unless you move it.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'keyboard',
+        text: 'The new control works from the keyboard and with a screen reader: arrow keys move between steps and wrap around, Home and End jump to the ends, and each step announces the window it selects. The selected step is marked by a filled shape and a heavier label, not by color alone, so it stays readable in grayscale.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'info',
+        text: 'The sidebar now says when the comparables came from the parcel register rather than from recent building permits. Narrow windows often have too few recent permits to work with, and the app used to switch sources silently, which made a narrow window look broken rather than simply sparse.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.12.1',
     date: 'August 21, 2026',
     codename: 'Varela Round',

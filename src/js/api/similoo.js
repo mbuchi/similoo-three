@@ -10,6 +10,14 @@
 // Request:  { egrid, years?, limit? }
 // Response: { target, comparables[], meta }
 //
+// `years` is either a positive integer (1..100) or the string 'all' — an
+// unrestricted window with no construction-year floor. It goes through
+// `coerceYearsWindow` rather than `Number.isFinite(...) ? ... : 10`, which
+// silently turned 'all' into a 10-year window. `meta.years_window_all` echoes
+// which mode the backend ran in (`meta.years_window` is null when it is
+// unrestricted), and `meta.fallback_used` says which candidate pool answered
+// (the sidebar surfaces 'parcel_table').
+//
 //   target     — { egrid, municipality, cz_local, cz_abbrev, parcel_area_m2,
 //                  lat, lng }
 //   comparable — { egrid, municipality, cz_local, parcel_area_m2,
@@ -26,6 +34,7 @@
 // The federal category `cz_harmonized` is a filter, never the label.
 
 import { getCached, setCached, TTL } from '../cache.js';
+import { coerceYearsWindow, isAllYears } from '../yearsWindow.js';
 
 // Same-origin Vercel proxy. The proxy (api/similoo.ts) attaches the RES
 // API token server-side so the client doesn't have to handle suite auth.
@@ -35,12 +44,19 @@ export async function fetchSimilooComparables(egrid, opts = {}) {
     if (!egrid) {
         throw new Error('fetchSimilooComparables: egrid is required');
     }
-    const years = Number.isFinite(opts.years) ? opts.years : 10;
+    const years = coerceYearsWindow(opts.years);
     const limit = Number.isFinite(opts.limit) ? opts.limit : 12;
 
-    // Cache key matches the backend's Redis cache shape so multi-tab
-    // sessions reuse each other's lookups.
-    const cacheKey = `similoo:${egrid}:y${years}:l${limit}`;
+    // Cache key tracks the backend's Redis cache shape so a client entry never
+    // outlives the response shape it was written for. RES moved its own key to
+    // `similoo:v4:` when `meta` gained `years_window_all`, so this key carries
+    // the same generation: entries written before that bump are simply never
+    // consulted again, and expire out of the 64-entry soft cap on their own.
+    // That also retires the off-ladder windows the old free 1..30 slider could
+    // write (`y7`, `y23`, …), which the precision ladder can no longer ask for.
+    // `years` is interpolated as the STRING it is, so the unrestricted window
+    // keys as `yall` and never collides with `y10`.
+    const cacheKey = `similoo:v4:${egrid}:y${years}:l${limit}`;
     const cached = getCached(cacheKey);
     if (cached) return cached;
 
@@ -151,8 +167,12 @@ function mockSimilooResponse(egrid, { years, limit }) {
     };
     target.ratioV = round2(target.building_volume_m3 / target.parcel_area_m2);
 
+    // 'all' has no construction-year floor, so the mock spreads its cohort
+    // across the whole plausible Swiss building stock instead of a window
+    // measured back from today. `thisYear - 'all'` would be NaN.
     const thisYear = new Date().getFullYear();
-    const minYear = thisYear - years;
+    const span = isAllYears(years) ? thisYear - 1850 : years;
+    const minYear = thisYear - span;
 
     const comparables = [];
     const count = Math.min(limit, 12);
@@ -162,7 +182,7 @@ function mockSimilooResponse(egrid, { years, limit }) {
         const height = Math.round((5 + rand() * 22) * 10) / 10;
         const floors = Math.max(1, Math.round(height / 3.2 + (rand() - 0.5)));
         const volume = Math.round(footprint * height);
-        const year = minYear + Math.floor(rand() * (years + 1));
+        const year = minYear + Math.floor(rand() * (span + 1));
         const ratioV = round2(volume / parcelArea);
         // similarity_score: 1.0 - distance from target across a few axes.
         // The closer the parcel area + ratioV + year, the higher the score.
@@ -207,6 +227,11 @@ function mockSimilooResponse(egrid, { years, limit }) {
             total_candidates: comparables.length,
             generated_at: new Date().toISOString(),
             source: 'mock',
+            // Mirrors the live contract so the sidebar reads one shape either
+            // way: the window that was applied, and whether it was the
+            // unrestricted one (`years_window` is null when it is).
+            years_window: isAllYears(years) ? null : years,
+            years_window_all: isAllYears(years),
         },
     };
 }
