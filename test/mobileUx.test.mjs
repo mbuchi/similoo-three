@@ -189,7 +189,13 @@ test('phone scene and navbar controls expose 44px targets', () => {
 
 test('phone comparison controls expose 44px targets and readable labels', () => {
   assert.match(comparison, /\.cmp-close[^}]*width:\s*44px[^}]*height:\s*44px/s);
-  assert.match(comparison, /\.cmp-years-range[^}]*min-height:\s*44px/s);
+  // The years filter is a segmented precision ladder, not a range input: the
+  // segment IS the touch target, so the phone block grows the step itself to
+  // the 44px floor rather than hanging a transparent ::before off a compact
+  // box (inside the ladder's own horizontal scroll container an oversized
+  // ::before would overflow vertically).
+  assert.match(comparison, /\.cmp-years-step[^}]*min-height:\s*44px/s);
+  assert.doesNotMatch(comparison, /\.cmp-years-range/);
   assert.match(comparison, /\.cmp-size-sub input[^}]*min-height:\s*44px/s);
   assert.match(comparison, /\.cmp-sort[^}]*min-height:\s*44px/s);
   assert.match(comparison, /\.cmp-card-foot-key[^}]*font-size:\s*12px/s);
@@ -230,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.12.1', () => {
-  assert.equal(pkg.version, '0.12.1');
-  assert.equal(lock.version, '0.12.1');
-  assert.equal(lock.packages[''].version, '0.12.1');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.12\.1'/s);
+test('release and package metadata are aligned at 0.13.0', () => {
+  assert.equal(pkg.version, '0.13.0');
+  assert.equal(lock.version, '0.13.0');
+  assert.equal(lock.packages[''].version, '0.13.0');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.13\.0'/s);
 });
 
 // Re-pinned to v1.178.1, the canonical-wordmark release (this app

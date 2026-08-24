@@ -20,10 +20,48 @@ if (!process.env.RES_API_TOKEN) {
 // Bounds for client-controlled query params. The /score/similoo backend
 // caps internally but rejecting absurd values here saves an upstream
 // roundtrip and limits DoS surface.
-const YEARS_MIN = 1;
-const YEARS_MAX = 100;
 const LIMIT_MIN = 1;
 const LIMIT_MAX = 100;
+
+// The construction-year window RES accepts: a bounded integer 1..100, or the
+// UNRESTRICTED window spelled 'all' (0 is the accepted numeric synonym), which
+// applies no construction-year floor at all. 100 is not "all" — Swiss parcels
+// carry construction years well before 1926.
+//
+// This mirrors src/js/yearsWindow.js; the two cannot share a module because
+// api/ ships as a Vercel serverless function with its own module graph.
+//
+// The years bound used to be enforced as a 400. It is now a coercion, for two
+// reasons: `Number('all')` is NaN, so the old check turned a window RES
+// supports into an opaque 4xx; and the DoS rationale is served just as well by
+// never forwarding an out-of-contract value upstream. Garbage is not clamped
+// into a neighbouring window — that would silently answer a different
+// question — it falls back to the default.
+const DEFAULT_YEARS = 10;
+const MIN_YEARS = 1;
+const MAX_YEARS = 100;
+const ALL_YEARS = 'all';
+
+function isAllYears(raw) {
+    // Strictly `0`, never `Number(raw) === 0` — null, '' and false all coerce
+    // to 0 and none of them means "every year".
+    if (raw === 0) return true;
+    if (typeof raw !== 'string') return false;
+    const v = raw.trim().toLowerCase();
+    return v === 'all' || v === '0';
+}
+
+function coerceYearsWindow(raw) {
+    if (isAllYears(raw)) return ALL_YEARS;
+    if (typeof raw === 'string') {
+        if (raw.trim() === '') return DEFAULT_YEARS;
+    } else if (typeof raw !== 'number') {
+        return DEFAULT_YEARS;
+    }
+    const n = Math.round(Number(raw));
+    if (!Number.isFinite(n) || n < MIN_YEARS || n > MAX_YEARS) return DEFAULT_YEARS;
+    return n;
+}
 
 const CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -69,17 +107,12 @@ export default async function handler(req, res) {
         send(res, 400, { error: "Invalid 'egrid' format — expected CH followed by 12 digits" });
         return;
     }
-    const yearsRaw = Number(body?.years);
     const limitRaw = Number(body?.limit);
-    if (body?.years != null && (!Number.isFinite(yearsRaw) || yearsRaw < YEARS_MIN || yearsRaw > YEARS_MAX)) {
-        send(res, 400, { error: `'years' must be an integer between ${YEARS_MIN} and ${YEARS_MAX}` });
-        return;
-    }
     if (body?.limit != null && (!Number.isFinite(limitRaw) || limitRaw < LIMIT_MIN || limitRaw > LIMIT_MAX)) {
         send(res, 400, { error: `'limit' must be an integer between ${LIMIT_MIN} and ${LIMIT_MAX}` });
         return;
     }
-    const years = Number.isFinite(yearsRaw) ? Math.round(yearsRaw) : 10;
+    const years = coerceYearsWindow(body?.years);
     const limit = Number.isFinite(limitRaw) ? Math.round(limitRaw) : 12;
 
     const controller = new AbortController();

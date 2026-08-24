@@ -257,27 +257,63 @@
     letter-spacing: 0.06em;
     font-weight: 600;
 }
-.cmp-years-control {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 10px;
-    align-items: center;
+/* Years precision ladder — a compact segmented pill row (5/10/15/20/40/60/All),
+   the suite's "pills, not grids" answer to what used to be a free 1..30 slider.
+   Segments grow to share the row but never shrink below their own label, so
+   nothing truncates (labels never truncate — DESIGN_GUIDELINES row 14); in the
+   widest locale at the narrowest phone the track scrolls inside itself instead,
+   the same escape hatch the topic-tab track uses. */
+.cmp-years-ladder {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--hood-panel-border);
+    border-radius: 9999px;
+    background: var(--hood-panel-row-bg);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
-.cmp-years-range {
-    width: 100%;
-    accent-color: var(--hood-red);
+.cmp-years-ladder::-webkit-scrollbar { display: none; }
+[data-theme="dark"] .cmp-years-ladder {
+    border-color: transparent;
+    background: rgba(0, 0, 0, 0.25);
+}
+.cmp-years-step {
+    flex: 1 0 auto;
+    min-height: 32px;
+    padding: 0 7px;
+    border: 1px solid transparent;
+    border-radius: 9999px;
     background: transparent;
-}
-.cmp-years-value {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    color: var(--hood-panel-title);
-    min-width: 2ch;
-    text-align: right;
-}
-.cmp-years-suffix {
     color: var(--hood-panel-muted);
-    font-size: 11px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+.cmp-years-step:hover[aria-checked="false"] {
+    background: var(--hood-panel-row-bg-hover);
+    color: var(--hood-panel-title);
+}
+.cmp-years-step:focus-visible {
+    outline: 2px solid var(--hood-red);
+    outline-offset: 1px;
+}
+/* Selected state carries two cues that both survive greyscale: the step is the
+   only one wearing a filled pill, and its label steps up from 600 to 800. Hue
+   alone never says which window is on. */
+.cmp-years-step[aria-checked="true"] {
+    background: var(--hood-red);
+    border-color: var(--hood-red);
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
 }
 .cmp-size-control {
     display: grid;
@@ -350,6 +386,16 @@
 .cmp-status[data-state="error"] {
     color: var(--hood-red);
 }
+/* Candidate-pool note — one quiet line under the status, printed only when
+   /score/similoo answered from the parcel-table fallback instead of the recent
+   GWR permit pool. Empty (and collapsed) the rest of the time. */
+.cmp-pool-note {
+    margin: 0 0 8px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--hood-panel-faint);
+}
+.cmp-pool-note:empty { display: none; }
 
 /* ---------- list ---------- */
 .cmp-list {
@@ -572,7 +618,11 @@ body.cmp-shifted .scene-layers {
     .cmp-copy-egrid { width: 40px; height: 40px; }
     .cmp-copy-egrid svg { width: 16px; height: 16px; }
     .cmp-target-val { font-size: 12px; }
-    .cmp-years-range { min-height: 44px; }
+    /* On touch the segment IS the target, so the row itself grows to the 44px
+       floor rather than hanging a transparent ::before off a compact box (the
+       identifier-chip trick would overflow the ladder's own scroll container).
+       Desktop keeps the compact 32px row. */
+    .cmp-years-step { min-height: 44px; font-size: 13px; }
     .cmp-size-sub input { min-height: 44px; }
     .cmp-sort { min-height: 44px; font-size: 12px; }
     .cmp-eyebrow,
@@ -582,7 +632,6 @@ body.cmp-shifted .scene-layers {
     .cmp-target-cell-key,
     .cmp-years-label,
     .cmp-size-label,
-    .cmp-years-suffix,
     .cmp-size-sub,
     .cmp-sort-wrap,
     .cmp-card-egrid,
