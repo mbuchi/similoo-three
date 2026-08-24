@@ -38,6 +38,26 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.13.1',
+    date: 'August 25, 2026',
+    codename: 'Readable at the bottom of the sidebar',
+    summary: 'The sparse-data note and the unselected year steps are legible again.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'contrast',
+        text: 'The line that says the comparables came from the parcel register rather than from recent building permits was printed in the palette\'s faintest gray, which fell below the WCAG AA contrast floor in both themes. The sentence that tells you a narrow window is sparse rather than broken was the hardest thing in the sidebar to read; it now uses the panel body-text color.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'accessibility',
+        text: 'The unselected steps in the years ladder sat just under the same contrast floor once the translucent sidebar was over a dark map. They now match the panel body text. The selected step is unchanged: it stays the only filled shape and keeps its heavier label, so which window is on is still obvious in grayscale.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.13.0',
     date: 'August 24, 2026',
     codename: 'Steps, not a slider',
