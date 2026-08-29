@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.0',
+    date: 'August 29, 2026',
+    codename: 'The account menu in our own clothes',
+    summary: 'The account menu now looks like the rest of the app, and error reports no longer fill up with browser-extension noise.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon library to v1.201.0. The account menu now draws the app\'s own styled shell instead of a generic element, so it matches the rest of the top bar, and its compact controls keep a full 44 pixel touch target on small screens, which makes them easier to hit on a phone. Error reporting also stops filing reports caused by the visitor\'s own browser extensions, so what is left is the noise-free set worth reading. The 3D scene and the comparison sidebar are unchanged.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.13.1',
     date: 'August 25, 2026',
     codename: 'Readable at the bottom of the sidebar',
