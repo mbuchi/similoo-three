@@ -236,18 +236,15 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.0', () => {
-  assert.equal(pkg.version, '0.14.0');
-  assert.equal(lock.version, '0.14.0');
-  assert.equal(lock.packages[''].version, '0.14.0');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.0'/s);
+test('release and package metadata are aligned at 0.14.1', () => {
+  assert.equal(pkg.version, '0.14.1');
+  assert.equal(lock.version, '0.14.1');
+  assert.equal(lock.packages[''].version, '0.14.1');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.1'/s);
 });
 
-// Re-pinned to v1.201.0, the WebGL-painter-gate release (this app
-// does not start the tracker itself, so the pin is a plain dependency bump).
-// similoo-three has no MapLibre map, so the map-bootstrap half of that
-// release is inert here; what it carries is the styled account-menu shell,
-// the 44px compact touch floor and the extension-noise guard in errorlog.
+// Re-pinned to v1.205.0. This app consumes the shared account and data UI
+// but does not directly start the tracker or render the canonical tables.
 // The zone-label contract from v1.177.0 still applies:
 // @aireon/shared/parcel-zone's resolveZoneLabel() returns the municipal
 // designation ("Wohnzone, Bauklasse 4"); the federal cz_harmonized category is
@@ -255,9 +252,9 @@ test('release and package metadata are aligned at 0.14.0', () => {
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.201.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.205.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#d7eb0e3804f3eda69716c8eb97ee09f95fcefd84',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#16e60171d4515ca594153c212adccc506895aa8c',
   );
 });
