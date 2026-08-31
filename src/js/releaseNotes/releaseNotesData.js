@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.1',
+    date: 'August 31, 2026',
+    codename: 'Shared housework, out of sight',
+    summary: 'The viewer now uses @aireon/shared v1.205.0, keeping its common account and data plumbing current without changing the 3D scene or comparison workflow.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon library from v1.201.0 to v1.205.0. This brings the suite\'s current caching and account-menu registry work, clearer shared wording and visibility handling, canonical table support, and stable build-package references. Similoo-three\'s 3D scene and comparison sidebar keep the same behavior.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.0',
     date: 'August 29, 2026',
     codename: 'The account menu in our own clothes',
