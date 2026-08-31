@@ -46,7 +46,7 @@ export const RELEASES = [
       {
         kind: 'improved',
         icon: 'package',
-        text: 'Updated the shared Aireon library from v1.201.0 to v1.205.0. This brings the suite\'s current caching and account-menu registry work, clearer shared wording and visibility handling, canonical table support, and stable build-package references. Similoo-three\'s 3D scene and comparison sidebar keep the same behavior.',
+        text: 'Updated the shared Aireon library from v1.201.0 to v1.205.0. This brings its session-cached saved-parcels (PRM) list, canonical account-menu wording and visibility handling, and stable build-package references. Similoo-three does not render the shared canonical tables, and its 3D scene and comparison sidebar keep the same behavior.',
         prs: [],
       },
     ],
