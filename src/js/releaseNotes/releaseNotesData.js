@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.2',
+    date: 'September 1, 2026',
+    codename: 'Light mode all the way through',
+    summary: 'Switching to light mode now changes the whole viewer at once, instead of leaving the floating panels and the comparison sidebar dark until a reload.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'package',
+        text: 'Switching between light and dark mode used to only half work. The first time you changed the theme in the viewer, the page background, the floating dialogs and the comparison sidebar kept the color they had when the page opened, so you could end up with dark panels sitting under a light navbar, or the reverse. Reloading the page always sorted it out. The viewer now moves every part of the theme together, so one click switches the whole thing in both directions and no reload is needed.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.1',
     date: 'August 31, 2026',
     codename: 'Shared housework, out of sight',
