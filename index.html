@@ -35,28 +35,62 @@
     <link rel="icon" type="image/png" sizes="512x512" href="https://hub.aireon.ch/favicon-512x512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://hub.aireon.ch/apple-touch-icon.png" />
     <link rel="manifest" href="https://hub.aireon.ch/site.webmanifest" />
-    <meta name="theme-color" content="#0f172a" />
+    <!-- Light default, matching `:root` in styles.css. The pre-paint script
+         below corrects it for a dark visitor, and initThemeColorSync() (main.tsx)
+         keeps it in step with the in-app toggle from then on. Do NOT add a
+         `media`-scoped pair: initThemeColorSync removes those on boot. -->
+    <meta name="theme-color" content="#ffffff" />
     <script>
         // Inline pre-paint theme bootstrap. Runs before any stylesheet is
         // applied so users on dark mode don't see a white flash on load.
+        //
+        // Resolution order mirrors the shared bootstrap in
+        // aireon-shared/src/vite/htmlPlugin.ts exactly, so the two can never
+        // disagree: `?theme=` deep link -> the `.aireon.ch` cookie (cross-app,
+        // written by @aireon/shared setTheme) -> this origin's localStorage
+        // mirror (key `theme`, the shared store's LS_KEY) -> the OS preference
+        // -> the app default of light. The per-app `similoo-three-theme` key is
+        // legacy: nothing has written it since the toggle moved to the shared
+        // setTheme() (Navbar.tsx), so it is only a last-resort fallback for
+        // users who never migrated.
         (function () {
+            var d = document.documentElement;
+            var resolved = 'light';
             try {
-                // Cross-app theme: the `aireon_theme` cookie (scoped to
-                // .aireon.ch by @aireon/shared) is the suite-wide source of
-                // truth, so a choice made in any *.aireon.ch app applies here.
-                // Cookie wins over the legacy per-app localStorage mirror.
-                var m = document.cookie.match(/(?:^|; )aireon_theme=([^;]*)/);
-                var cookie = m ? decodeURIComponent(m[1]) : null;
-                var stored = cookie || localStorage.getItem('similoo-three-theme');
-                var resolved = stored === 'light' || stored === 'dark'
-                    ? stored
-                    : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-                        ? 'dark'
-                        : 'light');
-                document.documentElement.setAttribute('data-theme', resolved);
+                var t = null;
+                try {
+                    var q = new URLSearchParams(location.search).get('theme');
+                    if (q === 'dark' || q === 'light') t = q;
+                } catch (e) { /* malformed query string */ }
+                if (!t) {
+                    var m = document.cookie.match(/(?:^|; )aireon_theme=([^;]*)/);
+                    var cookie = m ? decodeURIComponent(m[1]) : null;
+                    var stored = cookie
+                        || localStorage.getItem('theme')
+                        || localStorage.getItem('similoo-three-theme');
+                    if (stored === 'light' || stored === 'dark') t = stored;
+                }
+                // Only OS-DARK is a signal; OS-light falls through to the app
+                // default, matching resolveThemePreference().
+                if (!t && window.matchMedia
+                    && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+                resolved = t || 'light';
             } catch (e) {
-                document.documentElement.setAttribute('data-theme', 'light');
+                resolved = 'light';
             }
+            // The theme signals move together. See
+            // aireon-shared/docs/THEME_STANDARD.md. `style.backgroundColor` is
+            // deliberately NOT stamped: this app paints its own body/canvas
+            // gradients and an inline background on <html> would win the page
+            // canvas over them (applyTheme only re-stamps one that already
+            // exists, so it stays consistent either way).
+            d.classList.toggle('dark', resolved === 'dark');
+            d.setAttribute('data-theme', resolved);
+            d.style.colorScheme = resolved;
+            // Keep the browser-chrome color honest during the pre-paint window;
+            // initThemeColorSync() in main.tsx owns it from boot onwards.
+            var tc = document.querySelector('meta[name="theme-color"]');
+            if (tc) tc.content = resolved === 'dark' ? '#0f172a' : '#ffffff';
         })();
         // Inline pre-paint locale bootstrap. Sets <html lang> from persisted
         // choice (or navigator) before first paint.

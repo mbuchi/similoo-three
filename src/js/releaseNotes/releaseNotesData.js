@@ -38,6 +38,50 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.3',
+    date: 'September 1, 2026',
+    codename: 'Light stays light',
+    summary: 'Light mode is now honored everywhere: the page opens in the theme you actually picked, the scene status chip and the sun date field stop rendering dark on a light page, and a link with a theme set in it works again.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'sun',
+        text: 'The viewer could open in dark mode even though you had chosen light. It was looking for your saved choice in the wrong place, so whenever the shared browser cookie was not available it fell back to your device setting instead. It now reads the same saved choice as the rest of the suite, so light stays light.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'link',
+        text: 'Adding a theme to a link, such as ending the address with a light theme setting, had no effect here. The viewer now honors it for that visit only, without changing the theme you have saved.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'loader',
+        text: 'The loading and error message chip in the scene header was always dark, so in light mode a near black pill sat between two white ones while the buildings loaded. It now matches the rest of the header in both themes, and its progress bar stays visible on either background.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'calendar',
+        text: 'The date field in the sun position control followed your device setting rather than the viewer, so the little calendar button could turn almost invisible and the date picker could open dark inside a light panel. It now follows the viewer theme.',
+        prs: [],
+      },
+      {
+        kind: 'fixed',
+        icon: 'smartphone',
+        text: 'On phones the browser address bar and the app card in the task switcher were pinned to dark navy even in light mode. They now follow the theme and update the moment you switch it.',
+        prs: [],
+      },
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon building blocks to v1.205.2, which finishes the theme fix started in the previous release.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.2',
     date: 'September 1, 2026',
     codename: 'Light mode all the way through',
