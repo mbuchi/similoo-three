@@ -236,14 +236,23 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.1', () => {
-  assert.equal(pkg.version, '0.14.1');
-  assert.equal(lock.version, '0.14.1');
-  assert.equal(lock.packages[''].version, '0.14.1');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.1'/s);
+test('release and package metadata are aligned at 0.14.2', () => {
+  assert.equal(pkg.version, '0.14.2');
+  assert.equal(lock.version, '0.14.2');
+  assert.equal(lock.packages[''].version, '0.14.2');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.2'/s);
 });
 
-// Re-pinned to v1.205.0. This app consumes the shared account and data UI
+// Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
+// bootstrap stamps FOUR signals on <html> (the `dark` class, `data-theme`,
+// style.colorScheme and style.backgroundColor) but applyTheme() moved only the
+// class, so the first in-app theme change left the other three on the OLD
+// theme. glass.css keys its dark tokens on [data-theme='dark'] .glass-surface
+// / .glass-control as well as on .dark, so a stale attribute held every glass
+// panel at the dark fill while the rest of the app went light, until a reload.
+// All four signals now move together.
+//
+// This app consumes the shared account and data UI
 // but does not directly start the tracker or render the canonical tables.
 // The zone-label contract from v1.177.0 still applies:
 // @aireon/shared/parcel-zone's resolveZoneLabel() returns the municipal
@@ -252,9 +261,9 @@ test('release and package metadata are aligned at 0.14.1', () => {
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.205.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.205.1');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#16e60171d4515ca594153c212adccc506895aa8c',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#6ed0e99d7fedcd4a33168166fa7b47b43ab73ffa',
   );
 });
