@@ -89,11 +89,16 @@
     border-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Peer chip of .scene-back / .scene-address in the same header flex row, so it
+   follows the same convention: light base, [data-theme='dark'] override. It
+   used to be hardcoded slate-900 with no light branch, which put a near-black
+   pill between two white ones on every light-mode scene load. */
 .scene-status {
     position: relative;
     padding: 8px 14px;
-    background: rgba(15, 23, 42, 0.86);
-    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #0f172a;
     border-radius: 10px;
     font-size: 13px;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
@@ -108,6 +113,15 @@
 
 .scene-status:empty { display: none; }
 
+/* Placement matters: this and `.scene-status.is-error` below have identical
+   (0,2,0) specificity, so source order decides. Keeping the dark override ABOVE
+   the error rule leaves the red error chip winning in both themes. */
+[data-theme='dark'] .scene-status {
+    background: rgba(17, 24, 39, 0.92);
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
 .scene-status-msg {
     flex: 1 1 auto;
     overflow: hidden;
@@ -121,9 +135,15 @@
     right: 0;
     bottom: 0;
     height: 3px;
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.12);
     pointer-events: none;
 }
+
+[data-theme='dark'] .scene-status-bar { background: rgba(255, 255, 255, 0.12); }
+
+/* (0,3,0), so it beats both of the above whatever the source order: the error
+   chip stays red in either theme and needs the light track. */
+.scene-status.is-error .scene-status-bar { background: rgba(255, 255, 255, 0.22); }
 
 .scene-status-bar::after {
     content: '';
@@ -588,12 +608,19 @@
     font-size: 11px;
     color: inherit;
     font-family: inherit;
-    color-scheme: light dark;
+    /* Pin the native date field and its calendar popup to the APP theme.
+       `light dark` hands the choice to the OS `prefers-color-scheme`, which is
+       independent of `data-theme`, so a light app on a dark-preference OS drew
+       a near-white picker glyph on the white .scene-sun pill. */
+    color-scheme: light;
 }
 
 .scene-sun-date::-webkit-calendar-picker-indicator { cursor: pointer; }
 
-[data-theme='dark'] .scene-sun-date { border-color: rgba(255, 255, 255, 0.15); }
+[data-theme='dark'] .scene-sun-date {
+    border-color: rgba(255, 255, 255, 0.15);
+    color-scheme: dark;
+}
 
 .scene-sun-slider-wrap {
     display: flex;

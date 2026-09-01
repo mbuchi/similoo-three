@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.2', () => {
-  assert.equal(pkg.version, '0.14.2');
-  assert.equal(lock.version, '0.14.2');
-  assert.equal(lock.packages[''].version, '0.14.2');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.2'/s);
+test('release and package metadata are aligned at 0.14.3', () => {
+  assert.equal(pkg.version, '0.14.3');
+  assert.equal(lock.version, '0.14.3');
+  assert.equal(lock.packages[''].version, '0.14.3');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.3'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
@@ -252,6 +252,15 @@ test('release and package metadata are aligned at 0.14.2', () => {
 // panel at the dark fill while the rest of the app went light, until a reload.
 // All four signals now move together.
 //
+// Re-pinned again to v1.205.2, which finishes that fix at the other end: the
+// pre-paint bootstrap now OWNS the dark class (`classList.toggle`) instead of
+// only ever adding it, so a static `class="dark"` in an app's own index.html
+// can no longer survive a visitor whose stored choice is light. This app's
+// bootstrap is hand-rolled rather than injected by the shared vite plugin, and
+// it was brought onto the same contract in the same release: `?theme=` first,
+// then the cookie, then the shared `theme` localStorage mirror, with the class,
+// `data-theme` and `color-scheme` all stamped together.
+//
 // This app consumes the shared account and data UI
 // but does not directly start the tracker or render the canonical tables.
 // The zone-label contract from v1.177.0 still applies:
@@ -261,9 +270,9 @@ test('release and package metadata are aligned at 0.14.2', () => {
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.205.1');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.205.2');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#6ed0e99d7fedcd4a33168166fa7b47b43ab73ffa',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#1669f28ee1de9c0bc4b2769715b75d29e850bcf3',
   );
 });

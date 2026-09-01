@@ -18,20 +18,43 @@
     <link rel="icon" type="image/svg+xml" href="https://hub.aireon.ch/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="https://hub.aireon.ch/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://hub.aireon.ch/apple-touch-icon.png" />
-    <meta name="theme-color" content="#0f172a" />
+    <!-- Light default; the pre-paint script below rewrites it for a dark visitor. -->
+    <meta name="theme-color" content="#ffffff" />
 
-    <!-- Pre-paint theme bootstrap — shared with index.html so no white flash. -->
+    <!-- Pre-paint theme bootstrap, matching index.html so no white flash and
+         so the viewer and the splat page cannot disagree. Order: `?theme=`
+         deep link, the cross-app `.aireon.ch` cookie, this origin's
+         localStorage mirror (key `theme`, written by @aireon/shared
+         setTheme), then the legacy per-app key, then the OS preference. -->
     <script>
       (function () {
+        var d = document.documentElement;
+        var resolved = 'light';
         try {
-          var stored = localStorage.getItem('similoo-three-theme');
-          var resolved = stored === 'light' || stored === 'dark'
-            ? stored
-            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.setAttribute('data-theme', resolved);
+          var t = null;
+          try {
+            var q = new URLSearchParams(location.search).get('theme');
+            if (q === 'dark' || q === 'light') t = q;
+          } catch (e) { /* malformed query string */ }
+          if (!t) {
+            var m = document.cookie.match(/(?:^|; )aireon_theme=([^;]*)/);
+            var cookie = m ? decodeURIComponent(m[1]) : null;
+            var stored = cookie
+              || localStorage.getItem('theme')
+              || localStorage.getItem('similoo-three-theme');
+            if (stored === 'light' || stored === 'dark') t = stored;
+          }
+          if (!t && window.matchMedia
+            && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+          resolved = t || 'light';
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+          resolved = 'light';
         }
+        d.classList.toggle('dark', resolved === 'dark');
+        d.setAttribute('data-theme', resolved);
+        d.style.colorScheme = resolved;
+        var tc = document.querySelector('meta[name="theme-color"]');
+        if (tc) tc.content = resolved === 'dark' ? '#0f172a' : '#ffffff';
       })();
     </script>
 
