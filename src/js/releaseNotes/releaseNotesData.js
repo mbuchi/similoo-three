@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.4',
+    date: 'September 2, 2026',
+    codename: 'Shared library catch-up',
+    summary: 'Moved the shared library forward five releases, picking up the suite report client, the Cloudflare bot gate (inert here until keys are given) and a signal-transport fix. No change to the 3D scene or the comparison workflow.',
+    items: [
+      {
+        kind: 'fixed',
+        icon: 'package',
+        text: 'Updated @aireon/shared from v1.205.2 to v1.207.4. The range adds the suite report client and the Cloudflare Turnstile bot gate, both additive and both switched off here, plus a fix that stops an explicitly named default endpoint from silently disabling batched signal transport. The viewer keeps the account, theme, zone-label and parcel-save plumbing it already had.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.3',
     date: 'September 1, 2026',
     codename: 'Light stays light',
