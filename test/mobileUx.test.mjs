@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.4', () => {
-  assert.equal(pkg.version, '0.14.4');
-  assert.equal(lock.version, '0.14.4');
-  assert.equal(lock.packages[''].version, '0.14.4');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.4'/s);
+test('release and package metadata are aligned at 0.14.5', () => {
+  assert.equal(pkg.version, '0.14.5');
+  assert.equal(lock.version, '0.14.5');
+  assert.equal(lock.packages[''].version, '0.14.5');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.5'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
@@ -270,9 +270,9 @@ test('release and package metadata are aligned at 0.14.4', () => {
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.207.4');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.209.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#37c0089ce4ffd8fb322b6cf53e9e220695df6e4e',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#2b280d7f57d9b4fffcf31227c01201a6c7d8e1f4',
   );
 });
