@@ -29,7 +29,6 @@ export function createCompass({ container, controls, onResetNorth }) {
     `;
     container.appendChild(root);
 
-    const needle = root.querySelector('.scene-compass-needle');
     const disc = root.querySelector('.scene-compass-disc');
 
     function trigger() {

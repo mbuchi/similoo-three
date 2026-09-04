@@ -40,7 +40,6 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
 
     let currentEgrid = null;
     let currentData = null;
-    let currentTargetSeed = null;
     let years = DEFAULT_YEARS;
     let sizeFrom = null;
     let sizeTo = null;
@@ -226,7 +225,6 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
             // A newer request may have raced ahead — drop the stale response.
             if (seq !== fetchSeq) return;
             currentData = data;
-            currentTargetSeed = `${data?.target?.egrid ?? egrid}`;
             renderTarget();
             renderList();
             renderMeta();
@@ -445,7 +443,7 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
 
     function clearHighlight() {
         if (highlightMarker) {
-            try { highlightMarker.remove(); } catch {}
+            try { highlightMarker.remove(); } catch { /* no-op */ }
             highlightMarker = null;
         }
     }
@@ -541,7 +539,7 @@ export function createComparisonSidebar({ map, onOpen, onClose, onFlyTo } = {}) 
 
     function destroy() {
         clearHighlight();
-        try { unlinkLocale?.(); } catch {}
+        try { unlinkLocale?.(); } catch { /* no-op */ }
         if (mobileMedia.removeEventListener) mobileMedia.removeEventListener('change', handleViewportChange);
         else mobileMedia.removeListener(handleViewportChange);
         launcher.remove();

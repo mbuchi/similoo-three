@@ -111,7 +111,7 @@ export function createSunControl({ container, initialDate, onChange }) {
     }
 
     function destroy() {
-        try { unlinkLocale?.(); } catch {}
+        try { unlinkLocale?.(); } catch { /* no-op */ }
         root.remove();
     }
 

@@ -188,7 +188,7 @@ export function bootScene() {
             url.searchParams.delete('lng');
             url.searchParams.delete('label');
             window.history.replaceState({}, '', url.toString());
-        } catch {}
+        } catch { /* no-op */ }
     }
 
     backBtn?.addEventListener('click', showLanding);
@@ -306,16 +306,16 @@ export function bootScene() {
                 handlePick({ lat, lng, label });
             }
         }
-    } catch (_) { /* no-op */ }
+    } catch { /* no-op */ }
 
     if (window.lucide?.createIcons) window.lucide.createIcons();
 
     return {
         dispose() {
-            try { searchDispose?.(); } catch {}
-            try { backBtn?.removeEventListener('click', showLanding); } catch {}
-            try { viewer?.destroy?.(); } catch {}
-            try { sidebar?.destroy?.(); } catch {}
+            try { searchDispose?.(); } catch { /* no-op */ }
+            try { backBtn?.removeEventListener('click', showLanding); } catch { /* no-op */ }
+            try { viewer?.destroy?.(); } catch { /* no-op */ }
+            try { sidebar?.destroy?.(); } catch { /* no-op */ }
             viewer = null;
             sidebar = null;
         },

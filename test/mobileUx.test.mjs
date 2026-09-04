@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.5', () => {
-  assert.equal(pkg.version, '0.14.5');
-  assert.equal(lock.version, '0.14.5');
-  assert.equal(lock.packages[''].version, '0.14.5');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.5'/s);
+test('release and package metadata are aligned at 0.14.6', () => {
+  assert.equal(pkg.version, '0.14.6');
+  assert.equal(lock.version, '0.14.6');
+  assert.equal(lock.packages[''].version, '0.14.6');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.6'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme

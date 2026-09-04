@@ -1,21 +1,24 @@
 {
   "name": "similoo-three",
   "private": true,
-  "version": "0.14.5",
+  "version": "0.14.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run typecheck && vite build",
+    "lint": "oxlint --type-aware --tsconfig tsconfig.app.json",
+    "lint:syntax": "oxlint",
     "preview": "vite preview",
     "test": "node --test",
-    "typecheck": "node node_modules/typescript7/bin/tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.5",
-    "typescript": "^5.5.3",
-    "typescript7": "npm:typescript@^7.0.2",
+    "oxlint": "1.81.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "typescript": "7.0.2",
     "vite": "^8.2.1"
   },
   "dependencies": {

@@ -70,7 +70,7 @@ export function createLayersToggle({ container }) {
     }
 
     function destroy() {
-        toggles.forEach(({ unlink }) => { try { unlink?.(); } catch {} });
+        toggles.forEach(({ unlink }) => { try { unlink?.(); } catch { /* no-op */ } });
         root.remove();
     }
 

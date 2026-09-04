@@ -67,7 +67,7 @@ function openDB() {
                 // tab upgraded), drop our cached promise so the next call
                 // re-opens cleanly.
                 db.onversionchange = () => {
-                    try { db.close(); } catch {}
+                    try { db.close(); } catch { /* no-op */ }
                     dbPromise = undefined;
                 };
                 resolve(db);
@@ -111,7 +111,7 @@ async function readEntry(db, key) {
         if (!entry) return null;
         if (typeof entry.ts !== 'number' || Date.now() - entry.ts > TTL_MS) {
             // Stale — drop it lazily and miss.
-            try { tx(db, 'readwrite').delete(key); } catch {}
+            try { tx(db, 'readwrite').delete(key); } catch { /* no-op */ }
             return null;
         }
         return entry;
@@ -131,9 +131,9 @@ function touch(db, key) {
             const e = getReq.result;
             if (!e) return;
             e.last = Date.now();
-            try { store.put(e); } catch {}
+            try { store.put(e); } catch { /* no-op */ }
         };
-    } catch {}
+    } catch { /* no-op */ }
 }
 
 async function writeEntry(db, key, body) {
@@ -150,7 +150,7 @@ async function writeEntry(db, key, body) {
         return;
     }
     // Enforce the byte budget after the write. Cheap when under budget.
-    try { await enforceBudget(db); } catch {}
+    try { await enforceBudget(db); } catch { /* no-op */ }
 }
 
 // Byte-budget LRU eviction. Sum all entry byte counts; if we're over the
@@ -181,7 +181,7 @@ async function enforceBudget(db) {
     const store = tx(db, 'readwrite');
     for (const e of entries) {
         if (over <= 0) break;
-        try { store.delete(e.key); } catch {}
+        try { store.delete(e.key); } catch { /* no-op */ }
         over -= e.bytes;
     }
 }

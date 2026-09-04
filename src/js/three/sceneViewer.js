@@ -301,15 +301,6 @@ export function createSceneViewer({ container, onStatus, onBuildingPicked }) {
         return { node };
     }
 
-    function disposeVegetationOverlay() {
-        if (vegetationOverlay?.node) {
-            disposeNode(vegetationOverlay.node);
-            sceneGroup.remove(vegetationOverlay.node);
-        }
-        vegetationOverlay = null;
-        vegetationLoading = null;
-    }
-
     // Reference grid so the user has a sense of scale before assets
     // land (100 m × 100 m, 10 m cells).
     const grid = new THREE.GridHelper(SCENE_RADIUS_M * 2, 20, 0xb0b8c1, 0xd9dfe6);
