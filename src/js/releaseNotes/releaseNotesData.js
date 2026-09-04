@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.6',
+    date: 'September 4, 2026',
+    codename: 'One compiler, one linter',
+    summary: 'similoo-three now type-checks on TypeScript 7 as its only compiler and lints with Oxlint instead of ESLint; production builds refuse to ship with type errors.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'zap',
+        text: 'similoo-three now type-checks on TypeScript 7 as its only compiler and lints with Oxlint instead of ESLint; production builds refuse to ship with type errors. No change to what you see.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.5',
     date: 'September 4, 2026',
     codename: 'Shared foundation v1.209.0',

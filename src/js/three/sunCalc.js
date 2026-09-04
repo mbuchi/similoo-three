@@ -12,7 +12,6 @@
 // peer-reviewed almanac.
 
 const DEG = Math.PI / 180;
-const RAD = 180 / Math.PI;
 
 // Day-of-year fractional, 0-based — Jan 1 12:00 = ~0.5.
 function fractionalDay(date) {

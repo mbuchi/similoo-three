@@ -57,7 +57,7 @@ async function fetchGLBWithMeta(url, body) {
         // non-GLB body is never written to the cache by a future fetch,
         // and an old JSON body fails this check too.)
         let text = '';
-        try { text = new TextDecoder().decode(buf.slice(0, 200)); } catch {}
+        try { text = new TextDecoder().decode(buf.slice(0, 200)); } catch { /* no-op */ }
         throw new Error(`three3d expected GLB binary, got non-GLB: ${text.slice(0, 200)}`);
     }
     // Metadata rides on a response header which the blob cache can't store;

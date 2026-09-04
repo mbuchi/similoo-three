@@ -12,8 +12,6 @@
 // upward) but accurate enough for the bar to feel honest at the typical
 // 100 m city block scale.
 
-import * as THREE from 'three';
-
 const BAR_PX = 110;
 
 // Snap the displayed value to a "nice" round number so the bar reads

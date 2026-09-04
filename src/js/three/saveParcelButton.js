@@ -133,8 +133,8 @@ export function createSaveParcelButton({ container }) {
     }
 
     function destroy() {
-        try { unlinkLocale?.(); } catch {}
-        try { unlinkAuth?.(); } catch {}
+        try { unlinkLocale?.(); } catch { /* no-op */ }
+        try { unlinkAuth?.(); } catch { /* no-op */ }
         btn.remove();
     }
 

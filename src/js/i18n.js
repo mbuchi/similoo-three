@@ -1688,7 +1688,7 @@ export function setLocale(locale) {
   applyTranslations(document);
   // Mirror the change into the suite-shared engine so shared modules
   // (auth nav, profile modal) re-render in the new language.
-  try { setSharedLocale(locale); } catch {}
+  try { setSharedLocale(locale); } catch { /* no-op */ }
   subscribers.forEach((cb) => {
     try {
       cb(locale);

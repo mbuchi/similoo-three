@@ -109,7 +109,7 @@ export function createMobileSceneControls({ container, controls = [] }) {
             window.removeEventListener('keydown', onKeyDown);
             if (media.removeEventListener) media.removeEventListener('change', applyMode);
             else media.removeListener(applyMode);
-            try { unlinkLocale?.(); } catch {}
+            try { unlinkLocale?.(); } catch { /* no-op */ }
             overlay.remove();
             fab.remove();
         },
