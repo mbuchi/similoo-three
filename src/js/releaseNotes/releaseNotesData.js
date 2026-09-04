@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.14.5',
+    date: 'September 4, 2026',
+    codename: 'Shared foundation v1.209.0',
+    summary: 'Updated the shared library to v1.209.0: automated test runs are now marked as synthetic on their way to the bug tracker. No change to the 3D scene or the comparison workflow.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon foundation from v1.207.4 to v1.209.0. The shared bug-report relay now passes the synthetic marker of automated test runs (Playwright audits, perf sweeps) through to the suite bug tracker, so those runs are parked instead of opening incidents. The viewer keeps its own in-app bug reporter and the account, theme, zone-label and parcel-save plumbing it already had.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.4',
     date: 'September 2, 2026',
     codename: 'Shared library catch-up',
