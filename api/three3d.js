@@ -12,6 +12,8 @@
 // One single handler routes all endpoints via the trailing path; this
 // keeps Vercel function count low (only one function file).
 
+import { withTurnstile } from '@aireon/shared/turnstile-guard';
+
 export const config = { maxDuration: 60 };
 
 const CONTOOR_BASE =
@@ -94,7 +96,7 @@ const WFS_BUILDING_LAYER =
     'project_res:bo_buildings_all_2025';
 const WFS_BBOX_PAGE_SIZE = Number(process.env.SWISS_WFS_PAGE_SIZE || 200);
 
-export default async function handler(req, res) {
+async function handler(req, res) {
     if (req.method === 'OPTIONS') {
         setCors(res);
         res.status(204).end();
@@ -432,3 +434,5 @@ function lv95ToWGS84(easting, northing) {
         lat: (lat * 100) / 36,
     };
 }
+
+export default withTurnstile(handler);

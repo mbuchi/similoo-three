@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.15.0',
+    date: 'September 6, 2026',
+    codename: 'Bot gate wired in',
+    summary: 'similoo-three now carries the suite-wide Cloudflare Turnstile bot check on its parcel, comparable-building and 3D model endpoints. It stays inert until the app is given keys, so nothing changes for visitors yet.',
+    items: [
+      {
+        kind: 'new',
+        icon: 'shield-check',
+        text: 'The parcel lookup, comparable-building and 3D model endpoints can now be protected by a Cloudflare Turnstile check, the same one being rolled out across the Aireon suite. Automated scrapers pay the challenge once instead of calling these endpoints freely. Until similoo-three is switched on with its keys this has no effect at all: no script loads, no challenge appears and every request is served exactly as before.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.14.7',
     date: 'September 6, 2026',
     codename: 'Fewer false faults',
