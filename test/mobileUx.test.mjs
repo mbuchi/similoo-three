@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.14.6', () => {
-  assert.equal(pkg.version, '0.14.6');
-  assert.equal(lock.version, '0.14.6');
-  assert.equal(lock.packages[''].version, '0.14.6');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.6'/s);
+test('release and package metadata are aligned at 0.14.7', () => {
+  assert.equal(pkg.version, '0.14.7');
+  assert.equal(lock.version, '0.14.7');
+  assert.equal(lock.packages[''].version, '0.14.7');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.14\.7'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
@@ -269,10 +269,16 @@ test('release and package metadata are aligned at 0.14.6', () => {
 // a filter, never the label. The comparison sidebar imports it, so a repin
 // below v1.173.x is a build error (module not found) and a repin between
 // v1.173.x and v1.177.0 silently flips the zone back to the federal category.
+//
+// Re-pinned to v1.210.0, the errorlog accuracy release: a best-effort marker on
+// a fetch and a beforeCapture veto let a caller declare up front that a failure
+// is expected, so a reload, an offline moment or a deliberately aborted request
+// stops filing itself as a fault. Nothing in the 3D scene, the comparison
+// sidebar or the zone-label contract moves.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.209.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.210.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#2b280d7f57d9b4fffcf31227c01201a6c7d8e1f4',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#0d7d7166ea8c7d0454cbc718eca544a96fe0f8ae',
   );
 });
