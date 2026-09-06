@@ -4,6 +4,8 @@ import { initTheme, getStoredTheme, setTheme, applyTheme } from '@aireon/shared/
 import { getThemeOverride } from '@aireon/shared/url-params';
 import { initThemeColorSync } from '@aireon/shared/pwa';
 import { createIcons, ShieldAlert, X, Send } from 'lucide';
+import { TurnstileGate } from '@aireon/shared/turnstile';
+import { AppBootFallback } from './components/AppBootFallback';
 import App from './App.tsx';
 
 // Bundled Lucide icons for vanilla modules without external unpkg script
@@ -66,8 +68,23 @@ import './css/landing.css';
 import './css/scene.css';
 import './css/bugReport.css';
 
+// The bot gate sits directly around <App />, which is the whole app tree here:
+// similoo-three has no AccessGate component and no React AuthProvider (auth is
+// wired up inside the preserved imperative engine that App boots), so this is
+// the outermost point at which the app content can be withheld. Keeping it
+// above <App /> also means the Three.js engine only boots once the visitor is
+// cleared, rather than mounting a scene behind the challenge card.
+//
+// Inert until keys are set: with no VITE_TURNSTILE_SITE_KEY the gate renders
+// its children immediately and issues no request at all.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <TurnstileGate
+      appId="similoo-three"
+      siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+      fallback={<AppBootFallback />}
+    >
+      <App />
+    </TurnstileGate>
   </StrictMode>,
 );

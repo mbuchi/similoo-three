@@ -3,6 +3,8 @@
 // Proxies POST /api/parcel → RES /res_api/parcel_data so the client never
 // needs the RES API token. Mirrors the scoore /api/overpass pattern.
 
+import { withTurnstile } from '@aireon/shared/turnstile-guard';
+
 export const config = { maxDuration: 15 };
 
 const RES_PARCEL_URL = 'https://res.zeroo.ch/res_api/parcel_data';
@@ -33,7 +35,7 @@ function send(res, status, body) {
     res.status(status).json(body);
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
     if (req.method === 'OPTIONS') {
         for (const [k, v] of Object.entries(CORS_HEADERS)) res.setHeader(k, v);
         res.status(204).end();
@@ -110,3 +112,5 @@ export default async function handler(req, res) {
         clearTimeout(timer);
     }
 }
+
+export default withTurnstile(handler);
