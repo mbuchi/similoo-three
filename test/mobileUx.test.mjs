@@ -275,10 +275,27 @@ test('release and package metadata are aligned at 0.15.0', () => {
 // is expected, so a reload, an offline moment or a deliberately aborted request
 // stops filing itself as a fault. Nothing in the 3D scene, the comparison
 // sidebar or the zone-label contract moves.
+//
+// Re-pinned to v1.213.0, the Claire thinking-indicator release. v1.212.0 adds
+// ClaireThinking, the rotating status line the shared <ClaireAssistant> now
+// renders between the send and the first token in place of three static dots,
+// and v1.213.0 reserves one line of height in that row so the bubble no longer
+// grows when the first line lands. ClaireAssistantProps gains one OPTIONAL
+// `locale` prop; nothing is removed and no other export moves, so the repin is
+// type-compatible and tsc alone cannot see it, which is the whole reason this
+// guard exists. This app never mounts <ClaireAssistant>: Claire is still the
+// documented parity gap here (the vanilla viewer has no React island for her),
+// so nothing user-visible moves. For whenever she does land, the indicator
+// resolves its language from the `locale` prop, else <html lang>, else English,
+// and this app already keeps <html lang> honest: index.html seeds it pre-paint
+// from `similoo-three:locale` and src/js/i18n.js setLocale() restamps it on
+// every switch, so the fallback would already speak the user's language and no
+// `locale` prop would be needed. The zone-label contract from v1.177.0 and the
+// four-signal theme bootstrap above are untouched.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.210.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.213.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#0d7d7166ea8c7d0454cbc718eca544a96fe0f8ae',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#54fee1b4e4f7ef220a233bd2e5d54bd7ee32ef7b',
   );
 });
