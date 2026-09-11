@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.15.0', () => {
-  assert.equal(pkg.version, '0.15.0');
-  assert.equal(lock.version, '0.15.0');
-  assert.equal(lock.packages[''].version, '0.15.0');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.15\.0'/s);
+test('release and package metadata are aligned at 0.15.1', () => {
+  assert.equal(pkg.version, '0.15.1');
+  assert.equal(lock.version, '0.15.1');
+  assert.equal(lock.packages[''].version, '0.15.1');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.15\.1'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
@@ -292,10 +292,25 @@ test('release and package metadata are aligned at 0.15.0', () => {
 // every switch, so the fallback would already speak the user's language and no
 // `locale` prop would be needed. The zone-label contract from v1.177.0 and the
 // four-signal theme bootstrap above are untouched.
+//
+// Re-pinned to v1.219.0 (v1.214.0 through v1.219.0). Per `git diff --name-only
+// v1.213.0 v1.219.0 -- src`, the span touches only src/errorlog, src/turnstile
+// (TurnstileGate's probe and mint fetches become best-effort), src/nav/launchApps
+// (zeroo added; realioo added and then held out again), src/searchHistory/
+// anonCookie (the signed-out cookie also scopes to brokereum.xyz), src/claire
+// (v1.219.0's lazy root-barrel ClaireAssistant wrapper), src/signal (the signal
+// client's own entry) and the barrel. None of it reaches this viewer's
+// behavior: it mounts no Claire, no Open with launcher and no shared error
+// logger (the bundle carries neither `x-aireon-synthetic` nor `devOrigin`; bug
+// reports go through its own src/js/bugReport.js), so the errorlog and
+// TurnstileGate changes have no reporter to act on, and search history is
+// served from *.aireon.ch, where the cookie domain is unchanged. A vite build
+// shows first-load JS essentially flat (498,947 -> 501,893 bytes against
+// v1.213.0). The zone-label contract and the theme bootstrap stay untouched.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.213.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.219.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#54fee1b4e4f7ef220a233bd2e5d54bd7ee32ef7b',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#f201ad6012b3122d906e860663d6e024f79baf06',
   );
 });
