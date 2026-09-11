@@ -236,11 +236,11 @@ test('phone labels wrap without clipping and use local brand artwork', () => {
   assert.match(chrome, /mask:\s*url\("\/brand\/aireon-mark\.svg"\)/);
 });
 
-test('release and package metadata are aligned at 0.15.1', () => {
-  assert.equal(pkg.version, '0.15.1');
-  assert.equal(lock.version, '0.15.1');
-  assert.equal(lock.packages[''].version, '0.15.1');
-  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.15\.1'/s);
+test('release and package metadata are aligned at 0.15.2', () => {
+  assert.equal(pkg.version, '0.15.2');
+  assert.equal(lock.version, '0.15.2');
+  assert.equal(lock.packages[''].version, '0.15.2');
+  assert.match(releases, /export const RELEASES = \[\s*{\s*version: '0\.15\.2'/s);
 });
 
 // Re-pinned to v1.205.1, the light-mode theme fix. The pre-paint theme
@@ -307,10 +307,19 @@ test('release and package metadata are aligned at 0.15.1', () => {
 // served from *.aireon.ch, where the cookie domain is unchanged. A vite build
 // shows first-load JS essentially flat (498,947 -> 501,893 bytes against
 // v1.213.0). The zone-label contract and the theme bootstrap stay untouched.
+// (v1.219.0 resolved commit f201ad6012b3122d906e860663d6e024f79baf06.)
+//
+// Re-pinned to v1.220.0. Per `git diff --stat v1.219.0 v1.220.0 -- src`, the
+// release touches only src/claire (ClaireAssistant moves to the relay's
+// streaming route, the chat client retries at most once, and a Gemini | OpenAI
+// picker appears once the relay reports both providers) and the barrel
+// (additive provider exports). This viewer still mounts no Claire, so nothing
+// user-visible moves; no dependency or peerDependency changes, and the
+// zone-label contract and the theme bootstrap stay untouched.
 test('clean builds use the pinned shared package tag', () => {
-  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.219.0');
+  assert.equal(pkg.dependencies['@aireon/shared'], 'github:mbuchi/aireon-shared#v1.220.0');
   assert.equal(
     lock.packages['node_modules/@aireon/shared'].resolved,
-    'git+ssh://git@github.com/mbuchi/aireon-shared.git#f201ad6012b3122d906e860663d6e024f79baf06',
+    'git+ssh://git@github.com/mbuchi/aireon-shared.git#9865f5d64f68caab57d3c653966ae88fdc351a5b',
   );
 });

@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.15.2',
+    date: 'September 11, 2026',
+    codename: 'Shared foundation refresh',
+    summary: 'Routine update of the shared Aireon foundation to v1.220.0. The 3D scene, the comparison sidebar and the bot check work exactly as before.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Shared library update (v1.220.0); no visible change in this app. The release only changes Claire\'s chat panel, which this viewer does not show. The 3D scene and the comparison sidebar are unchanged.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.15.1',
     date: 'September 11, 2026',
     codename: 'Current shared foundation',
