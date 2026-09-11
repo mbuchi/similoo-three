@@ -38,6 +38,20 @@ export const KIND_META = {
 
 export const RELEASES = [
   {
+    version: '0.15.1',
+    date: 'September 11, 2026',
+    codename: 'Current shared foundation',
+    summary: 'Routine update of the shared Aireon foundation to v1.219.0. The 3D scene, the comparison sidebar and the bot check work exactly as before.',
+    items: [
+      {
+        kind: 'improved',
+        icon: 'package',
+        text: 'Updated the shared Aireon foundation from v1.213.0 to v1.219.0. The releases in between change parts of the shared library this viewer does not use: Claire\'s chat panel and how her code is packaged, the usage-signal client, the Open with launcher, the automatic error reporter, and the signed-out search-history cookie on a site served from another domain. The Cloudflare bot check now marks its own failed network requests as expected, which only matters to that error reporter, so it behaves exactly as before here. The 3D scene and the comparison sidebar are unchanged.',
+        prs: [],
+      },
+    ],
+  },
+  {
     version: '0.15.0',
     date: 'September 6, 2026',
     codename: 'Bot gate wired in',
